@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TAJIROX l Système de gestion des magasins</title>
+    <title>إدارة المحل - نظام احترافي</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -1664,7 +1664,7 @@
                     </div>
 
                     <!-- ملخص حسب الزبون/المورد -->
-                    <div id="reportSummary" class="mt-8 grid md:grid-cols-2 gap-6 hidden">
+                    <div id="reportSummary" class="mt-8 grid md:grid-cols-2 gap-6 !hidden" style="display: none !important;">
                         <div class="bg-slate-50 p-5 rounded-[2rem]">
                             <h4 class="font-black text-slate-700 mb-4" data-i18n="customer_summary">ملخص حسب الزبائن
                             </h4>
@@ -3277,7 +3277,7 @@
                 sale_word: "بيع",
                 cash_box: "صندوق",
                 check_word: "شيك",
-                goods_word: "سلع",
+                goods_word: "Marchandises",
                 promissory_note_word: "كمبيالة",
                 enter_ref_error: "يرجى إدخال رقم المرجع للشيك أو الكمبيالة",
                 enter_due_date_error: "يرجى إدخال تاريخ الاستحقاق للشيك أو الكمبيالة",
@@ -3379,17 +3379,17 @@
                 balance_label: "الباقي",
                 save_invoice_btn: "حفظ الفاتورة",
                 record_expense_title: "تسجيل مصروف",
-                buy_goods: "شراء سلع",
+                buy_goods: "Achat Marchandises",
                 rent: "كراء",
                 utilities: "كهرباء / ماء",
                 salaries: "رواتب",
                 other: "أخرى",
                 description_placeholder: "الوصف",
-                supplier_required_label: "المورد (إجباري لشراء السلع)",
+                supplier_required_label: "المورد (إجباري لشراء Marchandises)",
                 select_supplier: "اختر المورد",
-                invoice_num_required_label: "رقم الفاتورة (إجباري لشراء السلع)",
+                invoice_num_required_label: "رقم الفاتورة (إجباري لشراء Marchandises)",
                 invoice_num_placeholder: "رقم الفاتورة",
-                payment_ref_optional_label: "مرجع الأداء (اختياري لشراء السلع)",
+                payment_ref_optional_label: "مرجع الأداء (اختياري لشراء Marchandises)",
                 total_amount_label: "الإجمالي",
                 debt_to_supplier: "دين للمورد",
                 add_customer_title: "إضافة زبون",
@@ -3825,7 +3825,7 @@
             fr: {
                 // Dashboard Checks
                 goods_word: "Produits",
-                app_title_hero: "Système de Gestion des Magasins",
+                app_title_hero: "Système de Gestion de Magasin",
                 app_desc_hero: "Solution complète et efficace pour gérer les stocks, les ventes, les clients et les fournisseurs en un seul endroit. Développez votre activité et élevez-la vers un niveau professionnel grâce à des outils d’analyse précis et des fonctionnalités intelligentes qui vous aident à prendre de meilleures décisions.",
                 checks_received_title: "Chèques Reçus",
                 total_sum: "Total",
@@ -3920,7 +3920,7 @@
                 direction_received: "Entrant",
                 direction_given: "Sortant",
                 checks_promissory: "Chèques et Traites",
-                app_title_hero: "Système de Gestion des Magasins",
+                app_title_hero: "Système de Gestion de Magasin",
                 app_desc_hero: "La solution complète pour gérer votre stock, vos ventes et vos clients en un seul endroit. Propulsez votre commerce vers le professionnalisme avec des outils d'analyse précis.",
                 login_title: "Connexion",
                 welcome_back: "Bon retour, entrez vos coordonnées pour continuer",
@@ -11429,7 +11429,7 @@ function applyInvoiceColorToUI() {
 
                 container.innerHTML += `
             <div class="expense-category-summary ${color.border}">
-                <div class="category-header" onclick="toggleCategoryDetails('category-${index}')">
+                <div class="category-header" style="cursor: default;">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 ${color.bg} bg-opacity-20 rounded-xl flex items-center justify-center">
                             <i class="fas fa-tag ${color.text}"></i>
@@ -11450,7 +11450,7 @@ function applyInvoiceColorToUI() {
                     </div>
                 </div>
                 
-                <div id="category-${index}" class="category-details">
+                <div id="category-${index}" class="category-details !hidden" style="display: none !important;">
                     ${cat.items.map(item => `
                         <div class="expense-item-detail">
                             <div>
