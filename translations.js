@@ -66,7 +66,7 @@ const translations = {
                 direction_given: "صادر",
                 checks_promissory: "الشيكات والكمبيالات",
                 app_title_hero: "نظام إدارة المحلات التجارية",
-                app_desc_hero: "بسّط إدارتك، وحقق أقصى أداء.",
+                app_desc_hero: "بسّط تدبيرك، وحقق أقصى أداء.",
                 login_title: "تسجيل الدخول",
                 welcome_back: "مرحباً بك مجدداً، أدخل بياناتك للمتابعة",
                 username: "اسم المستخدم",
