@@ -43,7 +43,7 @@ const translations = {
                 sale_word: "بيع",
                 cash_box: "صندوق",
                 check_word: "شيك",
-                goods_word: "Marchandises",
+                goods_word: "سلع",
                 promissory_note_word: "كمبيالة",
                 enter_ref_error: "يرجى إدخال رقم المرجع للشيك أو الكمبيالة",
                 enter_due_date_error: "يرجى إدخال تاريخ الاستحقاق للشيك أو الكمبيالة",
