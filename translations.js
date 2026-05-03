@@ -139,6 +139,8 @@ const translations = {
                 search_product_placeholder: "اكتب اسم المنتج أو الكود للبحث...",
                 added_products_label: "المنتجات المضافة",
                 total_label: "المجموع",
+ goods: "سلع",
+        merchandise: "سلع",
                 discount_label: "الخصم",
                 net_total_label: "الصافي للدفع",
                 paid_label: "المدفوع",
