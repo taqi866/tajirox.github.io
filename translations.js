@@ -145,7 +145,7 @@ const translations = {
                 balance_label: "الباقي",
                 save_invoice_btn: "حفظ الفاتورة",
                 record_expense_title: "تسجيل مصروف",
-                buy_goods: "Achat Marchandises",
+                buy_goods: "شراء سلع",
                 rent: "كراء",
                 utilities: "كهرباء / ماء",
                 salaries: "رواتب",
