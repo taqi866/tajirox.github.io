@@ -4458,6 +4458,18 @@
             }).requestShopRenewal(currentUser.shopName, currentUser.username, currentUser.email);
         }
 
+        function updateExpenseCategoryTranslations() {
+    const expCatSelect = document.getElementById('expCat');
+    if (expCatSelect) {
+        Array.from(expCatSelect.options).forEach(option => {
+            const i18nKey = option.getAttribute('data-i18n');
+            if (i18nKey && translations[currentLang][i18nKey]) {
+                option.textContent = translations[currentLang][i18nKey];
+            }
+        });
+    }
+}
+
         function promptLogout() {
             openConfirm({
                 title: t('logout_title'),
