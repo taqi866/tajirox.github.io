@@ -65,7 +65,7 @@ const translations = {
                 direction_received: "وارد",
                 direction_given: "صادر",
                 checks_promissory: "الشيكات والكمبيالات",
-                app_title_hero: "نظام إدارة المحلات التجارية",
+                app_title_hero: "TAJIROX  I نظام إدارة المحلات التجارية",
                 app_desc_hero: "بسّط تدبيرك، وحقق أقصى أداء.",
                 login_title: "تسجيل الدخول",
                 welcome_back: "مرحباً بك مجدداً، أدخل بياناتك للمتابعة",
@@ -593,7 +593,7 @@ const translations = {
             fr: {
                 // Dashboard Checks
                 goods_word: "Marchandises",
-                app_title_hero: "Système de gestion des magasins",
+                app_title_hero: "TAJIROX I Système de gestion des magasins",
                 app_desc_hero: "Une Simplifiez votre gestion, maximisez vos performances et performante pour gérer votre stock, vos ventes, vos clients et vos fournisseurs en un seul endroit. Optimisez votre activité et propulsez votre commerce vers le professionnalisme grâce à des outils d’analyse précis et des fonctionnalités intelligentes.",
                 checks_received_title: "Chèques Reçus",
                 total_sum: "Total",
