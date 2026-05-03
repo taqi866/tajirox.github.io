@@ -593,7 +593,6 @@ const translations = {
             fr: {
                 // Dashboard Checks
                 goods_word: "Marchandises",
-                app_title_hero: "TAJIROX Système de gestion des magasins",
                 app_desc_hero: "Une Simplifiez votre gestion, maximisez vos performances et performante pour gérer votre stock, vos ventes, vos clients et vos fournisseurs en un seul endroit. Optimisez votre activité et propulsez votre commerce vers le professionnalisme grâce à des outils d’analyse précis et des fonctionnalités intelligentes.",
                 checks_received_title: "Chèques Reçus",
                 total_sum: "Total",
@@ -688,7 +687,7 @@ const translations = {
                 direction_received: "Entrant",
                 direction_given: "Sortant",
                 checks_promissory: "Chèques et Traites",
-                app_title_hero: "Système de gestion des magasins",
+                app_title_hero: "TAJIROX Système de gestion des magasins",
                 app_desc_hero: "Simplifiez votre gestion, maximisez vos performances",
                 login_title: "Connexion",
                 welcome_back: "Bon retour, entrez vos coordonnées pour continuer",
