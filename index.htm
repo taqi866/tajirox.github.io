@@ -3551,6 +3551,20 @@
             }];
         }
 
+        function translateCategoryName(category) {
+    const categoryMap = {
+        'سلع': t('goods_word'),
+        'كراء': t('rent'),
+        'كهرباء': t('utilities'),
+        'رواتب': t('salaries'),
+        'أخرى': t('other_category')
+    };
+    return categoryMap[category] || category;
+}
+
+//然后在 renderExpensesByCategory 中使用:
+<h5 class="font-bold text-slate-800">${translateCategoryName(category)}</h5>
+
         // Version modifiée de autoPrintThermalInvoice pour utiliser QZ Tray
         function autoPrintThermalInvoice(invoiceId) {
             // Vérifier les préférences utilisateur
