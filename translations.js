@@ -688,7 +688,6 @@ const translations = {
                 direction_given: "Sortant",
                 checks_promissory: "Chèques et Traites",
                 app_title_hero: "TAJIROX Système de gestion des magasins",
-                app_title_hero: "TAJIROX Système de gestion des magasins",
                 app_desc_hero: "Simplifiez votre gestion, maximisez vos performances",
                 login_title: "Connexion",
                 welcome_back: "Bon retour, entrez vos coordonnées pour continuer",
