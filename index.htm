@@ -2238,6 +2238,12 @@
                         class="w-full p-3 bg-slate-50 border-none rounded-xl font-black text-center" dir="ltr"
                         data-i18n-placeholder="current_qty_placeholder">
                 </div>
+                <div id="invExpiryDateGroup" class="hidden mt-3">
+                    <label class="text-[10px] font-black text-slate-400 px-1 block mb-1"
+                        data-i18n="expiry_date">تاريخ الصلاحية</label>
+                    <input type="date" id="invExpiryDate"
+                        class="w-full p-3 bg-slate-50 border-none rounded-xl font-black text-center" dir="ltr">
+                </div>
                 <div class="grid grid-cols-2 gap-2 pt-2">
                     <button onclick="closeModal('inventoryModal')"
                         class="py-3 bg-slate-100 rounded-xl font-black text-slate-400 hover:bg-slate-200"
@@ -3250,7 +3256,7 @@
                 </div>
             </div>
 
-            <div class="bg-slate-50 p-4 rounded-[1.5rem] mb-6 border border-slate-100">
+            <div id="cTotalContainer" class="bg-slate-50 p-4 rounded-[1.5rem] mb-6 border border-slate-100">
                 <div class="bg-slate-900 p-3 rounded-xl text-white text-center">
                     <p class="text-[8px] font-black text-slate-400 uppercase mb-1" data-i18n="total_label">المجموع (سعر
                         الشراء)</p>
@@ -4986,6 +4992,7 @@
             renderChecksPromissory();
 
             checkLowStockAlert(); // التحقق من تنبيهات المخزون
+            checkExpiringProducts(); // التحقق من تواريخ الصلاحية
             // تحديث قوائم الزبناء والموردين في النماذج
             updateClientLists();
 
@@ -5037,6 +5044,32 @@
                 }
             } else {
                 alertBtn.classList.add('hidden');
+            }
+        }
+
+        // --- دالة التحقق من تواريخ الصلاحية ---
+        function checkExpiringProducts() {
+            if (!currentUser || !currentUser.enableExpiryDate) return;
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const warningDays = currentUser.expiryWarningDays || 15;
+
+            const expiringProducts = allData.inventory.filter(item => {
+                if (!item.expiry_date || safeNum(item.qty) <= 0) return false;
+
+                const expDate = new Date(item.expiry_date);
+                expDate.setHours(0, 0, 0, 0);
+
+                const diffTime = expDate - today;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                return diffDays <= warningDays;
+            });
+
+            if (expiringProducts.length > 0 && !window.hasShownExpiryAlert) {
+                showToast(`تنبيه: يوجد ${expiringProducts.length} منتجات تقترب من أو تجاوزت تاريخ الصلاحية`, 'warning');
+                window.hasShownExpiryAlert = true;
             }
         }
 
@@ -5318,6 +5351,8 @@
             const dir = isRtl ? 'rtl' : 'ltr';
             const align = isRtl ? 'right' : 'left';
 
+            const showPurchase = currentUser.role === 'admin' || (currentUser.role === 'staff' && currentUser.showPurchaseToEmployee);
+
             const printWindow = window.open('', 'PRINT_INV_LIST', 'height=600,width=800');
             let html = `
                 <html lang="${currentLang}" dir="${dir}">
@@ -5350,7 +5385,7 @@
                                 <th>${t('product_code_label')}</th>
                                 <th>${t('product_col')}</th>
                                 <th class="text-center">${t('qty_label')}</th>
-                                <th class="text-center">${t('price_buy')}</th>
+                                ${showPurchase ? `<th class="text-center">${t('price_buy')}</th>` : ''}
                                 <th class="text-center">${t('price_sell')}</th>
                             </tr>
                         </thead>
@@ -5363,7 +5398,7 @@
                         <td>${item.id}</td>
                         <td>${item.name}</td>
                         <td class="text-center" style="font-weight: bold;">${item.qty}</td>
-                        <td class="text-center">${formatCurrency(item.purchase_price || 0)}</td>
+                        ${showPurchase ? `<td class="text-center">${formatCurrency(item.purchase_price || 0)}</td>` : ''}
                         <td class="text-center">${formatCurrency(item.sale_price || 0)}</td>
                     </tr>
                 `;
@@ -5698,6 +5733,8 @@
                 const statusText = getStatusText(qty);
                 const statusColor = getStatusColor(qty);
                 const unitLabel = item.unit_type === 'متر' ? t('meter') : t('unit');
+                
+                const showPurchase = currentUser.role === 'admin' || (currentUser.role === 'staff' && currentUser.showPurchaseToEmployee);
 
                 // --- التعديل هنا: تحديد أزرار الإدارة ---
                 // أزرار التعديل والحذف تظهر فقط للمدير
@@ -5713,6 +5750,47 @@
                 <i class="fas fa-trash text-xs"></i>
             </button>
         ` : ''; // إذا كان موظفاً، المتغير فارغ
+
+                let purchasePriceDisplay = '';
+                if (showPurchase) {
+                    purchasePriceDisplay = `
+                    <div>
+                        <p class="text-[9px] text-slate-400 font-bold mb-1">${t('price_buy')}</p>
+                        <p class="font-black text-blue-600 text-sm">${formatCurrency(item.purchase_price || 0)}</p>
+                    </div>`;
+                } else {
+                    purchasePriceDisplay = `<div></div>`;
+                }
+
+                let profitDisplay = '';
+                if (item.purchase_price && showPurchase) {
+                     profitDisplay = `
+                        <div class="text-left">
+                            <p class="text-[9px] text-slate-400 font-bold mb-1">${t('profit')}</p>
+                            <p class="text-xs font-bold text-emerald-600">
+                                ${formatCurrency((item.sale_price || 0) - (item.purchase_price || 0))}
+                            </p>
+                        </div>
+                    `;
+                }
+
+                let expiryDisplay = '';
+                if (currentUser.enableExpiryDate && item.expiry_date) {
+                    const expDate = new Date(item.expiry_date);
+                    const today = new Date();
+                    const diffTime = expDate - today;
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    
+                    let expClass = 'text-slate-600';
+                    if (diffDays <= 0) expClass = 'text-rose-600 font-black';
+                    else if (diffDays <= (currentUser.expiryWarningDays || 15)) expClass = 'text-amber-600 font-black';
+
+                    expiryDisplay = `
+                    <div class="mt-2 pt-2 border-t border-slate-100 flex items-center justify-between">
+                        <span class="text-[9px] text-slate-400 font-bold">${t('expiry_date')}</span>
+                        <span class="text-[10px] ${expClass}">${formatDateSimple(item.expiry_date)}</span>
+                    </div>`;
+                }
 
                 cardsHTML += `
         <div class="inventory-card ${stockClass}">
@@ -5735,10 +5813,7 @@
             
             <div class="card-body">
                 <div class="grid grid-cols-2 gap-3 mb-3">
-                    <div>
-                        <p class="text-[9px] text-slate-400 font-bold mb-1">${t('price_buy')}</p>
-                        <p class="font-black text-blue-600 text-sm">${formatCurrency(item.purchase_price || 0)}</p>
-                    </div>
+                    ${purchasePriceDisplay}
                     <div>
                         <p class="text-[9px] text-slate-400 font-bold mb-1">${t('price_sell')}</p>
                         <p class="font-black text-emerald-600 text-sm">${formatCurrency(item.sale_price)}</p>
@@ -5749,15 +5824,9 @@
                         <p class="text-[9px] text-slate-400 font-bold mb-1">${t('status')}</p>
                         <p class="text-xs font-bold ${statusColor}">${statusText}</p>
                     </div>
-                    ${item.purchase_price ? `
-                        <div class="text-left">
-                            <p class="text-[9px] text-slate-400 font-bold mb-1">${t('profit')}</p>
-                            <p class="text-xs font-bold text-emerald-600">
-                                ${formatCurrency((item.sale_price || 0) - (item.purchase_price || 0))}
-                            </p>
-                        </div>
-                    ` : ''}
+                    ${profitDisplay}
                 </div>
+                ${expiryDisplay}
             </div>
             
             <div class="card-footer">
@@ -5832,6 +5901,17 @@
             document.getElementById('invUnitType').value = 'وحدة';
             document.getElementById('qtyInputGroup').classList.remove('hidden');
 
+            // إعداد تاريخ الصلاحية
+            const expiryGroup = document.getElementById('invExpiryDateGroup');
+            if (expiryGroup) {
+                if (currentUser && currentUser.enableExpiryDate) {
+                    expiryGroup.classList.remove('hidden');
+                    document.getElementById('invExpiryDate').value = '';
+                } else {
+                    expiryGroup.classList.add('hidden');
+                }
+            }
+
             // إذا كان إعداد "إدخال سعر الشراء فقط" مفعلاً، نخفي حقل سعر البيع
             if (currentUser && currentUser.purchaseOnly) {
                 document.getElementById('invSale').parentElement.style.display = 'none';
@@ -5839,6 +5919,14 @@
             } else {
                 document.getElementById('invSale').parentElement.style.display = 'block';
                 document.getElementById('invSale').required = true;
+            }
+
+            // إخفاء سعر الشراء للموظف
+            const purchaseGroup = document.getElementById('invPurchase').parentElement;
+            if (currentUser && currentUser.role === 'staff' && !currentUser.showPurchaseToEmployee) {
+                purchaseGroup.classList.add('hidden');
+            } else {
+                purchaseGroup.classList.remove('hidden');
             }
 
             openModal('inventoryModal');
@@ -5854,7 +5942,15 @@
             if (!itemId && allData.inventory.find(p => p.id === itemCode)) return showToast(t('code_exists'), 'error');
 
             let salePrice = safeNum(document.getElementById('invSale').value);
-            const purchasePrice = safeNum(document.getElementById('invPurchase').value);
+            let purchasePrice = safeNum(document.getElementById('invPurchase').value);
+
+            // If staff isn't allowed to see/edit purchase price, ensure it retains its previous value in edit mode
+            if (currentUser && currentUser.role === 'staff' && !currentUser.showPurchaseToEmployee) {
+                const existingItem = allData.inventory.find(i => i.id === itemCode);
+                if (existingItem) {
+                    purchasePrice = existingItem.purchase_price;
+                }
+            }
 
             // إذا كان إعداد "إدخال سعر الشراء فقط" مفعلاً، نجعل سعر البيع مساوياً لسعر الشراء
             if (currentUser && currentUser.purchaseOnly) {
@@ -5868,7 +5964,8 @@
                 sale_price: salePrice,
                 qty: safeNum(document.getElementById('invQty').value),
                 category: document.getElementById('invCategory').value,
-                unit_type: document.getElementById('invUnitType').value
+                unit_type: document.getElementById('invUnitType').value,
+                expiry_date: (currentUser && currentUser.enableExpiryDate) ? document.getElementById('invExpiryDate').value : ''
             };
 
             if (!item.name || !item.sale_price) return showToast(t('enter_name_price'), 'error');
@@ -5896,6 +5993,17 @@
             document.getElementById('invCategory').value = item.category || 'منتج';
             document.getElementById('invUnitType').value = item.unit_type || 'وحدة';
 
+            // إعداد تاريخ الصلاحية
+            const expiryGroup = document.getElementById('invExpiryDateGroup');
+            if (expiryGroup) {
+                if (currentUser && currentUser.enableExpiryDate) {
+                    expiryGroup.classList.remove('hidden');
+                    document.getElementById('invExpiryDate').value = item.expiry_date || '';
+                } else {
+                    expiryGroup.classList.add('hidden');
+                }
+            }
+
             // إذا كان إعداد "إدخال سعر الشراء فقط" مفعلاً، نخفي حقل سعر البيع حتى في التعديل
             if (currentUser && currentUser.purchaseOnly) {
                 document.getElementById('invSale').parentElement.style.display = 'none';
@@ -5903,6 +6011,14 @@
             } else {
                 document.getElementById('invSale').parentElement.style.display = 'block';
                 document.getElementById('invSale').required = true;
+            }
+
+            // إخفاء سعر الشراء للموظف
+            const purchaseGroup = document.getElementById('invPurchase').parentElement;
+            if (currentUser && currentUser.role === 'staff' && !currentUser.showPurchaseToEmployee) {
+                purchaseGroup.classList.add('hidden');
+            } else {
+                purchaseGroup.classList.remove('hidden');
             }
 
             if (item.category === 'خدمة') {
@@ -8704,7 +8820,7 @@
                                 <div>
                                     <p class="font-bold text-xs text-slate-800">${product.name}</p>
                                     <div class="flex items-center gap-2 mt-1">
-                                        <span class="text-[9px] text-amber-600 font-black">${t('price_buy')}: ${formatCurrency(product.purchase_price || 0)}</span>
+                                        ${showPurchase ? `<span class="text-[9px] text-amber-600 font-black">${t('price_buy')}: ${formatCurrency(product.purchase_price || 0)}</span>` : ''}
                                         <span class="text-[8px] text-slate-400">${t('product_code_label')}: ${product.id}</span>
                                     </div>
                                 </div>
@@ -8734,8 +8850,9 @@
         }
 
         function openConsumptionQuantityModal(product) {
+            const showPurchase = currentUser.role === 'admin' || (currentUser.role === 'staff' && currentUser.showPurchaseToEmployee);
             document.getElementById('quantityProductName').innerText = product.name;
-            document.getElementById('quantityProductInfo').innerText = `${t('price_buy')}: ${formatCurrency(product.purchase_price || 0)} | ${t('product_code_label')}: ${product.id}`;
+            document.getElementById('quantityProductInfo').innerText = showPurchase ? `${t('price_buy')}: ${formatCurrency(product.purchase_price || 0)} | ${t('product_code_label')}: ${product.id}` : `${t('product_code_label')}: ${product.id}`;
             document.getElementById('availableQty').innerText = safeNum(product.qty);
             document.getElementById('quantityInput').value = 1;
             document.getElementById('quantityInput').max = safeNum(product.qty);
@@ -8816,6 +8933,7 @@
             const list = document.getElementById('cCart');
             let total = 0;
             list.innerHTML = '';
+            const showPurchase = currentUser.role === 'admin' || (currentUser.role === 'staff' && currentUser.showPurchaseToEmployee);
 
             if (consumptionCart.length === 0) {
                 list.innerHTML = `
@@ -8833,11 +8951,11 @@
                         <div>
                             <span class="font-bold text-xs text-slate-800">${it.name}</span>
                             <div class="flex items-center gap-2 mt-1">
-                                <span class="text-[9px] text-slate-500">${t('price_buy')}: ${formatCurrency(it.purchasePrice)} × ${it.selectedQty} ${it.unit_type === 'متر' ? t('meter') : t('unit')}</span>
+                                <span class="text-[9px] text-slate-500">${showPurchase ? t('price_buy') + ': ' + formatCurrency(it.purchasePrice) + ' × ' : ''}${it.selectedQty} ${it.unit_type === 'متر' ? t('meter') : t('unit')}</span>
                             </div>
                         </div>
                         <div class="flex items-center gap-3">
-                            <span class="text-amber-600 font-black text-xs">${formatCurrency(sub)}</span>
+                            ${showPurchase ? `<span class="text-amber-600 font-black text-xs">${formatCurrency(sub)}</span>` : ''}
                             <button onclick="removeFromConsumptionCart(${idx})" class="text-rose-400 hover:text-rose-600 transition-colors">
                                 <i class="fas fa-times-circle"></i>
                             </button>
@@ -8846,7 +8964,12 @@
                 });
             }
 
-            document.getElementById('cTotal').innerText = formatCurrency(total);
+            if (showPurchase) {
+                document.getElementById('cTotalContainer').classList.remove('hidden');
+                document.getElementById('cTotal').innerText = formatCurrency(total);
+            } else {
+                document.getElementById('cTotalContainer').classList.add('hidden');
+            }
         }
 
         function removeFromConsumptionCart(index) {
@@ -11278,6 +11401,8 @@
                 `;
                 return;
             }
+
+                const showPurchase = currentUser.role === 'admin' || (currentUser.role === 'staff' && currentUser.showPurchaseToEmployee);
 
             filteredClients.forEach(client => {
                 const totalDebt = calculateClientDebt(client.id);
