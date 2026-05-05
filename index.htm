@@ -1844,8 +1844,31 @@
                             <div class="flex items-center gap-3 p-4 bg-slate-50 rounded-xl mb-4">
                                 <input type="checkbox" id="settingPurchaseOnly"
                                     class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500">
+                                <input type="checkbox" id="settingPurchaseOnly"
+                                    class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500">
                                 <label for="settingPurchaseOnly" class="text-xs font-bold text-slate-700 cursor-pointer"
-                                    data-i18n="purchase_only_label">إدخال سعر الشراء فقط في المخزون</label>
+                                    data-i18n="purchase_only_label">إدخال سعر الشراء فقط في المخزون (سيتم تجاهل سعر البيع)</label>
+                            </div>
+
+                            <div class="flex items-center gap-3 p-4 bg-slate-50 rounded-xl mb-4">
+                                <input type="checkbox" id="settingShowPurchaseToEmployee"
+                                    class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500">
+                                <label for="settingShowPurchaseToEmployee" class="text-xs font-bold text-slate-700 cursor-pointer"
+                                    data-i18n="show_purchase_to_employee_label">إظهار سعر الشراء في المخزون بالنسبة للموظف</label>
+                            </div>
+
+                            <div class="flex items-center gap-3 p-4 bg-slate-50 rounded-xl mb-4">
+                                <input type="checkbox" id="settingEnableExpiryDate" onchange="toggleExpiryWarning()"
+                                    class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500">
+                                <label for="settingEnableExpiryDate" class="text-xs font-bold text-slate-700 cursor-pointer"
+                                    data-i18n="enable_expiry_date_label">تفعيل إدخال تاريخ صلاحية المنتوج</label>
+                            </div>
+                            
+                            <div id="settingExpiryWarningGroup" class="hidden mb-4 p-4 bg-slate-50 rounded-xl">
+                                <label class="text-[9px] font-black text-slate-400 block mb-1 uppercase"
+                                    data-i18n="expiry_warning_days_label">مدة التنبيه قبل انتهاء الصلاحية (بالأيام)</label>
+                                <input type="number" id="settingExpiryWarningDays" value="15" min="1"
+                                    class="w-full p-2 bg-white rounded-lg border-2 border-slate-200 font-bold outline-none focus:border-blue-500">
                             </div>
 
                             <h3 class="font-black text-slate-700 border-b pb-2 mb-4 mt-6"
@@ -4704,6 +4727,10 @@
             document.getElementById('shopOwnerDisplay').value = currentUser.ownerName || '';
             document.getElementById('scanSkipQtyInput').checked = currentUser.scanSkipQty || false;
             document.getElementById('settingPurchaseOnly').checked = currentUser.purchaseOnly || false;
+            document.getElementById('settingShowPurchaseToEmployee').checked = currentUser.showPurchaseToEmployee || false;
+            document.getElementById('settingEnableExpiryDate').checked = currentUser.enableExpiryDate || false;
+            document.getElementById('settingExpiryWarningDays').value = currentUser.expiryWarningDays || 15;
+            if(typeof toggleExpiryWarning === 'function') toggleExpiryWarning();
 
             document.getElementById('settingInvoiceSize').value = currentUser.invoiceSize || 'A4';
             document.getElementById('settingInvoiceWidth').value = currentUser.invoiceWidth || 80;
@@ -4803,6 +4830,9 @@
             const logo = document.getElementById('shopLogoInput').value.trim();
             const scanSkipQty = document.getElementById('scanSkipQtyInput').checked;
             const purchaseOnly = document.getElementById('settingPurchaseOnly').checked;
+            const showPurchaseToEmployee = document.getElementById('settingShowPurchaseToEmployee').checked;
+            const enableExpiryDate = document.getElementById('settingEnableExpiryDate').checked;
+            const expiryWarningDays = document.getElementById('settingExpiryWarningDays').value;
 
             const invoiceSize = document.getElementById('settingInvoiceSize').value;
             const invoiceWidth = document.getElementById('settingInvoiceWidth').value;
@@ -4829,6 +4859,10 @@
                     currentUser.shopLogo = logo;
                     currentUser.scanSkipQty = scanSkipQty;
                     currentUser.purchaseOnly = purchaseOnly;
+                    currentUser.showPurchaseToEmployee = showPurchaseToEmployee;
+                    currentUser.enableExpiryDate = enableExpiryDate;
+                    currentUser.expiryWarningDays = expiryWarningDays;
+                    if(typeof checkExpiringProducts === 'function') checkExpiringProducts();
 
                     currentUser.invoiceSize = invoiceSize;
                     currentUser.invoiceWidth = invoiceWidth;
@@ -4859,7 +4893,18 @@
                 } else {
                     showToast(t(res.message) || res.message, 'error');
                 }
-            }).updateShopSettings(currentUser.shopCode, phone, address, logo, scanSkipQty, purchaseOnly, invoiceSize, invoiceWidth, barcodeSize, barcodeWidth, barcodeHeight, invoiceColor, invoiceDesign, invoiceFooter);
+            }).updateShopSettings(currentUser.shopCode, phone, address, logo, scanSkipQty, purchaseOnly, invoiceSize, invoiceWidth, barcodeSize, barcodeWidth, barcodeHeight, invoiceColor, invoiceDesign, invoiceFooter, showPurchaseToEmployee, enableExpiryDate, expiryWarningDays);
+        }
+        
+        function toggleExpiryWarning() {
+            const group = document.getElementById('settingExpiryWarningGroup');
+            if(group) {
+                if (document.getElementById('settingEnableExpiryDate').checked) {
+                    group.classList.remove('hidden');
+                } else {
+                    group.classList.add('hidden');
+                }
+            }
         }
 
         // دالة لعرض تلميح حول الطباعة التلقائية
