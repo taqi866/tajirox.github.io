@@ -7314,21 +7314,34 @@
                 return customCSS + templateHTML;
             }
         }
-        function renderInvoices(fInvs) {
+        function renderInvoices(fInvs, q = '') {
             const container = document.getElementById('invoicesList');
             container.innerHTML = '';
 
-            if (fInvs.length === 0) {
+            let filteredInvs = fInvs;
+            if (q) {
+                filteredInvs = fInvs.filter(inv => 
+                    String(inv.id).toLowerCase().includes(q) || 
+                    (inv.customer || '').toLowerCase().includes(q) ||
+                    (inv.payment_reference || '').toLowerCase().includes(q) ||
+                    (inv.type || '').toLowerCase().includes(q)
+                );
+            }
+
+            if (filteredInvs.length === 0) {
                 container.innerHTML = `
             <div class="text-center p-8 bg-white rounded-3xl shadow-sm">
                 <i class="fas fa-file-invoice-dollar text-4xl text-slate-300 mb-4"></i>
-                <p class="text-slate-400 font-bold">${t('no_invoices_current')}</p>
+                <p class="text-slate-400 font-bold">${q ? t('no_results_for', { term: q }) : t('no_invoices_current')}</p>
             </div>
         `;
                 return;
             }
 
-            fInvs.forEach(inv => {
+            const limit = q ? 100 : 30;
+            const itemsToShow = filteredInvs.slice(0, limit);
+
+            itemsToShow.forEach(inv => {
                 const isDebt = safeNum(inv.balance) > 0;
                 const hasDiscount = safeNum(inv.discount) > 0;
                 const hasCancelledRemainder = safeNum(inv.cancelled_remainder) > 0;
@@ -7400,6 +7413,14 @@
                 ${adminButtons} </div>
         </div>`;
             });
+
+            if (!q && filteredInvs.length > limit) {
+                container.innerHTML += `
+                <div class="text-center py-4 bg-white rounded-3xl shadow-sm mt-2">
+                    <p class="text-slate-400 text-xs font-bold mb-2">${t('search_results_stats', { filtered: limit, total: filteredInvs.length })}</p>
+                    <p class="text-slate-300 text-[10px]">${t('use_search_hint')}</p>
+                </div>`;
+            }
         }
 
         // دالة للحصول على لون الفاتورة الحالي من الإعدادات
@@ -11040,7 +11061,10 @@
                 if (noClientsMessage) noClientsMessage.classList.add('hidden');
             }
 
-            clients.forEach(client => {
+            const limit = 10;
+            const itemsToShow = clients.slice(0, limit);
+
+            itemsToShow.forEach(client => {
                 const totalDebt = calculateClientDebt(client.id);
                 const hasDebt = totalDebt > 0;
 
@@ -11114,6 +11138,14 @@
                     </div>
                 </div>`;
             });
+
+            if (clients.length > limit) {
+                container.innerHTML += `
+                <div class="col-span-full text-center py-4">
+                    <p class="text-slate-400 text-xs font-bold mb-2">${t('search_results_stats', { filtered: limit, total: clients.length })}</p>
+                    <p class="text-slate-300 text-[10px]">${t('use_search_hint')}</p>
+                </div>`;
+            }
         }
 
         function renderSuppliers() {
@@ -11135,7 +11167,10 @@
                 if (noSuppliersMessage) noSuppliersMessage.classList.add('hidden');
             }
 
-            suppliers.forEach(supplier => {
+            const limit = 10;
+            const itemsToShow = suppliers.slice(0, limit);
+
+            itemsToShow.forEach(supplier => {
                 const totalDebt = calculateSupplierDebt(supplier.id);
                 const hasDebt = totalDebt > 0;
 
@@ -11209,6 +11244,14 @@
                     </div>
                 </div>`;
             });
+
+            if (suppliers.length > limit) {
+                container.innerHTML += `
+                <div class="col-span-full text-center py-4">
+                    <p class="text-slate-400 text-xs font-bold mb-2">${t('search_results_stats', { filtered: limit, total: suppliers.length })}</p>
+                    <p class="text-slate-300 text-[10px]">${t('use_search_hint')}</p>
+                </div>`;
+            }
         }
 
         function searchClients() {
@@ -11234,7 +11277,10 @@
                 return;
             }
 
-            filteredClients.forEach(client => {
+            const limit = searchTerm.length > 0 ? 100 : 10;
+            const itemsToShow = filteredClients.slice(0, limit);
+
+            itemsToShow.forEach(client => {
                 const totalDebt = calculateClientDebt(client.id);
                 const hasDebt = totalDebt > 0;
 
@@ -11296,6 +11342,14 @@
                     </div>
                 </div>`;
             });
+
+            if (filteredClients.length > limit) {
+                container.innerHTML += `
+                <div class="col-span-full text-center py-4">
+                    <p class="text-slate-400 text-xs font-bold mb-2">${t('search_results_stats', { filtered: limit, total: filteredClients.length })}</p>
+                    ${searchTerm.length === 0 ? `<p class="text-slate-300 text-[10px]">${t('use_search_hint')}</p>` : ''}
+                </div>`;
+            }
         }
 
         function searchSuppliers() {
@@ -11321,7 +11375,10 @@
                 return;
             }
 
-            filteredSuppliers.forEach(supplier => {
+            const limit = searchTerm.length > 0 ? 100 : 10;
+            const itemsToShow = filteredSuppliers.slice(0, limit);
+
+            itemsToShow.forEach(supplier => {
                 const totalDebt = calculateSupplierDebt(supplier.id);
                 const hasDebt = totalDebt > 0;
 
@@ -11383,6 +11440,14 @@
                     </div>
                 </div>`;
             });
+
+            if (filteredSuppliers.length > limit) {
+                container.innerHTML += `
+                <div class="col-span-full text-center py-4">
+                    <p class="text-slate-400 text-xs font-bold mb-2">${t('search_results_stats', { filtered: limit, total: filteredSuppliers.length })}</p>
+                    ${searchTerm.length === 0 ? `<p class="text-slate-300 text-[10px]">${t('use_search_hint')}</p>` : ''}
+                </div>`;
+            }
         }
 
         function calculateClientDebt(clientId) {
@@ -12547,11 +12612,21 @@
             document.getElementById('settleDate').value = new Date().toISOString().split('T')[0];
         }
 
+        let globalSearchTimeout = null;
         function filterTables() {
-            const q = document.getElementById('tableSearch').value.toLowerCase();
-            document.querySelectorAll('tbody tr, #invoicesList > div, #usersList > div, #expensesContainer .expense-card, #customerDebtsList > div, #supplierDebtsList > div, #clientsContainer > div, #suppliersContainer > div, #paymentsContainer > div').forEach(el => {
-                el.style.display = el.innerText.toLowerCase().includes(q) ? '' : 'none';
-            });
+            clearTimeout(globalSearchTimeout);
+            globalSearchTimeout = setTimeout(() => {
+                const q = document.getElementById('tableSearch').value.trim().toLowerCase();
+                
+                const fInvs = getFilteredData(allData.invoices);
+                const fExps = getFilteredData(allData.expenses);
+                renderInvoices(fInvs, q);
+                renderExpenses(fExps, q);
+                
+                document.querySelectorAll('tbody tr, #usersList > div, #customerDebtsList > div, #supplierDebtsList > div, #paymentsContainer > div').forEach(el => {
+                    el.style.display = el.innerText.toLowerCase().includes(q) ? '' : 'none';
+                });
+            }, 300);
         }
 
         function showPage(p) {
@@ -12630,8 +12705,8 @@
                 // تحسين: عرض المخزون مباشرة دون تأخير
                 renderInventory();
             }
-            if (p === 'invoices') renderInvoices(fInvs);
-            if (p === 'expenses') renderExpenses(fExps);
+            if (p === 'invoices') renderInvoices(fInvs, q);
+            if (p === 'expenses') renderExpenses(fExps, q);
             if (p === 'clients') renderClients();
             if (p === 'suppliers') renderSuppliers();
             if (p === 'payments') renderPayments();
