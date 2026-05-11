@@ -588,6 +588,10 @@ const translations = {
                 full_name_placeholder: "الاسم الكامل",
                 products_count_label: "عدد المنتجات",
                 view_debts: "عرض الديون"
+                hero_expenses_manage: "إدارة المصاريف",
+                hero_expenses_manage_desc: "تتبع ومراقبة المصروفات بدقة",
+                hero_checks_manage: "إدارة الشيكات والكمبيالات",
+                hero_checks_manage_desc: "متابعة تواريخ الاستحقاق والصرف",
 
             },
             fr: {
@@ -1202,6 +1206,10 @@ const translations = {
                 full_name_placeholder: "Nom et Prénom",
                 products_count_label: "Nombre de produits",
                 view_debts: "Voir les dettes",
+                hero_expenses_manage: "Gestion des Dépenses",
+                hero_expenses_manage_desc: "Suivi et contrôle précis des dépenses",
+                hero_checks_manage: "Chèques et Traites",
+                hero_checks_manage_desc: "Suivi des échéances et encaissements",
 
                 // Additions for financial report
                 month_word: "Mois",
