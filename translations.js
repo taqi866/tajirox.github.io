@@ -271,6 +271,8 @@ const translations = {
                 EMAIL_NOT_FOUND: "لم يتم العثور على حساب بهذا البريد",
                 INVALID_OTP: "رمز التحقق غير صحيح أو منتهي الصلاحية",
                 SHOP_NOT_FOUND: "المتجر غير موجود",
+free_trial_title: " استفد من نسخة مجانية لمدة 14 يوم ",
+        special_offer: "عرض خاص"
 
                 dashboard: "لوحة التحكم",
                 inventory: "المخزون",
@@ -875,6 +877,8 @@ const translations = {
                 sort_by_amount_asc: "Montant: du plus petit au plus grand",
                 sort_by_date_desc: "Date: de la plus récente à la plus ancienne",
                 sort_by_date_asc: "Date: de la plus ancienne à la plus récente",
+                        free_trial_title: "✨ Bénéficiez d'une version gratuite pendant 14 jours ✨",
+        special_offer: "Offre spéciale",
 
                 // Server Messages
                 EMAIL_EXISTS: "Cet email est déjà enregistré",
