@@ -272,7 +272,7 @@ const translations = {
                 INVALID_OTP: "رمز التحقق غير صحيح أو منتهي الصلاحية",
                 SHOP_NOT_FOUND: "المتجر غير موجود",
 free_trial_title: " استفد من نسخة مجانية لمدة 14 يوم ",
-        special_offer: "عرض خاص"
+        special_offer: "عرض خاص",
 
                 dashboard: "لوحة التحكم",
                 inventory: "المخزون",
