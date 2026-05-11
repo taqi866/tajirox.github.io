@@ -877,7 +877,7 @@ free_trial_title: " استفد من نسخة مجانية لمدة 14 يوم ",
                 sort_by_amount_asc: "Montant: du plus petit au plus grand",
                 sort_by_date_desc: "Date: de la plus récente à la plus ancienne",
                 sort_by_date_asc: "Date: de la plus ancienne à la plus récente",
-                        free_trial_title: "✨ Bénéficiez d'une version gratuite pendant 14 jours ✨",
+            free_trial_title: " Bénéficiez d'une version gratuite pendant 14 jours ",
         special_offer: "Offre spéciale",
 
                 // Server Messages
