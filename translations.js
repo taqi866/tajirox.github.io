@@ -585,13 +585,14 @@ const translations = {
                 hero_smart_reports_desc: "تحليل الأرباح والمصاريف",
                 hero_clients_manage: "إدارة الزبناء والموردين",
                 hero_clients_manage_desc: "سجل الديون والمدفوعات",
-                full_name_placeholder: "الاسم الكامل",
-                products_count_label: "عدد المنتجات",
-                view_debts: "عرض الديون"
                 hero_expenses_manage: "إدارة المصاريف",
                 hero_expenses_manage_desc: "تتبع ومراقبة المصروفات بدقة",
                 hero_checks_manage: "إدارة الشيكات والكمبيالات",
                 hero_checks_manage_desc: "متابعة تواريخ الاستحقاق والصرف",
+                full_name_placeholder: "الاسم الكامل",
+                products_count_label: "عدد المنتجات",
+                view_debts: "عرض الديون"
+                
 
             },
             fr: {
