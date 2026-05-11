@@ -836,102 +836,112 @@
     <!-- Section Connexion -->
     <section id="authSection" class="min-h-screen flex flex-col lg:flex-row p-0 bg-white overflow-x-hidden">
         <!-- القسم الأيمن (معلومات ترويجية وجذابة) -->
+        <!-- القسم الأيمن (معلومات ترويجية وجذابة) -->
+<div
+    class="flex flex-col w-full min-h-screen lg:min-h-0 lg:flex lg:w-1/2 bg-blue-600 relative items-center justify-center p-6 lg:p-12 text-white overflow-hidden">
+    <div
+        class="absolute inset-0 z-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1556742049-0cfed4f7a07d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80')] bg-cover bg-center">
+    </div>
+    <div class="absolute inset-0 bg-gradient-to-br from-blue-600 to-indigo-900 z-10 opacity-90"></div>
+
+    <div class="relative z-20 max-w-lg text-center lg:ltr:text-left lg:rtl:text-right w-full">
         <div
-            class="flex flex-col w-full min-h-screen lg:min-h-0 lg:flex lg:w-1/2 bg-blue-600 relative items-center justify-center p-6 lg:p-12 text-white overflow-hidden">
-            <div
-                class="absolute inset-0 z-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1556742049-0cfed4f7a07d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80')] bg-cover bg-center">
+            class="w-16 h-16 lg:w-20 lg:h-20 mx-auto lg:mx-0 bg-white/15 backdrop-blur-md rounded-2xl flex items-center justify-center mb-6 lg:mb-8 shadow-2xl border border-white/30 hover:scale-105 transition-transform duration-300">
+            <i class="fas fa-store-alt text-white text-3xl lg:text-4xl drop-shadow-lg"></i>
+        </div>
+        <h1 class="text-3xl lg:text-5xl font-black mb-4 lg:mb-6 leading-tight" data-i18n="app_title_hero"></h1>
+        <p class="text-sm lg:text-lg text-blue-100 font-bold leading-relaxed mb-6 lg:mb-6"
+            data-i18n="app_desc_hero">
+            بسّط تدبيرك، وحقق أقصى أداء.</p>
+
+        <!-- عرض تجريبي مجاني لمدة 14 يوم -->
+        <div class="mb-8 lg:mb-8 bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl p-4 text-center shadow-lg transform hover:scale-105 transition-all duration-300">
+            <div class="flex items-center justify-center gap-2 mb-2">
+                <i class="fas fa-gem text-2xl text-yellow-200"></i>
+                <span class="text-white font-black text-sm bg-white/20 px-3 py-1 rounded-full">عرض خاص</span>
             </div>
-            <div class="absolute inset-0 bg-gradient-to-br from-blue-600 to-indigo-900 z-10 opacity-90"></div>
+            <p class="text-white font-black text-base lg:text-lg mb-1"> استفد من نسخة مجانية لمدة 14 يوم </p>
+        </div>
 
-            <div class="relative z-20 max-w-lg text-center lg:ltr:text-left lg:rtl:text-right w-full">
-                <div
-                    class="w-16 h-16 lg:w-20 lg:h-20 mx-auto lg:mx-0 bg-white/15 backdrop-blur-md rounded-2xl flex items-center justify-center mb-6 lg:mb-8 shadow-2xl border border-white/30 hover:scale-105 transition-transform duration-300">
-                    <i class="fas fa-store-alt text-white text-3xl lg:text-4xl drop-shadow-lg"></i>
-                </div>
-                <h1 class="text-3xl lg:text-5xl font-black mb-4 lg:mb-6 leading-tight" data-i18n="app_title_hero"></h1>
-                <p class="text-sm lg:text-lg text-blue-100 font-bold leading-relaxed mb-8 lg:mb-10"
-                    data-i18n="app_desc_hero">
-                    بسّط تدبيرك، وحقق أقصى أداء.</p>
+        <div class="grid grid-cols-2 gap-3 lg:gap-4 mb-8 lg:mb-0">
 
-                <div class="grid grid-cols-2 gap-3 lg:gap-4 mb-8 lg:mb-0">
+            <!-- إدارة المخزون -->
+            <div
+                class="bg-white/10 p-3 lg:p-4 rounded-2xl backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all cursor-default">
+                <i class="fas fa-box-open text-emerald-400 text-xl mb-2"></i>
+                <h3 class="font-bold text-xs lg:text-sm" data-i18n="hero_inventory">إدارة المخزون</h3>
+                <p class="text-[9px] lg:text-[10px] text-blue-200 mt-1" data-i18n="hero_inventory_desc">
+                    تتبع دقيق للمنتجات والكميات
+                </p>
+            </div>
 
-                    <!-- إدارة المخزون -->
-                    <div
-                        class="bg-white/10 p-3 lg:p-4 rounded-2xl backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all cursor-default">
-                        <i class="fas fa-box-open text-emerald-400 text-xl mb-2"></i>
-                        <h3 class="font-bold text-xs lg:text-sm" data-i18n="hero_inventory">إدارة المخزون</h3>
-                        <p class="text-[9px] lg:text-[10px] text-blue-200 mt-1" data-i18n="hero_inventory_desc">
-                            تتبع دقيق للمنتجات والكميات
-                        </p>
-                    </div>
+            <!-- الفواتير -->
+            <div
+                class="bg-white/10 p-3 lg:p-4 rounded-2xl backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all cursor-default">
+                <i class="fas fa-file-invoice-dollar text-amber-400 text-xl mb-2"></i>
+                <h3 class="font-bold text-xs lg:text-sm" data-i18n="hero_pro_invoices">فواتير احترافية</h3>
+                <p class="text-[9px] lg:text-[10px] text-blue-200 mt-1" data-i18n="hero_pro_invoices_desc">
+                    إصدار فواتير بيع وخدمات
+                </p>
+            </div>
 
-                    <!-- الفواتير -->
-                    <div
-                        class="bg-white/10 p-3 lg:p-4 rounded-2xl backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all cursor-default">
-                        <i class="fas fa-file-invoice-dollar text-amber-400 text-xl mb-2"></i>
-                        <h3 class="font-bold text-xs lg:text-sm" data-i18n="hero_pro_invoices">فواتير احترافية</h3>
-                        <p class="text-[9px] lg:text-[10px] text-blue-200 mt-1" data-i18n="hero_pro_invoices_desc">
-                            إصدار فواتير بيع وخدمات
-                        </p>
-                    </div>
+            <!-- الزبناء والموردين -->
+            <div
+                class="bg-white/10 p-3 lg:p-4 rounded-2xl backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all cursor-default">
+                <i class="fas fa-users text-cyan-400 text-xl mb-2"></i>
+                <h3 class="font-bold text-xs lg:text-sm" data-i18n="hero_clients_manage">إدارة الزبناء والموردين
+                </h3>
+                <p class="text-[9px] lg:text-[10px] text-blue-200 mt-1" data-i18n="hero_clients_manage_desc">
+                    تتبع الديون والمدفوعات
+                </p>
+            </div>
 
-                    <!-- الزبناء والموردين (تم تقديمها) -->
-                    <div
-                        class="bg-white/10 p-3 lg:p-4 rounded-2xl backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all cursor-default">
-                        <i class="fas fa-users text-cyan-400 text-xl mb-2"></i>
-                        <h3 class="font-bold text-xs lg:text-sm" data-i18n="hero_clients_manage">إدارة الزبناء والموردين
-                        </h3>
-                        <p class="text-[9px] lg:text-[10px] text-blue-200 mt-1" data-i18n="hero_clients_manage_desc">
-                            تتبع الديون والمدفوعات
-                        </p>
-                    </div>
+            <!-- التقارير -->
+            <div
+                class="bg-white/10 p-3 lg:p-4 rounded-2xl backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all cursor-default">
+                <i class="fas fa-chart-line text-purple-400 text-xl mb-2"></i>
+                <h3 class="font-bold text-xs lg:text-sm" data-i18n="hero_smart_reports">تقارير ذكية</h3>
+                <p class="text-[9px] lg:text-[10px] text-blue-200 mt-1" data-i18n="hero_smart_reports_desc">
+                    تحليل الأرباح والمصاريف
+                </p>
+            </div>
 
-                    <!-- التقارير (تم تأخيرها) -->
-                    <div
-                        class="bg-white/10 p-3 lg:p-4 rounded-2xl backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all cursor-default">
-                        <i class="fas fa-chart-line text-purple-400 text-xl mb-2"></i>
-                        <h3 class="font-bold text-xs lg:text-sm" data-i18n="hero_smart_reports">تقارير ذكية</h3>
-                        <p class="text-[9px] lg:text-[10px] text-blue-200 mt-1" data-i18n="hero_smart_reports_desc">
-                            تحليل الأرباح والمصاريف
-                        </p>
-                    </div>
- <!-- إدارة المصاريف -->
-                    <div
-                        class="bg-white/10 p-3 lg:p-4 rounded-2xl backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all cursor-default">
-                        <i class="fas fa-wallet text-rose-400 text-xl mb-2"></i>
-                        <h3 class="font-bold text-xs lg:text-sm" data-i18n="hero_expenses_manage">إدارة المصاريف</h3>
-                        <p class="text-[9px] lg:text-[10px] text-blue-200 mt-1" data-i18n="hero_expenses_manage_desc">
-                            تتبع ومراقبة المصروفات
-                        </p>
-                    </div>
+            <!-- إدارة المصاريف -->
+            <div
+                class="bg-white/10 p-3 lg:p-4 rounded-2xl backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all cursor-default">
+                <i class="fas fa-wallet text-rose-400 text-xl mb-2"></i>
+                <h3 class="font-bold text-xs lg:text-sm" data-i18n="hero_expenses_manage">إدارة المصاريف</h3>
+                <p class="text-[9px] lg:text-[10px] text-blue-200 mt-1" data-i18n="hero_expenses_manage_desc">
+                    تتبع ومراقبة المصروفات
+                </p>
+            </div>
 
-                    <!-- الشيكات والكمبيالات -->
-                    <div
-                        class="bg-white/10 p-3 lg:p-4 rounded-2xl backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all cursor-default">
-                        <i class="fas fa-money-check-alt text-emerald-400 text-xl mb-2"></i>
-                        <h3 class="font-bold text-xs lg:text-sm" data-i18n="hero_checks_manage">إدارة الشيكات والكمبيالات</h3>
-                        <p class="text-[9px] lg:text-[10px] text-blue-200 mt-1" data-i18n="hero_checks_manage_desc">
-                            متابعة تواريخ الاستحقاق
-                        </p>
-                    </div>
-                </div>
-
-                <!-- أزرار الهاتف -->
-                <div class="lg:hidden flex flex-col gap-3 w-full mt-4">
-                    <button onclick="document.getElementById('loginFormContainer').scrollIntoView({behavior: 'smooth'})"
-                        class="w-full bg-white text-blue-600 py-4 rounded-xl font-black text-sm shadow-lg active:scale-95 transition-all"
-                        data-i18n="login_btn">
-                        تسجيل الدخول
-                    </button>
-                    <button onclick="openRegisterModal()"
-                        class="w-full bg-transparent border-2 border-white/30 hover:bg-white/10 text-white py-4 rounded-xl font-black text-sm shadow-lg active:scale-95 transition-all"
-                        data-i18n="create_account">
-                        إنشاء حساب جديد للمتجر
-                    </button>
-                </div>
+            <!-- الشيكات والكمبيالات -->
+            <div
+                class="bg-white/10 p-3 lg:p-4 rounded-2xl backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all cursor-default">
+                <i class="fas fa-money-check-alt text-emerald-400 text-xl mb-2"></i>
+                <h3 class="font-bold text-xs lg:text-sm" data-i18n="hero_checks_manage">إدارة الشيكات والكمبيالات</h3>
+                <p class="text-[9px] lg:text-[10px] text-blue-200 mt-1" data-i18n="hero_checks_manage_desc">
+                    متابعة تواريخ الاستحقاق
+                </p>
             </div>
         </div>
 
+        <!-- أزرار الهاتف -->
+        <div class="lg:hidden flex flex-col gap-3 w-full mt-4">
+            <button onclick="document.getElementById('loginFormContainer').scrollIntoView({behavior: 'smooth'})"
+                class="w-full bg-white text-blue-600 py-4 rounded-xl font-black text-sm shadow-lg active:scale-95 transition-all"
+                data-i18n="login_btn">
+                تسجيل الدخول
+            </button>
+            <button onclick="openRegisterModal()"
+                class="w-full bg-transparent border-2 border-white/30 hover:bg-white/10 text-white py-4 rounded-xl font-black text-sm shadow-lg active:scale-95 transition-all"
+                data-i18n="create_account">
+                إنشاء حساب جديد للمتجر
+            </button>
+        </div>
+    </div>
+</div>
         <!-- القسم الأيسر (نموذج تسجيل الدخول) -->
         <div id="loginFormContainer"
             class="w-full min-h-screen lg:min-h-0 lg:w-1/2 flex flex-col items-center justify-center p-6 bg-slate-50">
