@@ -3971,6 +3971,26 @@
             return isNaN(num) ? 0 : num;
         }
 
+        function translateExpenseCategory(cat) {
+            if (!cat || typeof cat !== 'string') return cat;
+            if (cat.includes('سلع')) return t('buy_goods') || cat;
+            if (cat.includes('كراء')) return t('rent') || cat;
+            if (cat.includes('كهرباء') || cat.includes('ماء')) return t('utilities') || cat;
+            if (cat.includes('رواتب')) return t('salaries') || cat;
+            if (cat.includes('أخرى')) return t('other_category') || t('other') || cat;
+            return cat;
+        }
+
+        function translatePaymentMethod(method) {
+            if (!method || typeof method !== 'string') return method;
+            if (method === 'صندوق') return t('cash') || method;
+            if (method === 'شيك') return t('check') || method;
+            if (method.includes('تحويل')) return t('transfer') || method;
+            if (method === 'كمبيالة') return t('promissory') || method;
+            if (method === 'دين') return t('debt') || method;
+            return method;
+        }
+
         // دالة التنسيق للعرض فقط (النقطة للألف، والفاصلة للعشري)
         // النتيجة: 1500.50 -> "1.500,50"
         function formatCurrency(n) {
@@ -6869,7 +6889,7 @@
                             ${relatedPayments.sort((a, b) => new Date(a.date) - new Date(b.date)).map(p => `
                                 <tr>
                                     <td style="border: 1px solid #000000; padding: 5px; text-align: center;">${p.date}</td>
-                                    <td style="border: 1px solid #000000; padding: 5px; text-align: center;">${p.method}</td>
+                                    <td style="border: 1px solid #000000; padding: 5px; text-align: center;">${translatePaymentMethod(p.method)}</td>
                                     <td style="border: 1px solid #000000; padding: 5px; text-align: center; font-weight: bold;">${formatCurrency(p.amount)}</td>
                                 </tr>
                             `).join('')}
@@ -8094,7 +8114,7 @@
                             <div>
                                 <h4 class="font-black text-slate-800 text-sm mb-1 truncate">${exp.description}</h4>
                                 <div class="flex items-center gap-2">
-                                    <span class="bg-rose-50 text-rose-500 px-2 py-0.5 rounded-full text-[8px] font-black">${exp.category}</span>
+                                    <span class="bg-rose-50 text-rose-500 px-2 py-0.5 rounded-full text-[8px] font-black">${translateExpenseCategory(exp.category)}</span>
                                     <span class="text-[9px] text-slate-400">${exp.date}</span>
                                 </div>
                             </div>
@@ -8147,7 +8167,7 @@
                         <div class="flex justify-between items-center">
                             <div>
                                 <p class="text-[9px] text-slate-400 mb-1">${t('payment_method')}</p>
-                                <p class="text-xs font-bold text-slate-700">${exp.method || 'صندوق'}</p>
+                                <p class="text-xs font-bold text-slate-700">${translatePaymentMethod(exp.method || 'صندوق')}</p>
                             </div>
                             
                             <div class="flex gap-2">
@@ -9463,7 +9483,7 @@
                 document.getElementById('settleDebtAmount').innerText = formatCurrency(exp.balance);
                 document.getElementById('settleDebtDetails').innerHTML = `
                     ${t('expense')} • ${exp.date}<br>
-                    ${exp.category} • ${exp.method || t('cash_box')}
+                    ${translateExpenseCategory(exp.category)} • ${translatePaymentMethod(exp.method || 'صندوق')}
                     ${exp.invoice_number ? `<br>${t('invoice')}: ${exp.invoice_number}` : ''}
                     ${exp.payment_reference ? `<br>${t('payment_reference')}: ${exp.payment_reference}` : ''}
                 `;
@@ -10260,7 +10280,7 @@
                             <i class="fas fa-tag ${color.text}"></i>
                         </div>
                         <div>
-                            <h5 class="font-bold text-slate-800">${category === 'أخرى' && t('other_category') ? t('other_category') : category === 'سلع' && t('goods_word') ? t('goods_word') : category}</h5>
+                            <h5 class="font-bold text-slate-800">${translateExpenseCategory(category)}</h5>
                             <p class="text-[9px] text-slate-400">${cat.count} ${t('expense_word') || 'Dépense'} | ${t('paid_word')}: ${formatCurrency(cat.paid)}</p>
                         </div>
                     </div>
@@ -11688,7 +11708,7 @@
                                 ${formatCurrency(payment.amount)}
                             </p>
                             <span class="payment-badge ${methodBadgeClass}">
-                                ${payment.method}
+                                ${translatePaymentMethod(payment.method)}
                             </span>
                         </div>
                     </div>
@@ -11805,7 +11825,7 @@
                         ${formatCurrency(payment.amount)}
                     </p>
                     <span class="payment-badge ${methodBadgeClass}">
-                        ${payment.method}
+                        ${translatePaymentMethod(payment.method)}
                     </span>
                 </div>
             </div>
