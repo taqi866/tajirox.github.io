@@ -948,6 +948,14 @@
             class="w-full min-h-screen lg:min-h-0 lg:w-1/2 flex flex-col items-center justify-center p-6 bg-slate-50">
             <div class="w-full max-w-md">
                 <div class="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-xl border border-slate-100">
+                    <!-- Language Switcher Top -->
+                    <div class="flex justify-end gap-3 mb-2">
+                        <button onclick="changeLanguage('ar')"
+                            class="text-[10px] font-black text-slate-400 hover:text-blue-600 transition-colors uppercase">Ar</button>
+                        <span class="text-slate-200 text-[10px]">|</span>
+                        <button onclick="changeLanguage('fr')"
+                            class="text-[10px] font-black text-slate-400 hover:text-blue-600 transition-colors uppercase">Fr</button>
+                    </div>
                     <div class="text-center mb-8">
                         <h2 class="text-2xl font-black text-slate-800 mb-2" data-i18n="login_title">تسجيل الدخول</h2>
                         <p class="text-slate-400 text-xs font-bold" data-i18n="welcome_back">مرحباً بك مجدداً، أدخل
@@ -1115,7 +1123,10 @@
                         التحكم</span>
                 </div>
                 <div class="flex items-center gap-2">
-                   
+                    <!-- Language Switcher Header -->
+                    <button onclick="toggleLanguage()"
+                        class="w-9 h-9 bg-slate-50 text-slate-600 rounded-xl flex items-center justify-center hover:bg-slate-100 transition-all font-bold text-xs"
+                        id="headerLangBtn">FR</button>
 
                     <!-- زر تنبيهات المخزون -->
                     <button id="lowStockAlertBtn" onclick="showPage('inventory'); filterInventory('critical')"
