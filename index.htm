@@ -8979,82 +8979,112 @@
         }
 
         // دالة تحديث بطاقات المجموع
-        function updateChecksDashboard() {
-            if (!document.getElementById('page-checks-promissory') || document.getElementById('page-checks-promissory').classList.contains('hidden')) {
-                return; // Don't calculate if page is not visible
-            }
-            if (!allData.checks_promissory) return;
+       function updateChecksDashboard() {
+    if (!document.getElementById('page-checks-promissory') || 
+        document.getElementById('page-checks-promissory').classList.contains('hidden')) {
+        return;
+    }
+    
+    if (!allData.checks_promissory) return;
 
-            let totalReceived = 0;
-            let totalGiven = 0;
-            let pendingReceivedCount = 0;
-            let paidReceivedCount = 0;
-            let pendingGivenCount = 0;
-            let paidGivenCount = 0;
-            let receivedCount = 0;
-            let givenCount = 0;
-            let totalChecksCount = allData.checks_promissory.length;
-            let pendingChecksCount = 0;
-            let paidChecksCount = 0;
-            let cancelledChecksCount = 0;
+    let totalReceived = 0;
+    let totalGiven = 0;
+    let pendingReceivedCount = 0;
+    let paidReceivedCount = 0;
+    let pendingGivenCount = 0;
+    let paidGivenCount = 0;
+    let receivedCount = 0;
+    let givenCount = 0;
+    let totalChecksCount = allData.checks_promissory.length;
+    let pendingChecksCount = 0;
+    let paidChecksCount = 0;
+    let cancelledChecksCount = 0;
 
-            allData.checks_promissory.forEach(check => {
-                const isReceived = check.debt_type === 'invoice';
+    allData.checks_promissory.forEach(check => {
+        const isReceived = check.debt_type === 'invoice';
+        const amount = safeNum(check.amount);
 
-                // حساب المجاميع المالية فقط للشيكات المدفوعة
-                if (check.status === 'paid') {
-                    const amount = safeNum(check.amount);
-                    if (isReceived) {
-                        totalReceived += amount;
-                    } else { // isGiven
-                        totalGiven += amount;
-                    }
-                }
-
-                // حساب عدد الشيكات حسب الحالة والاتجاه
-                if (isReceived) {
-                    receivedCount++;
-                    if (check.status === 'paid') paidReceivedCount++;
-                    if (check.status === 'pending' || !check.status) pendingReceivedCount++;
-                } else { // isGiven
-                    givenCount++;
-                    if (check.status === 'paid') paidGivenCount++;
-                    if (check.status === 'pending' || !check.status) pendingGivenCount++;
-                }
-
-                if (check.status === 'pending' || !check.status) pendingChecksCount++;
-                else if (check.status === 'paid') paidChecksCount++;
-                else if (check.status === 'cancelled') cancelledChecksCount++;
-            });
-
-            const netBalance = totalReceived - totalGiven;
-
-            // Update UI elements
-            document.getElementById('totalReceivedChecks').textContent = formatCurrency(totalReceived);
-            document.getElementById('pendingReceivedCount').textContent = pendingReceivedCount;
-            document.getElementById('paidReceivedCount').textContent = paidReceivedCount;
-
-            document.getElementById('totalGivenChecks').textContent = formatCurrency(totalGiven);
-            document.getElementById('pendingGivenCount').textContent = pendingGivenCount;
-            document.getElementById('paidGivenCount').textContent = paidGivenCount;
-
-            document.getElementById('netChecksBalance').textContent = formatCurrency(netBalance);
-            document.getElementById('receivedCount').textContent = receivedCount;
-            document.getElementById('givenCount').textContent = givenCount;
-
-            document.getElementById('totalChecksCount').textContent = totalChecksCount;
-            document.getElementById('pendingChecksCount').textContent = pendingChecksCount;
-            document.getElementById('paidChecksCount').textContent = paidChecksCount;
-            document.getElementById('cancelledChecksCount').textContent = cancelledChecksCount;
-
-            // Color for net balance
-            const netElement = document.getElementById('netChecksBalance');
-            if (netElement) {
-                const netClass = netBalance > 0 ? 'text-emerald-600' : (netBalance < 0 ? 'text-rose-600' : 'text-slate-600');
-                netElement.className = `text-xl font-black ${netClass}`;
+        // Calculs pour les montants (seulement les chèques payés)
+        if (check.status === 'paid') {
+            if (isReceived) {
+                totalReceived += amount;
+            } else {
+                totalGiven += amount;
             }
         }
 
+        // Comptages par direction
+        if (isReceived) {
+            receivedCount++;
+            if (check.status === 'paid') paidReceivedCount++;
+            if (check.status === 'pending' || !check.status) pendingReceivedCount++;
+        } else {
+            givenCount++;
+            if (check.status === 'paid') paidGivenCount++;
+            if (check.status === 'pending' || !check.status) pendingGivenCount++;
+        }
+
+        // Comptages par statut global
+        if (check.status === 'pending' || !check.status) pendingChecksCount++;
+        else if (check.status === 'paid') paidChecksCount++;
+        else if (check.status === 'cancelled') cancelledChecksCount++;
+    });
+
+    const netBalance = totalReceived - totalGiven;
+
+    // Mise à jour de l'interface
+    const totalReceivedEl = document.getElementById('totalReceivedChecks');
+    if (totalReceivedEl) totalReceivedEl.textContent = formatCurrency(totalReceived);
+    
+    const pendingReceivedEl = document.getElementById('pendingReceivedCount');
+    if (pendingReceivedEl) pendingReceivedEl.textContent = pendingReceivedCount;
+    
+    const paidReceivedEl = document.getElementById('paidReceivedCount');
+    if (paidReceivedEl) paidReceivedEl.textContent = paidReceivedCount;
+
+    const totalGivenEl = document.getElementById('totalGivenChecks');
+    if (totalGivenEl) totalGivenEl.textContent = formatCurrency(totalGiven);
+    
+    const pendingGivenEl = document.getElementById('pendingGivenCount');
+    if (pendingGivenEl) pendingGivenEl.textContent = pendingGivenCount;
+    
+    const paidGivenEl = document.getElementById('paidGivenCount');
+    if (paidGivenEl) paidGivenEl.textContent = paidGivenCount;
+
+    const netBalanceEl = document.getElementById('netChecksBalance');
+    if (netBalanceEl) netBalanceEl.textContent = formatCurrency(netBalance);
+    
+    const receivedCountEl = document.getElementById('receivedCount');
+    if (receivedCountEl) receivedCountEl.textContent = receivedCount;
+    
+    const givenCountEl = document.getElementById('givenCount');
+    if (givenCountEl) givenCountEl.textContent = givenCount;
+
+    const totalChecksEl = document.getElementById('totalChecksCount');
+    if (totalChecksEl) totalChecksEl.textContent = totalChecksCount;
+    
+    const pendingChecksEl = document.getElementById('pendingChecksCount');
+    if (pendingChecksEl) pendingChecksEl.textContent = pendingChecksCount;
+    
+    const paidChecksEl = document.getElementById('paidChecksCount');
+    if (paidChecksEl) paidChecksEl.textContent = paidChecksCount;
+    
+    const cancelledChecksEl = document.getElementById('cancelledChecksCount');
+    if (cancelledChecksEl) cancelledChecksEl.textContent = cancelledChecksCount;
+
+    // Couleur du solde net
+    if (netBalanceEl) {
+        const netClass = netBalance > 0 ? 'text-emerald-600' : (netBalance < 0 ? 'text-rose-600' : 'text-slate-600');
+        netBalanceEl.className = `text-xl font-black ${netClass}`;
+    }
+}
+
+        function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
         // دالة تحديث ملخص الفلترة (إصلاح المشكلة: الدالة كانت مفقودة)
         function updateFilterSummary() {
             const summaryDiv = document.getElementById('filterSummary');
@@ -9079,141 +9109,143 @@
         }
 
         // دالة عرض الشيكات والكمبيالات
-        function renderChecksPromissory() {
-            const container = document.getElementById('checksContainer');
-            const noChecksMessage = document.getElementById('noChecksMessage');
+      function renderChecksPromissory() {
+    const container = document.getElementById('checksContainer');
+    const noChecksMessage = document.getElementById('noChecksMessage');
 
-            if (!container) return;
+    if (!container) return;
 
-            container.innerHTML = '';
+    container.innerHTML = '';
 
-            // تحديث بطاقات الملخص بناءً على البيانات الكاملة
-            updateChecksDashboard();
+    // Mettre à jour les cartes de résumé
+    updateChecksDashboard();
 
-            if (!allData.checks_promissory || allData.checks_promissory.length === 0) {
-                container.classList.add('hidden');
-                if (noChecksMessage) {
-                    noChecksMessage.classList.remove('hidden');
-                    noChecksMessage.innerHTML = `
+    if (!allData.checks_promissory || allData.checks_promissory.length === 0) {
+        container.classList.add('hidden');
+        if (noChecksMessage) {
+            noChecksMessage.classList.remove('hidden');
+            noChecksMessage.innerHTML = `
                 <i class="fas fa-money-check-alt text-3xl text-slate-300 mb-3"></i>
-                <p class="text-slate-400 font-bold" data-i18n="no_checks">${t('no_checks')}</p>
+                <p class="text-slate-400 font-bold">${t('no_checks')}</p>
             `;
-                }
-                return;
-            } else {
-                container.classList.remove('hidden');
-                if (noChecksMessage) noChecksMessage.classList.add('hidden');
-            }
+        }
+        return;
+    } else {
+        container.classList.remove('hidden');
+        if (noChecksMessage) noChecksMessage.classList.add('hidden');
+    }
 
-            // تطبيق الفلاتر (بما في ذلك السنة والشهر من الفلتر العام)
-            const filteredChecks = filterChecksData();
+    // Appliquer les filtres
+    const filteredChecks = filterChecksData();
+    updateFilterSummary();
 
-            // تحديث ملخص الفلترة
-            updateFilterSummary();
-
-            if (filteredChecks.length === 0) {
-                container.innerHTML = `
+    if (filteredChecks.length === 0) {
+        container.innerHTML = `
             <div class="text-center p-8 bg-white rounded-[2rem] shadow-sm">
                 <i class="fas fa-search text-3xl text-slate-300 mb-3"></i>
                 <p class="text-slate-400 font-bold">${t('no_results_found')}</p>
             </div>
         `;
-                return;
+        return;
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Trier par date (plus récent d'abord)
+    filteredChecks.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    filteredChecks.forEach(check => {
+        // Déterminer la direction (entrant/sortant)
+        const isReceived = check.debt_type === 'invoice';
+        const directionText = isReceived ? t('received_dir') : t('given_dir');
+        const directionClass = isReceived ? 'text-emerald-600 bg-emerald-50' : 'text-blue-600 bg-blue-50';
+
+        // Déterminer le statut
+        const isPending = check.status === 'pending' || !check.status;
+        const isPaid = check.status === 'paid';
+        const isCancelled = check.status === 'cancelled';
+
+        let statusClass = '';
+        let statusText = '';
+
+        if (isPending) {
+            statusClass = 'text-amber-600 bg-amber-50';
+            statusText = t('pending');
+        } else if (isPaid) {
+            statusClass = 'text-emerald-600 bg-emerald-50';
+            statusText = t('paid');
+        } else if (isCancelled) {
+            statusClass = 'text-rose-600 bg-rose-50';
+            statusText = t('cancelled');
+        }
+
+        // Type de document (chèque ou billet à ordre)
+        const isCheck = check.type === 'شيك';
+        const typeText = isCheck ? t('check_word') : t('promissory');
+        const typeClass = isCheck ? 'bg-blue-100 text-blue-600' : 'bg-purple-100 text-purple-600';
+
+        // Nom du client/fournisseur
+        let clientName = check.client_name || t('unknown');
+
+        // Essayer d'obtenir le nom depuis les données liées
+        if (check.debt_type === 'invoice' && check.debt_id) {
+            const invoice = allData.invoices?.find(i => String(i.id) === String(check.debt_id));
+            if (invoice && invoice.customer) {
+                clientName = invoice.customer;
             }
+        } else if (check.debt_type === 'expense' && check.debt_id) {
+            const expense = allData.expenses?.find(e => String(e.id) === String(check.debt_id));
+            if (expense && expense.supplier) {
+                clientName = expense.supplier;
+            }
+        }
 
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
+        // Vérifier la date d'échéance
+        let dueDateClass = '';
+        let dueDateIcon = '';
+        let dueDateText = '';
 
-            // ترتيب الشيكات من الأحدث إلى الأقدم
-            filteredChecks.sort((a, b) => new Date(b.date) - new Date(a.date));
+        if (isPending && check.due_date) {
+            const dueDate = new Date(check.due_date);
+            dueDate.setHours(0, 0, 0, 0);
 
-            filteredChecks.forEach(check => {
-                // ... باقي كود عرض الشيكات (نفس الكود السابق) ...
+            const diffTime = dueDate - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-                // تحديد اتجاه الشيك
-                const isReceived = check.debt_type === 'invoice';
-                const directionText = isReceived ? t('received_dir') : t('given_dir');
-                const directionClass = isReceived ? 'text-emerald-600 bg-emerald-50' : 'text-blue-600 bg-blue-50';
+            if (diffDays < 0) {
+                dueDateClass = 'text-rose-600 font-black';
+                dueDateIcon = '⚠️';
+                dueDateText = t('late_by', { days: Math.abs(diffDays) });
+            } else if (diffDays === 0) {
+                dueDateClass = 'text-rose-600 font-black';
+                dueDateIcon = '🔴';
+                dueDateText = t('today');
+            } else if (diffDays <= 3) {
+                dueDateClass = 'text-amber-600 font-black';
+                dueDateIcon = '🔔';
+                dueDateText = t('in_days', { days: diffDays });
+            } else if (diffDays <= 7) {
+                dueDateClass = 'text-orange-600';
+                dueDateIcon = '⏰';
+                dueDateText = t('in_days', { days: diffDays });
+            } else {
+                dueDateText = check.due_date ? formatDateSimple(check.due_date) : t('not_specified');
+            }
+        } else {
+            dueDateText = check.due_date ? formatDateSimple(check.due_date) : t('not_specified');
+        }
 
-                const isPending = check.status === 'pending' || !check.status;
-                const isPaid = check.status === 'paid';
-                const isCancelled = check.status === 'cancelled';
+        const amount = safeNum(check.amount || 0);
 
-                let statusClass = '';
-                let statusText = '';
-
-                if (isPending) {
-                    statusClass = 'text-amber-600 bg-amber-50';
-                    statusText = t('pending');
-                } else if (isPaid) {
-                    statusClass = 'text-emerald-600 bg-emerald-50';
-                    statusText = t('paid');
-                } else if (isCancelled) {
-                    statusClass = 'text-rose-600 bg-rose-50';
-                    statusText = t('cancelled');
-                }
-
-                // الحصول على اسم العميل/المورد
-                let clientName = check.client_name || t('unknown');
-
-                // محاولة الحصول على الاسم من البيانات المرتبطة
-                if (check.debt_type === 'invoice' && check.debt_id) {
-                    const invoice = allData.invoices?.find(i => String(i.id) === String(check.debt_id));
-                    if (invoice && invoice.customer) {
-                        clientName = invoice.customer;
-                    }
-                } else if (check.debt_type === 'expense' && check.debt_id) {
-                    const expense = allData.expenses?.find(e => String(e.id) === String(check.debt_id));
-                    if (expense && expense.supplier) {
-                        clientName = expense.supplier;
-                    }
-                }
-
-                // التحقق من قرب تاريخ الاستحقاق
-                let dueDateClass = '';
-                let dueDateIcon = '';
-                let dueDateText = '';
-
-                if (isPending && check.due_date) {
-                    const dueDate = new Date(check.due_date);
-                    dueDate.setHours(0, 0, 0, 0);
-
-                    const diffTime = dueDate - today;
-                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-                    if (diffDays < 0) {
-                        dueDateClass = 'text-rose-600 font-black';
-                        dueDateIcon = '⚠️';
-                        dueDateText = t('late_by', { days: Math.abs(diffDays) });
-                    } else if (diffDays === 0) {
-                        dueDateClass = 'text-rose-600 font-black';
-                        dueDateIcon = '🔴';
-                        dueDateText = t('today');
-                    } else if (diffDays <= 3) {
-                        dueDateClass = 'text-amber-600 font-black';
-                        dueDateIcon = '🔔';
-                        dueDateText = t('in_days', { days: diffDays });
-                    } else if (diffDays <= 7) {
-                        dueDateClass = 'text-orange-600';
-                        dueDateIcon = '⏰';
-                        dueDateText = t('in_days', { days: diffDays });
-                    } else {
-                        dueDateText = formatDateSimple(check.due_date);
-                    }
-                } else {
-                    dueDateText = check.due_date ? formatDateSimple(check.due_date) : t('not_specified');
-                }
-
-                // تنسيق المبلغ
-                const amount = safeNum(check.amount || 0);
-
-                container.innerHTML += `
+        // Construction de la carte
+        container.innerHTML += `
         <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all ${dueDateClass ? 'border-r-4 border-amber-400' : ''}">
             <div class="flex justify-between items-start mb-3">
                 <div class="flex-1">
                     <div class="flex items-center gap-2 mb-2 flex-wrap">
-                        <span class="px-2 py-1 rounded-full text-[10px] font-black ${check.type === 'شيك' || check.type === t('check_word') ? 'bg-blue-100 text-blue-600' : 'bg-purple-100 text-purple-600'}">
-                            ${check.type === 'كمبيالة' ? t('promissory_note_word') : t('check_word')}
+                        <span class="px-2 py-1 rounded-full text-[10px] font-black ${typeClass}">
+                            ${typeText}
                         </span>
                         <span class="px-2 py-1 rounded-full text-[10px] font-black ${directionClass}">
                             ${directionText}
@@ -9221,10 +9253,10 @@
                         <span class="px-2 py-1 rounded-full text-[10px] font-black ${statusClass}">
                             ${statusText}
                         </span>
-                        <span class="text-[9px] text-slate-400">#${check.reference || t('no_reference')}</span>
+                        <span class="text-[9px] text-slate-400">${t('reference_label')}: ${check.reference || t('no_reference')}</span>
                     </div>
                     
-                    <h4 class="font-black text-slate-800 text-sm mb-2">${clientName}</h4>
+                    <h4 class="font-black text-slate-800 text-sm mb-2">${escapeHtml(clientName)}</h4>
                     
                     <div class="grid grid-cols-2 gap-2 mt-2 text-[9px]">
                         <div>
@@ -9278,9 +9310,8 @@
                 </div>
             </div>
         </div>`;
-            });
-        }
-
+    });
+}
 
         // دالة تأكيد صرف شيك/كمبيالة
         function confirmCashing(id) {
