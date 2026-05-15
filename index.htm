@@ -1741,85 +1741,66 @@
                 <div id="usersList" class="grid md:grid-cols-2 lg:grid-cols-3 gap-3"></div>
             </div>
 
-          <!-- صفحة إدارة الاشتراك -->
-<div id="page-subscription" class="page-content hidden p-4 md:p-6 space-y-6">
-    <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 max-w-3xl mx-auto text-center">
-        <div class="w-24 h-24 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-6 text-indigo-600 shadow-inner">
-            <i class="fas fa-crown text-4xl"></i>
-        </div>
-        <h2 class="text-2xl font-black text-slate-800 mb-2" data-i18n="subscription_details">تفاصيل الاشتراك</h2>
-        <p class="text-slate-400 font-bold mb-8 text-sm" data-i18n="subscription_desc">إدارة اشتراكك وصلاحية الحساب</p>
+            <!-- صفحة إدارة الاشتراك -->
+            <div id="page-subscription" class="page-content hidden p-4 md:p-6 space-y-6">
+                <div
+                    class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 max-w-3xl mx-auto text-center">
+                    <div
+                        class="w-24 h-24 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-6 text-indigo-600 shadow-inner">
+                        <i class="fas fa-crown text-4xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-black text-slate-800 mb-2" data-i18n="subscription_details">تفاصيل الاشتراك
+                    </h2>
+                    <p class="text-slate-400 font-bold mb-8 text-sm" data-i18n="subscription_desc">إدارة اشتراكك السنوي
+                        وصلاحية الحساب</p>
 
-        <div class="grid md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-slate-50 p-6 rounded-3xl border border-slate-100">
-                <p class="text-[10px] font-black text-slate-400 uppercase mb-2 tracking-widest" data-i18n="subscription_type">نوع الاشتراك</p>
-                <p id="subscriptionType" class="text-xl font-black text-slate-800">...</p>
-            </div>
-            <div class="bg-slate-50 p-6 rounded-3xl border border-slate-100">
-                <p class="text-[10px] font-black text-slate-400 uppercase mb-2 tracking-widest" data-i18n="start_date">تاريخ البداية</p>
-                <p id="subStartDate" class="text-xl font-black text-slate-800">...</p>
-            </div>
-            <div class="bg-slate-50 p-6 rounded-3xl border border-slate-100">
-                <p class="text-[10px] font-black text-slate-400 uppercase mb-2 tracking-widest" data-i18n="end_date">تاريخ الانتهاء</p>
-                <p id="subEndDate" class="text-xl font-black text-slate-800">...</p>
-            </div>
-        </div>
+                    <div class="grid md:grid-cols-2 gap-6 mb-8">
+                        <div class="bg-slate-50 p-6 rounded-3xl border border-slate-100">
+                            <p class="text-[10px] font-black text-slate-400 uppercase mb-2 tracking-widest"
+                                data-i18n="start_date">تاريخ البداية</p>
+                            <p id="subStartDate" class="text-xl font-black text-slate-800">...</p>
+                        </div>
+                        <div class="bg-slate-50 p-6 rounded-3xl border border-slate-100">
+                            <p class="text-[10px] font-black text-slate-400 uppercase mb-2 tracking-widest"
+                                data-i18n="end_date">تاريخ الانتهاء</p>
+                            <p id="subEndDate" class="text-xl font-black text-slate-800">...</p>
+                        </div>
+                    </div>
 
-        <div class="mb-8 bg-slate-50 p-6 rounded-3xl border border-slate-100">
-            <div class="flex justify-between text-xs font-bold mb-3">
-                <span id="subStatusText" class="text-slate-600" data-i18n="status">الحالة</span>
-                <span id="subscriptionStatus" class="px-3 py-1 rounded-full text-xs font-black">...</span>
-            </div>
-            <div class="flex justify-between text-xs font-bold mb-3">
-                <span class="text-slate-600" data-i18n="remaining_period">الفترة المتبقية</span>
-                <span id="subDaysLeft" class="text-indigo-600">... يوم متبقي</span>
-            </div>
-            <div class="w-full bg-slate-200 rounded-full h-4 overflow-hidden shadow-inner">
-                <div id="subProgressBar" class="bg-indigo-600 h-4 rounded-full transition-all duration-1000 shadow-lg" style="width: 0%"></div>
-            </div>
-        </div>
+                    <div class="mb-8 bg-slate-50 p-6 rounded-3xl border border-slate-100">
+                        <div class="flex justify-between text-xs font-bold mb-3">
+                            <span id="subStatusText" class="text-slate-600" data-i18n="status">الحالة</span>
+                            <span id="subDaysLeft" class="text-indigo-600">... يوم متبقي</span>
+                        </div>
+                        <div class="w-full bg-slate-200 rounded-full h-4 overflow-hidden shadow-inner">
+                            <div id="subProgressBar"
+                                class="bg-indigo-600 h-4 rounded-full transition-all duration-1000 shadow-lg"
+                                style="width: 0%"></div>
+                        </div>
+                    </div>
 
-        <!-- قسم طلب الاشتراك السنوي (للمستخدمين التجريبيين) -->
-        <div id="renewalSection" class="hidden">
-            <div class="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 p-6 rounded-2xl mb-6">
-                <div class="flex items-center justify-center gap-3 mb-3">
-                    <i class="fas fa-hourglass-half text-amber-600 text-2xl"></i>
-                    <h3 class="font-black text-amber-800 text-lg" data-i18n="trial_ending_title">نسختك التجريبية على وشك الانتهاء!</h3>
+                    <div id="renewalSection" class="hidden animate-pulse">
+                        <div
+                            class="bg-amber-50 border border-amber-200 p-4 rounded-2xl mb-6 text-amber-800 text-xs font-bold flex items-center justify-center gap-2">
+                            <i class="fas fa-exclamation-triangle text-lg"></i>
+                            <span data-i18n="sub_expiring_msg">اشتراكك شارف على الانتهاء. يرجى تجديد الاشتراك لضمان
+                                استمرار الخدمة.</span>
+                        </div>
+                        <button onclick="requestRenewal()" id="requestRenewalBtn"
+                            class="bg-indigo-600 text-white px-8 py-4 rounded-2xl font-black shadow-xl hover:bg-indigo-700 transition-all w-full md:w-auto transform hover:-translate-y-1">
+                            <i class="fas fa-sync-alt ml-2"></i> <span data-i18n="request_renewal">طلب تجديد
+                                الاشتراك</span>
+                        </button>
+                    </div>
+
+                    <div id="renewalSentMessage"
+                        class="hidden bg-emerald-50 border border-emerald-200 p-6 rounded-2xl text-emerald-800 font-bold">
+                        <i class="fas fa-check-circle text-3xl mb-3 block text-emerald-500"></i>
+                        <span data-i18n="renewal_sent_msg">تم إرسال طلب التجديد بنجاح. سيتم التواصل معك قريباً لإتمام
+                            العملية.</span>
+                    </div>
                 </div>
-                <p class="text-amber-700 text-sm font-bold mb-4 text-center" data-i18n="upgrade_to_continue">للإستمرار في الإستفادة من النظام، يرجى تفعيل اشتراكك السنوي.</p>
-                <button onclick="requestYearlySubscription()" id="requestSubscriptionBtn"
-                    class="w-full bg-indigo-600 text-white px-8 py-4 rounded-2xl font-black shadow-xl hover:bg-indigo-700 transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2">
-                    <i class="fas fa-crown ml-2"></i> <span data-i18n="request_yearly_subscription">طلب تفعيل الإشتراك السنوي</span>
-                </button>
             </div>
-        </div>
-
-        <div id="requestSentMessage" class="hidden bg-emerald-50 border border-emerald-200 p-6 rounded-2xl text-emerald-800 font-bold">
-            <i class="fas fa-check-circle text-3xl mb-3 block text-emerald-500"></i>
-            <span data-i18n="subscription_request_sent_msg">تم إرسال طلب تفعيل الإشتراك بنجاح. سيتم التواصل معكم قريباً لإتمام العملية.</span>
-        </div>
-
-        <!-- قسم تجديد الاشتراك السنوي (للمشتركين السنويين) -->
-        <div id="yearlyRenewalSection" class="hidden">
-            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 p-6 rounded-2xl mb-6">
-                <div class="flex items-center justify-center gap-3 mb-3">
-                    <i class="fas fa-calendar-alt text-blue-600 text-2xl"></i>
-                    <h3 class="font-black text-blue-800 text-lg" data-i18n="renewal_reminder">تذكير بتجديد الإشتراك</h3>
-                </div>
-                <p class="text-blue-700 text-sm font-bold mb-4 text-center" data-i18n="renewal_warning_msg">سيتم توقيف الإشتراك بعد إنتهاء المدة. قم بتجديد إشتراكك الآن لضمان إستمرارية الخدمة.</p>
-                <button onclick="renewYearlySubscription()" id="yearlyRenewBtn"
-                    class="w-full bg-emerald-600 text-white px-8 py-4 rounded-2xl font-black shadow-xl hover:bg-emerald-700 transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2">
-                    <i class="fas fa-sync-alt ml-2"></i> <span data-i18n="renew_subscription">تجديد الإشتراك السنوي</span>
-                </button>
-            </div>
-        </div>
-
-        <div id="renewalSentMessage" class="hidden bg-emerald-50 border border-emerald-200 p-6 rounded-2xl text-emerald-800 font-bold">
-            <i class="fas fa-check-circle text-3xl mb-3 block text-emerald-500"></i>
-            <span data-i18n="renewal_sent_msg">تم تجديد إشتراكك بنجاح. شكراً لثقتكم بنا!</span>
-        </div>
-    </div>
-</div>
 
             <!-- صفحة إعدادات المتجر (بديلة للنافذة المنبثقة) -->
             <div id="page-settings" class="page-content hidden p-4 md:p-6 space-y-6">
@@ -4466,149 +4447,60 @@
         }
 
         // --- Subscription Logic ---
-      // --- Subscription Logic (محدث) ---
-function checkSubscriptionStatus() {
-    if (!currentUser || !currentUser.subscription) return;
+        function checkSubscriptionStatus() {
+            if (!currentUser || !currentUser.subscription) return;
 
-    const end = parseDate(currentUser.subscription.end);
-    const today = new Date();
-    const diffTime = end - today;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            const end = parseDate(currentUser.subscription.end);
+            const today = new Date();
+            const diffTime = end - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-    // عرض رسالة تنبيه عندما يبقى يوم واحد فقط
-    if (diffDays === 1) {
-        showToast(t('sub_last_day_warning'), 'warning');
-        // إضافة علامة حمراء على زر الاشتراك
-        const subMenuBtn = document.getElementById('subscriptionMenuBtn');
-        if (subMenuBtn) {
-            subMenuBtn.classList.add('text-rose-600', 'bg-rose-50', 'animate-pulse');
-            subMenuBtn.classList.remove('text-indigo-600');
+            if (diffDays <= 30 && diffDays > 0) {
+                showToast(t('sub_warning', { days: diffDays }), 'info');
+                // يمكن إضافة علامة حمراء على زر الاشتراك
+                document.getElementById('subscriptionMenuBtn').classList.add('text-rose-600', 'bg-rose-50');
+                document.getElementById('subscriptionMenuBtn').classList.remove('text-indigo-600');
+            }
         }
-    } else if (diffDays <= 3 && diffDays > 1) {
-        showToast(t('sub_warning', { days: diffDays }), 'info');
-    } else if (diffDays <= 0) {
-        showToast(t('sub_expired_contact'), 'error');
-        // تسجيل الخروج التلقائي
-        setTimeout(() => {
-            promptLogout();
-        }, 3000);
-    }
-}
+
         function downloadMyCertificate() {
             if (currentUser) downloadSubscriptionCertificate(currentUser);
         }
 
-       function renderSubscriptionPage() {
-    if (!currentUser || !currentUser.subscription) return;
+        function renderSubscriptionPage() {
+            if (!currentUser || !currentUser.subscription) return;
 
-    const start = parseDate(currentUser.subscription.start);
-    const end = parseDate(currentUser.subscription.end);
-    const today = new Date();
-    
-    const isTrial = currentUser.subscription.isTrial === true;
-    const isYearly = currentUser.subscription.isYearly === true;
-    const isActive = currentUser.isActive !== false;
+            const start = parseDate(currentUser.subscription.start);
+            const end = parseDate(currentUser.subscription.end);
+            const today = new Date();
 
-    document.getElementById('subStartDate').innerText = formatDateSimple(start);
-    document.getElementById('subEndDate').innerText = formatDateSimple(end);
+            document.getElementById('subStartDate').innerText = formatDateSimple(start);
+            document.getElementById('subEndDate').innerText = formatDateSimple(end);
 
-    const totalDuration = end - start;
-    const elapsed = today - start;
-    const remaining = end - today;
-    const daysLeft = Math.ceil(remaining / (1000 * 60 * 60 * 24));
+            const totalDuration = end - start;
+            const elapsed = today - start;
+            const remaining = end - today;
+            const daysLeft = Math.ceil(remaining / (1000 * 60 * 60 * 24));
 
-    let percentage = (elapsed / totalDuration) * 100;
-    percentage = Math.min(Math.max(percentage, 0), 100);
+            // حساب النسبة المئوية للتقدم
+            let percentage = (elapsed / totalDuration) * 100;
+            percentage = Math.min(Math.max(percentage, 0), 100); // حصر بين 0 و 100
 
-    document.getElementById('subProgressBar').style.width = `${percentage}%`;
-    
-    // عرض نوع الاشتراك والحالة
-    let subscriptionType = '';
-    let statusClass = '';
-    let statusText = '';
-    
-    if (!isActive) {
-        statusText = t('suspended');
-        statusClass = 'text-rose-600 bg-rose-100';
-        document.getElementById('subDaysLeft').innerText = t('account_suspended_contact_short');
-    } else if (isTrial) {
-        subscriptionType = t('trial_version');
-        if (daysLeft <= 0) {
-            statusText = t('expired');
-            statusClass = 'text-rose-600 bg-rose-100';
-            document.getElementById('subDaysLeft').innerHTML = `<span class="text-rose-600 font-black">${t('trial_expired_action')}</span>`;
-        } else if (daysLeft <= 3) {
-            statusText = t('ending_soon');
-            statusClass = 'text-amber-600 bg-amber-100';
-            document.getElementById('subDaysLeft').innerHTML = `<span class="text-amber-600 font-black">${t('days_left', { days: daysLeft })} - ${t('renew_to_continue')}</span>`;
-        } else {
-            statusText = t('active_trial');
-            statusClass = 'text-emerald-600 bg-emerald-100';
-            document.getElementById('subDaysLeft').innerHTML = `<span class="text-indigo-600">${t('days_left', { days: daysLeft })}</span>`;
+            document.getElementById('subProgressBar').style.width = `${percentage}%`;
+            document.getElementById('subDaysLeft').innerText = daysLeft > 0 ? t('sub_warning', { days: daysLeft }) : t('expired');
+
+            // تلوين الشريط حسب الحالة
+            const bar = document.getElementById('subProgressBar');
+            if (daysLeft <= 30) {
+                bar.classList.remove('bg-indigo-600', 'bg-emerald-500');
+                bar.classList.add('bg-rose-500');
+                document.getElementById('renewalSection').classList.remove('hidden');
+            } else {
+                bar.classList.remove('bg-rose-500');
+                bar.classList.add('bg-indigo-600');
+                document.getElementById('renewalSection').classList.add('hidden');
+            }
         }
-    } else if (isYearly) {
-        subscriptionType = t('yearly_subscription');
-        if (daysLeft <= 0) {
-            statusText = t('expired');
-            statusClass = 'text-rose-600 bg-rose-100';
-            document.getElementById('subDaysLeft').innerHTML = `<span class="text-rose-600 font-black">${t('subscription_expired_contact')}</span>`;
-        } else if (daysLeft <= 30) {
-            statusText = t('expiring_soon');
-            statusClass = 'text-amber-600 bg-amber-100';
-            document.getElementById('subDaysLeft').innerHTML = `<span class="text-amber-600 font-black">${t('days_left_renew', { days: daysLeft })}</span>`;
-        } else {
-            statusText = t('active');
-            statusClass = 'text-emerald-600 bg-emerald-100';
-            document.getElementById('subDaysLeft').innerHTML = `<span class="text-indigo-600">${t('days_left', { days: daysLeft })}</span>`;
-        }
-    }
-    
-    // تحديث واجهة نوع الاشتراك
-    const subTypeElement = document.getElementById('subscriptionType');
-    if (subTypeElement) {
-        subTypeElement.innerText = subscriptionType;
-    }
-    
-    const statusElement = document.getElementById('subscriptionStatus');
-    if (statusElement) {
-        statusElement.innerText = statusText;
-        statusElement.className = `px-3 py-1 rounded-full text-xs font-black ${statusClass}`;
-    }
-    
-    // تلوين شريط التقدم
-    const bar = document.getElementById('subProgressBar');
-    if (daysLeft <= 3 && isTrial) {
-        bar.classList.remove('bg-indigo-600', 'bg-emerald-500');
-        bar.classList.add('bg-rose-500');
-    } else if (daysLeft <= 30 && isYearly) {
-        bar.classList.remove('bg-indigo-600', 'bg-emerald-500');
-        bar.classList.add('bg-amber-500');
-    } else {
-        bar.classList.remove('bg-rose-500', 'bg-amber-500');
-        bar.classList.add('bg-indigo-600');
-    }
-    
-    // إظهار/إخفاء أزرار الإجراءات المناسبة
-    const trialSection = document.getElementById('renewalSection');
-    const yearlySection = document.getElementById('yearlyRenewalSection');
-    const requestSentMsg = document.getElementById('requestSentMessage');
-    const renewalSentMsg = document.getElementById('renewalSentMessage');
-    
-    if (isTrial && isActive && daysLeft > 0) {
-        if (trialSection) trialSection.classList.remove('hidden');
-        if (yearlySection) yearlySection.classList.add('hidden');
-    } else if (isYearly && isActive) {
-        if (trialSection) trialSection.classList.add('hidden');
-        if (daysLeft <= 30 && daysLeft > 0) {
-            if (yearlySection) yearlySection.classList.remove('hidden');
-        } else {
-            if (yearlySection) yearlySection.classList.add('hidden');
-        }
-    } else {
-        if (trialSection) trialSection.classList.add('hidden');
-        if (yearlySection) yearlySection.classList.add('hidden');
-    }
-}
 
         function requestRenewal() {
             const btn = document.getElementById('requestRenewalBtn');
@@ -12921,163 +12813,6 @@ function checkSubscriptionStatus() {
                 updateClientLists();
             }
         }
-        // ==================== دوال إدارة الاشتراك المحسنة ====================
-
-// دالة التحقق من حالة الاشتراك وعرض التنبيهات المناسبة
-function checkSubscriptionStatus() {
-    if (!currentUser || !currentUser.subscription) return;
-
-    const end = parseDate(currentUser.subscription.end);
-    const today = new Date();
-    const diffTime = end - today;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
-    const subMenuBtn = document.getElementById('subscriptionMenuBtn');
-    const renewalSection = document.getElementById('renewalSection');
-    const yearlyRenewalSection = document.getElementById('yearlyRenewalSection');
-    
-    // التحقق من نوع الاشتراك (تجريبي أم سنوي)
-    const isTrial = currentUser.subscription.isTrial === true;
-    const isYearly = currentUser.subscription.isYearly === true;
-    
-    // حالة الحساب (نشط أم لا)
-    const isActive = currentUser.isActive !== false;
-    
-    if (!isActive) {
-        // الحساب غير نشط - عرض رسالة للتواصل مع الدعم
-        showToast(t('account_suspended_contact'), 'error');
-        if (subMenuBtn) {
-            subMenuBtn.classList.add('text-rose-600', 'bg-rose-50');
-        }
-        return;
-    }
-    
-    // حالة النسخة التجريبية
-    if (isTrial) {
-        if (diffDays <= 0) {
-            // انتهت النسخة التجريبية
-            showToast(t('trial_expired_contact'), 'error');
-            if (subMenuBtn) {
-                subMenuBtn.classList.add('text-rose-600', 'bg-rose-50', 'animate-pulse');
-            }
-            if (renewalSection) {
-                renewalSection.classList.remove('hidden');
-            }
-        } else if (diffDays === 1) {
-            // يتبقى يوم واحد
-            showToast(t('trial_last_day_warning'), 'warning');
-            if (subMenuBtn) {
-                subMenuBtn.classList.add('text-amber-600', 'bg-amber-50', 'animate-pulse');
-            }
-            if (renewalSection) {
-                renewalSection.classList.remove('hidden');
-            }
-        } else if (diffDays <= 3) {
-            // يتبقى 3 أيام أو أقل
-            showToast(t('trial_ending_soon', { days: diffDays }), 'info');
-            if (renewalSection) {
-                renewalSection.classList.remove('hidden');
-            }
-        } else {
-            // عرض أيام متبقية عادية
-            if (renewalSection) {
-                renewalSection.classList.add('hidden');
-            }
-        }
-    }
-    
-    // حالة الاشتراك السنوي
-    if (isYearly) {
-        if (diffDays <= 0) {
-            // انتهى الاشتراك السنوي
-            showToast(t('yearly_expired_contact'), 'error');
-            if (subMenuBtn) {
-                subMenuBtn.classList.add('text-rose-600', 'bg-rose-50');
-            }
-            if (yearlyRenewalSection) {
-                yearlyRenewalSection.classList.remove('hidden');
-            }
-        } else if (diffDays <= 30) {
-            // يتبقى 30 يوم أو أقل - عرض زر التجديد
-            showToast(t('yearly_renewal_warning', { days: diffDays }), 'warning');
-            if (subMenuBtn) {
-                subMenuBtn.classList.add('text-amber-600', 'bg-amber-50');
-            }
-            if (yearlyRenewalSection) {
-                yearlyRenewalSection.classList.remove('hidden');
-            }
-        } else {
-            if (yearlyRenewalSection) {
-                yearlyRenewalSection.classList.add('hidden');
-            }
-        }
-    }
-}
-
-// دالة طلب تفعيل الاشتراك السنوي (للمحلات التجريبية)
-function requestYearlySubscription() {
-    openConfirm({
-        title: t('request_yearly_subscription'),
-        msg: t('request_yearly_subscription_msg'),
-        iconClass: "fas fa-crown",
-        colorClass: "bg-indigo-600",
-        onConfirm: () => {
-            const btn = document.getElementById('requestSubscriptionBtn');
-            setBtnLoading(btn, true, t('sending'));
-            
-            google.script.run
-                .withSuccessHandler(res => {
-                    setBtnLoading(btn, false);
-                    if (res.success) {
-                        showToast(t('subscription_request_sent'));
-                        document.getElementById('renewalSection').classList.add('hidden');
-                        document.getElementById('requestSentMessage').classList.remove('hidden');
-                    } else {
-                        showToast(t('op_failed') + ': ' + res.message, 'error');
-                    }
-                })
-                .withFailureHandler(err => {
-                    setBtnLoading(btn, false);
-                    showToast(t('connection_error'), 'error');
-                })
-                .requestYearlySubscription(currentUser.shopCode);
-        }
-    });
-}
-
-// دالة تجديد الاشتراك السنوي (للمشتركين السنويين)
-function renewYearlySubscription() {
-    openConfirm({
-        title: t('renew_yearly_subscription'),
-        msg: t('renew_yearly_subscription_msg'),
-        iconClass: "fas fa-sync-alt",
-        colorClass: "bg-emerald-600",
-        onConfirm: () => {
-            const btn = document.getElementById('yearlyRenewBtn');
-            setBtnLoading(btn, true, t('processing'));
-            
-            google.script.run
-                .withSuccessHandler(res => {
-                    setBtnLoading(btn, false);
-                    if (res.success) {
-                        showToast(t('renewal_success'));
-                        // تحديث بيانات المستخدم
-                        currentUser.subscription.end = res.newEndDate;
-                        currentUser.isActive = true;
-                        renderSubscriptionPage();
-                        checkSubscriptionStatus();
-                    } else {
-                        showToast(t('op_failed') + ': ' + res.message, 'error');
-                    }
-                })
-                .withFailureHandler(err => {
-                    setBtnLoading(btn, false);
-                    showToast(t('connection_error'), 'error');
-                })
-                .renewYearlySubscription(currentUser.shopCode);
-        }
-    });
-}
         function showToast(m, t = 'success') {
             const div = document.createElement('div');
             div.className = `fixed bottom-6 left-6 z-[300] px-6 py-4 rounded-[2rem] shadow-2xl text-[11px] font-black animate-bounce flex items-center gap-3 transition-all ${t === 'error' ? 'bg-rose-500 text-white' : 'bg-slate-900 text-white'}`;
