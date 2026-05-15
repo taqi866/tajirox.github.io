@@ -4447,22 +4447,34 @@
         }
 
         // --- Subscription Logic ---
-        function checkSubscriptionStatus() {
-            if (!currentUser || !currentUser.subscription) return;
+      // --- Subscription Logic (محدث) ---
+function checkSubscriptionStatus() {
+    if (!currentUser || !currentUser.subscription) return;
 
-            const end = parseDate(currentUser.subscription.end);
-            const today = new Date();
-            const diffTime = end - today;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const end = parseDate(currentUser.subscription.end);
+    const today = new Date();
+    const diffTime = end - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-            if (diffDays <= 30 && diffDays > 0) {
-                showToast(t('sub_warning', { days: diffDays }), 'info');
-                // يمكن إضافة علامة حمراء على زر الاشتراك
-                document.getElementById('subscriptionMenuBtn').classList.add('text-rose-600', 'bg-rose-50');
-                document.getElementById('subscriptionMenuBtn').classList.remove('text-indigo-600');
-            }
+    // عرض رسالة تنبيه عندما يبقى يوم واحد فقط
+    if (diffDays === 1) {
+        showToast(t('sub_last_day_warning'), 'warning');
+        // إضافة علامة حمراء على زر الاشتراك
+        const subMenuBtn = document.getElementById('subscriptionMenuBtn');
+        if (subMenuBtn) {
+            subMenuBtn.classList.add('text-rose-600', 'bg-rose-50', 'animate-pulse');
+            subMenuBtn.classList.remove('text-indigo-600');
         }
-
+    } else if (diffDays <= 3 && diffDays > 1) {
+        showToast(t('sub_warning', { days: diffDays }), 'info');
+    } else if (diffDays <= 0) {
+        showToast(t('sub_expired_contact'), 'error');
+        // تسجيل الخروج التلقائي
+        setTimeout(() => {
+            promptLogout();
+        }, 3000);
+    }
+}
         function downloadMyCertificate() {
             if (currentUser) downloadSubscriptionCertificate(currentUser);
         }
