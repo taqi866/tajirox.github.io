@@ -837,112 +837,116 @@
     <section id="authSection" class="min-h-screen flex flex-col lg:flex-row p-0 bg-white overflow-x-hidden">
         <!-- القسم الأيمن (معلومات ترويجية وجذابة) -->
         <!-- القسم الأيمن (معلومات ترويجية وجذابة) -->
-<div
-    class="flex flex-col w-full min-h-screen lg:min-h-0 lg:flex lg:w-1/2 bg-blue-600 relative items-center justify-center p-6 lg:p-12 text-white overflow-hidden">
-    <div
-        class="absolute inset-0 z-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1556742049-0cfed4f7a07d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80')] bg-cover bg-center">
-    </div>
-    <div class="absolute inset-0 bg-gradient-to-br from-blue-600 to-indigo-900 z-10 opacity-90"></div>
-
-    <div class="relative z-20 max-w-lg text-center lg:ltr:text-left lg:rtl:text-right w-full">
         <div
-            class="w-16 h-16 lg:w-20 lg:h-20 mx-auto lg:mx-0 bg-white/15 backdrop-blur-md rounded-2xl flex items-center justify-center mb-6 lg:mb-8 shadow-2xl border border-white/30 hover:scale-105 transition-transform duration-300">
-            <i class="fas fa-store-alt text-white text-3xl lg:text-4xl drop-shadow-lg"></i>
+            class="flex flex-col w-full min-h-screen lg:min-h-0 lg:flex lg:w-1/2 bg-blue-600 relative items-center justify-center p-6 lg:p-12 text-white overflow-hidden">
+            <div
+                class="absolute inset-0 z-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1556742049-0cfed4f7a07d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80')] bg-cover bg-center">
+            </div>
+            <div class="absolute inset-0 bg-gradient-to-br from-blue-600 to-indigo-900 z-10 opacity-90"></div>
+
+            <div class="relative z-20 max-w-lg text-center lg:ltr:text-left lg:rtl:text-right w-full">
+                <div
+                    class="w-16 h-16 lg:w-20 lg:h-20 mx-auto lg:mx-0 bg-white/15 backdrop-blur-md rounded-2xl flex items-center justify-center mb-6 lg:mb-8 shadow-2xl border border-white/30 hover:scale-105 transition-transform duration-300">
+                    <i class="fas fa-store-alt text-white text-3xl lg:text-4xl drop-shadow-lg"></i>
+                </div>
+                <h1 class="text-3xl lg:text-5xl font-black mb-4 lg:mb-6 leading-tight" data-i18n="app_title_hero"></h1>
+                <p class="text-sm lg:text-lg text-blue-100 font-bold leading-relaxed mb-6 lg:mb-6"
+                    data-i18n="app_desc_hero">
+                    بسّط تدبيرك، وحقق أقصى أداء.</p>
+
+                <!-- عرض تجريبي مجاني لمدة 14 يوم -->
+                <!-- عرض تجريبي مجاني لمدة 14 يوم -->
+                <div
+                    class="mb-8 lg:mb-8 bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl p-4 text-center shadow-lg transform hover:scale-105 transition-all duration-300">
+                    <div class="flex items-center justify-center gap-2 mb-2">
+                        <i class="fas fa-gem text-2xl text-yellow-200"></i>
+                        <span class="text-white font-black text-sm bg-white/20 px-3 py-1 rounded-full"
+                            data-i18n="special_offer">عرض خاص</span>
+                    </div>
+                    <p class="text-white font-black text-base lg:text-lg mb-1" data-i18n="free_trial_title"> استفد من
+                        نسخة مجانية لمدة 14 يوم </p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 lg:gap-4 mb-8 lg:mb-0">
+
+                    <!-- إدارة المخزون -->
+                    <div
+                        class="bg-white/10 p-3 lg:p-4 rounded-2xl backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all cursor-default">
+                        <i class="fas fa-box-open text-emerald-400 text-xl mb-2"></i>
+                        <h3 class="font-bold text-xs lg:text-sm" data-i18n="hero_inventory">إدارة المخزون</h3>
+                        <p class="text-[9px] lg:text-[10px] text-blue-200 mt-1" data-i18n="hero_inventory_desc">
+                            تتبع دقيق للمنتجات والكميات
+                        </p>
+                    </div>
+
+                    <!-- الفواتير -->
+                    <div
+                        class="bg-white/10 p-3 lg:p-4 rounded-2xl backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all cursor-default">
+                        <i class="fas fa-file-invoice-dollar text-amber-400 text-xl mb-2"></i>
+                        <h3 class="font-bold text-xs lg:text-sm" data-i18n="hero_pro_invoices">فواتير احترافية</h3>
+                        <p class="text-[9px] lg:text-[10px] text-blue-200 mt-1" data-i18n="hero_pro_invoices_desc">
+                            إصدار فواتير بيع وخدمات
+                        </p>
+                    </div>
+
+                    <!-- الزبناء والموردين -->
+                    <div
+                        class="bg-white/10 p-3 lg:p-4 rounded-2xl backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all cursor-default">
+                        <i class="fas fa-users text-cyan-400 text-xl mb-2"></i>
+                        <h3 class="font-bold text-xs lg:text-sm" data-i18n="hero_clients_manage">إدارة الزبناء والموردين
+                        </h3>
+                        <p class="text-[9px] lg:text-[10px] text-blue-200 mt-1" data-i18n="hero_clients_manage_desc">
+                            تتبع الديون والمدفوعات
+                        </p>
+                    </div>
+
+                    <!-- التقارير -->
+                    <div
+                        class="bg-white/10 p-3 lg:p-4 rounded-2xl backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all cursor-default">
+                        <i class="fas fa-chart-line text-purple-400 text-xl mb-2"></i>
+                        <h3 class="font-bold text-xs lg:text-sm" data-i18n="hero_smart_reports">تقارير ذكية</h3>
+                        <p class="text-[9px] lg:text-[10px] text-blue-200 mt-1" data-i18n="hero_smart_reports_desc">
+                            تحليل الأرباح والمصاريف
+                        </p>
+                    </div>
+
+                    <!-- إدارة المصاريف -->
+                    <div
+                        class="bg-white/10 p-3 lg:p-4 rounded-2xl backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all cursor-default">
+                        <i class="fas fa-wallet text-rose-400 text-xl mb-2"></i>
+                        <h3 class="font-bold text-xs lg:text-sm" data-i18n="hero_expenses_manage">إدارة المصاريف</h3>
+                        <p class="text-[9px] lg:text-[10px] text-blue-200 mt-1" data-i18n="hero_expenses_manage_desc">
+                            تتبع ومراقبة المصروفات
+                        </p>
+                    </div>
+
+                    <!-- الشيكات والكمبيالات -->
+                    <div
+                        class="bg-white/10 p-3 lg:p-4 rounded-2xl backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all cursor-default">
+                        <i class="fas fa-money-check-alt text-emerald-400 text-xl mb-2"></i>
+                        <h3 class="font-bold text-xs lg:text-sm" data-i18n="hero_checks_manage">إدارة الشيكات
+                            والكمبيالات</h3>
+                        <p class="text-[9px] lg:text-[10px] text-blue-200 mt-1" data-i18n="hero_checks_manage_desc">
+                            متابعة تواريخ الاستحقاق
+                        </p>
+                    </div>
+                </div>
+
+                <!-- أزرار الهاتف -->
+                <div class="lg:hidden flex flex-col gap-3 w-full mt-4">
+                    <button onclick="document.getElementById('loginFormContainer').scrollIntoView({behavior: 'smooth'})"
+                        class="w-full bg-white text-blue-600 py-4 rounded-xl font-black text-sm shadow-lg active:scale-95 transition-all"
+                        data-i18n="login_btn">
+                        تسجيل الدخول
+                    </button>
+                    <button onclick="openRegisterModal()"
+                        class="w-full bg-transparent border-2 border-white/30 hover:bg-white/10 text-white py-4 rounded-xl font-black text-sm shadow-lg active:scale-95 transition-all"
+                        data-i18n="create_account">
+                        إنشاء حساب جديد للمتجر
+                    </button>
+                </div>
+            </div>
         </div>
-        <h1 class="text-3xl lg:text-5xl font-black mb-4 lg:mb-6 leading-tight" data-i18n="app_title_hero"></h1>
-        <p class="text-sm lg:text-lg text-blue-100 font-bold leading-relaxed mb-6 lg:mb-6"
-            data-i18n="app_desc_hero">
-            بسّط تدبيرك، وحقق أقصى أداء.</p>
-
-        <!-- عرض تجريبي مجاني لمدة 14 يوم -->
-        <!-- عرض تجريبي مجاني لمدة 14 يوم -->
-<div class="mb-8 lg:mb-8 bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl p-4 text-center shadow-lg transform hover:scale-105 transition-all duration-300">
-    <div class="flex items-center justify-center gap-2 mb-2">
-        <i class="fas fa-gem text-2xl text-yellow-200"></i>
-        <span class="text-white font-black text-sm bg-white/20 px-3 py-1 rounded-full" data-i18n="special_offer">عرض خاص</span>
-    </div>
-    <p class="text-white font-black text-base lg:text-lg mb-1" data-i18n="free_trial_title"> استفد من نسخة مجانية لمدة 14 يوم </p>
-</div>
-
-        <div class="grid grid-cols-2 gap-3 lg:gap-4 mb-8 lg:mb-0">
-
-            <!-- إدارة المخزون -->
-            <div
-                class="bg-white/10 p-3 lg:p-4 rounded-2xl backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all cursor-default">
-                <i class="fas fa-box-open text-emerald-400 text-xl mb-2"></i>
-                <h3 class="font-bold text-xs lg:text-sm" data-i18n="hero_inventory">إدارة المخزون</h3>
-                <p class="text-[9px] lg:text-[10px] text-blue-200 mt-1" data-i18n="hero_inventory_desc">
-                    تتبع دقيق للمنتجات والكميات
-                </p>
-            </div>
-
-            <!-- الفواتير -->
-            <div
-                class="bg-white/10 p-3 lg:p-4 rounded-2xl backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all cursor-default">
-                <i class="fas fa-file-invoice-dollar text-amber-400 text-xl mb-2"></i>
-                <h3 class="font-bold text-xs lg:text-sm" data-i18n="hero_pro_invoices">فواتير احترافية</h3>
-                <p class="text-[9px] lg:text-[10px] text-blue-200 mt-1" data-i18n="hero_pro_invoices_desc">
-                    إصدار فواتير بيع وخدمات
-                </p>
-            </div>
-
-            <!-- الزبناء والموردين -->
-            <div
-                class="bg-white/10 p-3 lg:p-4 rounded-2xl backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all cursor-default">
-                <i class="fas fa-users text-cyan-400 text-xl mb-2"></i>
-                <h3 class="font-bold text-xs lg:text-sm" data-i18n="hero_clients_manage">إدارة الزبناء والموردين
-                </h3>
-                <p class="text-[9px] lg:text-[10px] text-blue-200 mt-1" data-i18n="hero_clients_manage_desc">
-                    تتبع الديون والمدفوعات
-                </p>
-            </div>
-
-            <!-- التقارير -->
-            <div
-                class="bg-white/10 p-3 lg:p-4 rounded-2xl backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all cursor-default">
-                <i class="fas fa-chart-line text-purple-400 text-xl mb-2"></i>
-                <h3 class="font-bold text-xs lg:text-sm" data-i18n="hero_smart_reports">تقارير ذكية</h3>
-                <p class="text-[9px] lg:text-[10px] text-blue-200 mt-1" data-i18n="hero_smart_reports_desc">
-                    تحليل الأرباح والمصاريف
-                </p>
-            </div>
-
-            <!-- إدارة المصاريف -->
-            <div
-                class="bg-white/10 p-3 lg:p-4 rounded-2xl backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all cursor-default">
-                <i class="fas fa-wallet text-rose-400 text-xl mb-2"></i>
-                <h3 class="font-bold text-xs lg:text-sm" data-i18n="hero_expenses_manage">إدارة المصاريف</h3>
-                <p class="text-[9px] lg:text-[10px] text-blue-200 mt-1" data-i18n="hero_expenses_manage_desc">
-                    تتبع ومراقبة المصروفات
-                </p>
-            </div>
-
-            <!-- الشيكات والكمبيالات -->
-            <div
-                class="bg-white/10 p-3 lg:p-4 rounded-2xl backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all cursor-default">
-                <i class="fas fa-money-check-alt text-emerald-400 text-xl mb-2"></i>
-                <h3 class="font-bold text-xs lg:text-sm" data-i18n="hero_checks_manage">إدارة الشيكات والكمبيالات</h3>
-                <p class="text-[9px] lg:text-[10px] text-blue-200 mt-1" data-i18n="hero_checks_manage_desc">
-                    متابعة تواريخ الاستحقاق
-                </p>
-            </div>
-        </div>
-
-        <!-- أزرار الهاتف -->
-        <div class="lg:hidden flex flex-col gap-3 w-full mt-4">
-            <button onclick="document.getElementById('loginFormContainer').scrollIntoView({behavior: 'smooth'})"
-                class="w-full bg-white text-blue-600 py-4 rounded-xl font-black text-sm shadow-lg active:scale-95 transition-all"
-                data-i18n="login_btn">
-                تسجيل الدخول
-            </button>
-            <button onclick="openRegisterModal()"
-                class="w-full bg-transparent border-2 border-white/30 hover:bg-white/10 text-white py-4 rounded-xl font-black text-sm shadow-lg active:scale-95 transition-all"
-                data-i18n="create_account">
-                إنشاء حساب جديد للمتجر
-            </button>
-        </div>
-    </div>
-</div>
         <!-- القسم الأيسر (نموذج تسجيل الدخول) -->
         <div id="loginFormContainer"
             class="w-full min-h-screen lg:min-h-0 lg:w-1/2 flex flex-col items-center justify-center p-6 bg-slate-50">
@@ -7369,8 +7373,8 @@
 
             let filteredInvs = fInvs;
             if (q) {
-                filteredInvs = fInvs.filter(inv => 
-                    String(inv.id).toLowerCase().includes(q) || 
+                filteredInvs = fInvs.filter(inv =>
+                    String(inv.id).toLowerCase().includes(q) ||
                     (inv.customer || '').toLowerCase().includes(q) ||
                     (inv.payment_reference || '').toLowerCase().includes(q) ||
                     (inv.type || '').toLowerCase().includes(q)
@@ -8979,112 +8983,112 @@
         }
 
         // دالة تحديث بطاقات المجموع
-       function updateChecksDashboard() {
-    if (!document.getElementById('page-checks-promissory') || 
-        document.getElementById('page-checks-promissory').classList.contains('hidden')) {
-        return;
-    }
-    
-    if (!allData.checks_promissory) return;
+        function updateChecksDashboard() {
+            if (!document.getElementById('page-checks-promissory') ||
+                document.getElementById('page-checks-promissory').classList.contains('hidden')) {
+                return;
+            }
 
-    let totalReceived = 0;
-    let totalGiven = 0;
-    let pendingReceivedCount = 0;
-    let paidReceivedCount = 0;
-    let pendingGivenCount = 0;
-    let paidGivenCount = 0;
-    let receivedCount = 0;
-    let givenCount = 0;
-    let totalChecksCount = allData.checks_promissory.length;
-    let pendingChecksCount = 0;
-    let paidChecksCount = 0;
-    let cancelledChecksCount = 0;
+            if (!allData.checks_promissory) return;
 
-    allData.checks_promissory.forEach(check => {
-        const isReceived = check.debt_type === 'invoice';
-        const amount = safeNum(check.amount);
+            let totalReceived = 0;
+            let totalGiven = 0;
+            let pendingReceivedCount = 0;
+            let paidReceivedCount = 0;
+            let pendingGivenCount = 0;
+            let paidGivenCount = 0;
+            let receivedCount = 0;
+            let givenCount = 0;
+            let totalChecksCount = allData.checks_promissory.length;
+            let pendingChecksCount = 0;
+            let paidChecksCount = 0;
+            let cancelledChecksCount = 0;
 
-        // Calculs pour les montants (seulement les chèques payés)
-        if (check.status === 'paid') {
-            if (isReceived) {
-                totalReceived += amount;
-            } else {
-                totalGiven += amount;
+            allData.checks_promissory.forEach(check => {
+                const isReceived = check.debt_type === 'invoice';
+                const amount = safeNum(check.amount);
+
+                // Calculs pour les montants (seulement les chèques payés)
+                if (check.status === 'paid') {
+                    if (isReceived) {
+                        totalReceived += amount;
+                    } else {
+                        totalGiven += amount;
+                    }
+                }
+
+                // Comptages par direction
+                if (isReceived) {
+                    receivedCount++;
+                    if (check.status === 'paid') paidReceivedCount++;
+                    if (check.status === 'pending' || !check.status) pendingReceivedCount++;
+                } else {
+                    givenCount++;
+                    if (check.status === 'paid') paidGivenCount++;
+                    if (check.status === 'pending' || !check.status) pendingGivenCount++;
+                }
+
+                // Comptages par statut global
+                if (check.status === 'pending' || !check.status) pendingChecksCount++;
+                else if (check.status === 'paid') paidChecksCount++;
+                else if (check.status === 'cancelled') cancelledChecksCount++;
+            });
+
+            const netBalance = totalReceived - totalGiven;
+
+            // Mise à jour de l'interface
+            const totalReceivedEl = document.getElementById('totalReceivedChecks');
+            if (totalReceivedEl) totalReceivedEl.textContent = formatCurrency(totalReceived);
+
+            const pendingReceivedEl = document.getElementById('pendingReceivedCount');
+            if (pendingReceivedEl) pendingReceivedEl.textContent = pendingReceivedCount;
+
+            const paidReceivedEl = document.getElementById('paidReceivedCount');
+            if (paidReceivedEl) paidReceivedEl.textContent = paidReceivedCount;
+
+            const totalGivenEl = document.getElementById('totalGivenChecks');
+            if (totalGivenEl) totalGivenEl.textContent = formatCurrency(totalGiven);
+
+            const pendingGivenEl = document.getElementById('pendingGivenCount');
+            if (pendingGivenEl) pendingGivenEl.textContent = pendingGivenCount;
+
+            const paidGivenEl = document.getElementById('paidGivenCount');
+            if (paidGivenEl) paidGivenEl.textContent = paidGivenCount;
+
+            const netBalanceEl = document.getElementById('netChecksBalance');
+            if (netBalanceEl) netBalanceEl.textContent = formatCurrency(netBalance);
+
+            const receivedCountEl = document.getElementById('receivedCount');
+            if (receivedCountEl) receivedCountEl.textContent = receivedCount;
+
+            const givenCountEl = document.getElementById('givenCount');
+            if (givenCountEl) givenCountEl.textContent = givenCount;
+
+            const totalChecksEl = document.getElementById('totalChecksCount');
+            if (totalChecksEl) totalChecksEl.textContent = totalChecksCount;
+
+            const pendingChecksEl = document.getElementById('pendingChecksCount');
+            if (pendingChecksEl) pendingChecksEl.textContent = pendingChecksCount;
+
+            const paidChecksEl = document.getElementById('paidChecksCount');
+            if (paidChecksEl) paidChecksEl.textContent = paidChecksCount;
+
+            const cancelledChecksEl = document.getElementById('cancelledChecksCount');
+            if (cancelledChecksEl) cancelledChecksEl.textContent = cancelledChecksCount;
+
+            // Couleur du solde net
+            if (netBalanceEl) {
+                const netClass = netBalance > 0 ? 'text-emerald-600' : (netBalance < 0 ? 'text-rose-600' : 'text-slate-600');
+                netBalanceEl.className = `text-xl font-black ${netClass}`;
             }
         }
 
-        // Comptages par direction
-        if (isReceived) {
-            receivedCount++;
-            if (check.status === 'paid') paidReceivedCount++;
-            if (check.status === 'pending' || !check.status) pendingReceivedCount++;
-        } else {
-            givenCount++;
-            if (check.status === 'paid') paidGivenCount++;
-            if (check.status === 'pending' || !check.status) pendingGivenCount++;
-        }
-
-        // Comptages par statut global
-        if (check.status === 'pending' || !check.status) pendingChecksCount++;
-        else if (check.status === 'paid') paidChecksCount++;
-        else if (check.status === 'cancelled') cancelledChecksCount++;
-    });
-
-    const netBalance = totalReceived - totalGiven;
-
-    // Mise à jour de l'interface
-    const totalReceivedEl = document.getElementById('totalReceivedChecks');
-    if (totalReceivedEl) totalReceivedEl.textContent = formatCurrency(totalReceived);
-    
-    const pendingReceivedEl = document.getElementById('pendingReceivedCount');
-    if (pendingReceivedEl) pendingReceivedEl.textContent = pendingReceivedCount;
-    
-    const paidReceivedEl = document.getElementById('paidReceivedCount');
-    if (paidReceivedEl) paidReceivedEl.textContent = paidReceivedCount;
-
-    const totalGivenEl = document.getElementById('totalGivenChecks');
-    if (totalGivenEl) totalGivenEl.textContent = formatCurrency(totalGiven);
-    
-    const pendingGivenEl = document.getElementById('pendingGivenCount');
-    if (pendingGivenEl) pendingGivenEl.textContent = pendingGivenCount;
-    
-    const paidGivenEl = document.getElementById('paidGivenCount');
-    if (paidGivenEl) paidGivenEl.textContent = paidGivenCount;
-
-    const netBalanceEl = document.getElementById('netChecksBalance');
-    if (netBalanceEl) netBalanceEl.textContent = formatCurrency(netBalance);
-    
-    const receivedCountEl = document.getElementById('receivedCount');
-    if (receivedCountEl) receivedCountEl.textContent = receivedCount;
-    
-    const givenCountEl = document.getElementById('givenCount');
-    if (givenCountEl) givenCountEl.textContent = givenCount;
-
-    const totalChecksEl = document.getElementById('totalChecksCount');
-    if (totalChecksEl) totalChecksEl.textContent = totalChecksCount;
-    
-    const pendingChecksEl = document.getElementById('pendingChecksCount');
-    if (pendingChecksEl) pendingChecksEl.textContent = pendingChecksCount;
-    
-    const paidChecksEl = document.getElementById('paidChecksCount');
-    if (paidChecksEl) paidChecksEl.textContent = paidChecksCount;
-    
-    const cancelledChecksEl = document.getElementById('cancelledChecksCount');
-    if (cancelledChecksEl) cancelledChecksEl.textContent = cancelledChecksCount;
-
-    // Couleur du solde net
-    if (netBalanceEl) {
-        const netClass = netBalance > 0 ? 'text-emerald-600' : (netBalance < 0 ? 'text-rose-600' : 'text-slate-600');
-        netBalanceEl.className = `text-xl font-black ${netClass}`;
-    }
-}
-
         function escapeHtml(text) {
-    if (!text) return '';
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
         // دالة تحديث ملخص الفلترة (إصلاح المشكلة: الدالة كانت مفقودة)
         function updateFilterSummary() {
             const summaryDiv = document.getElementById('filterSummary');
@@ -9109,137 +9113,137 @@
         }
 
         // دالة عرض الشيكات والكمبيالات
-      function renderChecksPromissory() {
-    const container = document.getElementById('checksContainer');
-    const noChecksMessage = document.getElementById('noChecksMessage');
+        function renderChecksPromissory() {
+            const container = document.getElementById('checksContainer');
+            const noChecksMessage = document.getElementById('noChecksMessage');
 
-    if (!container) return;
+            if (!container) return;
 
-    container.innerHTML = '';
+            container.innerHTML = '';
 
-    // Mettre à jour les cartes de résumé
-    updateChecksDashboard();
+            // Mettre à jour les cartes de résumé
+            updateChecksDashboard();
 
-    if (!allData.checks_promissory || allData.checks_promissory.length === 0) {
-        container.classList.add('hidden');
-        if (noChecksMessage) {
-            noChecksMessage.classList.remove('hidden');
-            noChecksMessage.innerHTML = `
+            if (!allData.checks_promissory || allData.checks_promissory.length === 0) {
+                container.classList.add('hidden');
+                if (noChecksMessage) {
+                    noChecksMessage.classList.remove('hidden');
+                    noChecksMessage.innerHTML = `
                 <i class="fas fa-money-check-alt text-3xl text-slate-300 mb-3"></i>
                 <p class="text-slate-400 font-bold">${t('no_checks')}</p>
             `;
-        }
-        return;
-    } else {
-        container.classList.remove('hidden');
-        if (noChecksMessage) noChecksMessage.classList.add('hidden');
-    }
+                }
+                return;
+            } else {
+                container.classList.remove('hidden');
+                if (noChecksMessage) noChecksMessage.classList.add('hidden');
+            }
 
-    // Appliquer les filtres
-    const filteredChecks = filterChecksData();
-    updateFilterSummary();
+            // Appliquer les filtres
+            const filteredChecks = filterChecksData();
+            updateFilterSummary();
 
-    if (filteredChecks.length === 0) {
-        container.innerHTML = `
+            if (filteredChecks.length === 0) {
+                container.innerHTML = `
             <div class="text-center p-8 bg-white rounded-[2rem] shadow-sm">
                 <i class="fas fa-search text-3xl text-slate-300 mb-3"></i>
                 <p class="text-slate-400 font-bold">${t('no_results_found')}</p>
             </div>
         `;
-        return;
-    }
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    // Trier par date (plus récent d'abord)
-    filteredChecks.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-    filteredChecks.forEach(check => {
-        // Déterminer la direction (entrant/sortant)
-        const isReceived = check.debt_type === 'invoice';
-        const directionText = isReceived ? t('received_dir') : t('given_dir');
-        const directionClass = isReceived ? 'text-emerald-600 bg-emerald-50' : 'text-blue-600 bg-blue-50';
-
-        // Déterminer le statut
-        const isPending = check.status === 'pending' || !check.status;
-        const isPaid = check.status === 'paid';
-        const isCancelled = check.status === 'cancelled';
-
-        let statusClass = '';
-        let statusText = '';
-
-        if (isPending) {
-            statusClass = 'text-amber-600 bg-amber-50';
-            statusText = t('pending');
-        } else if (isPaid) {
-            statusClass = 'text-emerald-600 bg-emerald-50';
-            statusText = t('paid');
-        } else if (isCancelled) {
-            statusClass = 'text-rose-600 bg-rose-50';
-            statusText = t('cancelled');
-        }
-
-        // Type de document (chèque ou billet à ordre)
-        const isCheck = check.type === 'شيك';
-        const typeText = isCheck ? t('check_word') : t('promissory');
-        const typeClass = isCheck ? 'bg-blue-100 text-blue-600' : 'bg-purple-100 text-purple-600';
-
-        // Nom du client/fournisseur
-        let clientName = check.client_name || t('unknown');
-
-        // Essayer d'obtenir le nom depuis les données liées
-        if (check.debt_type === 'invoice' && check.debt_id) {
-            const invoice = allData.invoices?.find(i => String(i.id) === String(check.debt_id));
-            if (invoice && invoice.customer) {
-                clientName = invoice.customer;
+                return;
             }
-        } else if (check.debt_type === 'expense' && check.debt_id) {
-            const expense = allData.expenses?.find(e => String(e.id) === String(check.debt_id));
-            if (expense && expense.supplier) {
-                clientName = expense.supplier;
-            }
-        }
 
-        // Vérifier la date d'échéance
-        let dueDateClass = '';
-        let dueDateIcon = '';
-        let dueDateText = '';
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
 
-        if (isPending && check.due_date) {
-            const dueDate = new Date(check.due_date);
-            dueDate.setHours(0, 0, 0, 0);
+            // Trier par date (plus récent d'abord)
+            filteredChecks.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-            const diffTime = dueDate - today;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            filteredChecks.forEach(check => {
+                // Déterminer la direction (entrant/sortant)
+                const isReceived = check.debt_type === 'invoice';
+                const directionText = isReceived ? t('received_dir') : t('given_dir');
+                const directionClass = isReceived ? 'text-emerald-600 bg-emerald-50' : 'text-blue-600 bg-blue-50';
 
-            if (diffDays < 0) {
-                dueDateClass = 'text-rose-600 font-black';
-                dueDateIcon = '⚠️';
-                dueDateText = t('late_by', { days: Math.abs(diffDays) });
-            } else if (diffDays === 0) {
-                dueDateClass = 'text-rose-600 font-black';
-                dueDateIcon = '🔴';
-                dueDateText = t('today');
-            } else if (diffDays <= 3) {
-                dueDateClass = 'text-amber-600 font-black';
-                dueDateIcon = '🔔';
-                dueDateText = t('in_days', { days: diffDays });
-            } else if (diffDays <= 7) {
-                dueDateClass = 'text-orange-600';
-                dueDateIcon = '⏰';
-                dueDateText = t('in_days', { days: diffDays });
-            } else {
-                dueDateText = check.due_date ? formatDateSimple(check.due_date) : t('not_specified');
-            }
-        } else {
-            dueDateText = check.due_date ? formatDateSimple(check.due_date) : t('not_specified');
-        }
+                // Déterminer le statut
+                const isPending = check.status === 'pending' || !check.status;
+                const isPaid = check.status === 'paid';
+                const isCancelled = check.status === 'cancelled';
 
-        const amount = safeNum(check.amount || 0);
+                let statusClass = '';
+                let statusText = '';
 
-        // Construction de la carte
-        container.innerHTML += `
+                if (isPending) {
+                    statusClass = 'text-amber-600 bg-amber-50';
+                    statusText = t('pending');
+                } else if (isPaid) {
+                    statusClass = 'text-emerald-600 bg-emerald-50';
+                    statusText = t('paid');
+                } else if (isCancelled) {
+                    statusClass = 'text-rose-600 bg-rose-50';
+                    statusText = t('cancelled');
+                }
+
+                // Type de document (chèque ou billet à ordre)
+                const isCheck = check.type === 'شيك';
+                const typeText = isCheck ? t('check_word') : t('promissory');
+                const typeClass = isCheck ? 'bg-blue-100 text-blue-600' : 'bg-purple-100 text-purple-600';
+
+                // Nom du client/fournisseur
+                let clientName = check.client_name || t('unknown');
+
+                // Essayer d'obtenir le nom depuis les données liées
+                if (check.debt_type === 'invoice' && check.debt_id) {
+                    const invoice = allData.invoices?.find(i => String(i.id) === String(check.debt_id));
+                    if (invoice && invoice.customer) {
+                        clientName = invoice.customer;
+                    }
+                } else if (check.debt_type === 'expense' && check.debt_id) {
+                    const expense = allData.expenses?.find(e => String(e.id) === String(check.debt_id));
+                    if (expense && expense.supplier) {
+                        clientName = expense.supplier;
+                    }
+                }
+
+                // Vérifier la date d'échéance
+                let dueDateClass = '';
+                let dueDateIcon = '';
+                let dueDateText = '';
+
+                if (isPending && check.due_date) {
+                    const dueDate = new Date(check.due_date);
+                    dueDate.setHours(0, 0, 0, 0);
+
+                    const diffTime = dueDate - today;
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                    if (diffDays < 0) {
+                        dueDateClass = 'text-rose-600 font-black';
+                        dueDateIcon = '⚠️';
+                        dueDateText = t('late_by', { days: Math.abs(diffDays) });
+                    } else if (diffDays === 0) {
+                        dueDateClass = 'text-rose-600 font-black';
+                        dueDateIcon = '🔴';
+                        dueDateText = t('today');
+                    } else if (diffDays <= 3) {
+                        dueDateClass = 'text-amber-600 font-black';
+                        dueDateIcon = '🔔';
+                        dueDateText = t('in_days', { days: diffDays });
+                    } else if (diffDays <= 7) {
+                        dueDateClass = 'text-orange-600';
+                        dueDateIcon = '⏰';
+                        dueDateText = t('in_days', { days: diffDays });
+                    } else {
+                        dueDateText = check.due_date ? formatDateSimple(check.due_date) : t('not_specified');
+                    }
+                } else {
+                    dueDateText = check.due_date ? formatDateSimple(check.due_date) : t('not_specified');
+                }
+
+                const amount = safeNum(check.amount || 0);
+
+                // Construction de la carte
+                container.innerHTML += `
         <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all ${dueDateClass ? 'border-r-4 border-amber-400' : ''}">
             <div class="flex justify-between items-start mb-3">
                 <div class="flex-1">
@@ -9310,8 +9314,8 @@
                 </div>
             </div>
         </div>`;
-    });
-}
+            });
+        }
 
         // دالة تأكيد صرف شيك/كمبيالة
         function confirmCashing(id) {
@@ -10876,6 +10880,29 @@
                     </div>
                 `;
             } else {
+                if (currentDebtClient.type === 'customer') {
+                    container.innerHTML += `
+                        <div class="bg-slate-900 p-4 rounded-2xl shadow-sm flex justify-between items-center mb-4 text-white">
+                        <div class="bg-slate-900 p-4 rounded-2xl shadow-sm flex flex-col md:flex-row justify-between items-center gap-3 mb-4 text-white">
+                            <div>
+                                <p class="text-[10px] text-slate-400 font-bold mb-1">إجمالي الدين المتبقي</p>
+                                <p class="font-black text-xl text-rose-400">${formatCurrency(totalDebt)}</p>
+                            </div>
+                            <button onclick="openSettleAllDebtsModal()" class="bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-black shadow-lg hover:bg-emerald-600 transition-all flex items-center gap-2">
+                                <i class="fas fa-check-double"></i> تسديد كلي وطباعة
+                            </button>
+                            <div class="flex flex-wrap gap-2 w-full md:w-auto">
+                                <button onclick="downloadDetailedDebtsInvoice('${currentDebtClient.id}', '${currentDebtClient.name}')" class="flex-1 md:flex-none bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-black shadow-lg hover:bg-blue-700 transition-all flex items-center justify-center gap-2">
+                                    <i class="fas fa-file-invoice"></i> تحميل كشف مفصل
+                                </button>
+                                <button onclick="openSettleAllDebtsModal()" class="flex-1 md:flex-none bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-black shadow-lg hover:bg-emerald-600 transition-all flex items-center justify-center gap-2">
+                                    <i class="fas fa-check-double"></i> تسديد كلي
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+
                 debts.forEach(d => {
                     const debtId = d.id;
                     const date = d.date;
@@ -12674,12 +12701,12 @@
             clearTimeout(globalSearchTimeout);
             globalSearchTimeout = setTimeout(() => {
                 const q = document.getElementById('tableSearch').value.trim().toLowerCase();
-                
+
                 const fInvs = getFilteredData(allData.invoices);
                 const fExps = getFilteredData(allData.expenses);
                 renderInvoices(fInvs, q);
                 renderExpenses(fExps, q);
-                
+
                 document.querySelectorAll('tbody tr, #usersList > div, #customerDebtsList > div, #supplierDebtsList > div, #paymentsContainer > div').forEach(el => {
                     el.style.display = el.innerText.toLowerCase().includes(q) ? '' : 'none';
                 });
