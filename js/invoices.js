@@ -395,7 +395,7 @@
                     method: inv.payment_method,
                     reference: inv.payment_reference || '',
                     amount: inv.paid,
-                    description: 'دفعة أولية - فاتورة ' + inv.id,
+                    description: t('initial_payment_invoice', { id: inv.id }),
                     debt_id: inv.id,
                     debt_type: 'invoice',
                     created_at: new Date().toISOString().split('T')[0]
@@ -1779,7 +1779,7 @@
                             method: serviceData.payment_method,
                             reference: serviceData.payment_reference,
                             amount: safeNum(serviceData.paid),
-                            description: 'دفعة أولية - فاتورة ' + serviceData.id,
+                            description: t('initial_payment_invoice', { id: serviceData.id }),
                             debt_id: serviceData.id,
                             debt_type: 'invoice',
                             created_at: new Date().toISOString().split('T')[0]
