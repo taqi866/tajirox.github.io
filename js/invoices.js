@@ -337,6 +337,7 @@
             }
 
             // 4. Gestion des chèques (même logique que précédemment)
+            let newCheck = null;
             if (inv.payment_method === 'شيك' || inv.payment_method === 'كمبيالة') {
                 if (allData.checks_promissory && allData.checks_promissory.length > 0) {
                     const avant = allData.checks_promissory.length;
@@ -350,7 +351,7 @@
                 }
                 if (inv.paid > 0) {
                     console.log('🆕 Création d\'un nouveau chèque pour facture:', inv.id);
-                    const newCheck = {
+                    newCheck = {
                         id: 'CHK-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
                         reference: inv.payment_reference || '',
                         type: inv.payment_method,
@@ -450,6 +451,17 @@
                     setTimeout(() => refreshData(), 2000);
                 })
                 .saveInvoice(inv, existingInvoiceIndex !== -1, currentDbId);
+
+            if (newCheck) {
+                google.script.run
+                    .withSuccessHandler(() => {
+                        console.log('✅ Synchronisation serveur réussie pour chèque/traite de facture:', newCheck.id);
+                    })
+                    .withFailureHandler((e) => {
+                        console.error('❌ Échec synchronisation chèque/traite de facture:', e);
+                    })
+                    .saveCheckPromissory(newCheck, currentDbId);
+            }
 
             setTimeout(() => setBtnLoading(saveBtn, false), 1000);
             closeModal('invoiceModal');
@@ -1718,6 +1730,8 @@
                 return showToast(t('fill_fields_error'), 'error');
             }
 
+            let serviceCheckRec = null;
+
             setBtnLoading(saveBtn, true, t('saving'));
             performOptimisticAction('invoices', serviceData, false,
                 () => {
@@ -1733,7 +1747,7 @@
                         );
                     }
                     if ((serviceData.payment_method === 'شيك' || serviceData.payment_method === 'كمبيالة') && safeNum(serviceData.paid) > 0) {
-                        const newCheck = {
+                        serviceCheckRec = {
                             id: 'CHK-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
                             reference: serviceData.payment_reference || '',
                             type: serviceData.payment_method,
@@ -1746,7 +1760,7 @@
                             debt_type: 'invoice'
                         };
                         if (!allData.checks_promissory) allData.checks_promissory = [];
-                        allData.checks_promissory.unshift(newCheck);
+                        allData.checks_promissory.unshift(serviceCheckRec);
                     }
 
                     // 2. تنظيف وإضافة الدفعات
@@ -1757,7 +1771,6 @@
                     }
                     if (safeNum(serviceData.paid) > 0) {
                         const payRec = {
-                            id: 'PAY-' + Date.now(),
                             id: 'PAY-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
                             date: serviceData.date,
                             type: 'customer',
@@ -1774,16 +1787,6 @@
                         if (!allData.payments) allData.payments = [];
                         allData.payments.unshift(payRec);
                         if (!document.getElementById('page-payments').classList.contains('hidden')) renderPayments();
-
-                        // إضافة إلى سجل الشيكات والكمبيالات
-                        if (serviceData.payment_method === 'شيك' || serviceData.payment_method === 'كمبيالة') {
-                            addToChecksPromissory(
-                                { method: serviceData.payment_method, reference: serviceData.payment_reference, amount: serviceData.paid, date: serviceData.date, due_date: serviceData.due_date },
-                                serviceData.customer,
-                                serviceData.id,
-                                'invoice'
-                            );
-                        }
                     }
 
                     // 3. تحديث الواجهات
@@ -1793,6 +1796,9 @@
                     if (!document.getElementById('page-payments').classList.contains('hidden')) renderPayments();
                     if (!document.getElementById('page-checks-promissory').classList.contains('hidden')) renderChecksPromissory();
 
+                    // تحديث التنبيهات
+                    checkDueDateAlerts();
+
                     // ========== إضافة الطباعة التلقائية لفاتورة الخدمة ==========
                     if (currentUser && currentUser.invoiceSize === 'Thermal') {
                         console.log('🖨️ تفعيل الطباعة التلقائية الحرارية لفاتورة الخدمة:', serviceData.id);
@@ -1800,7 +1806,15 @@
                     }
                     // ========== نهاية الطباعة التلقائية ==========
                 },
-                (runner) => runner.saveInvoice(serviceData, isEditing, currentDbId)
+                (runner) => {
+                    runner.saveInvoice(serviceData, isEditing, currentDbId);
+                    if (serviceCheckRec) {
+                        google.script.run
+                            .withSuccessHandler(() => console.log('✅ Synchronisation chèque réussie pour facture service:', serviceData.id))
+                            .withFailureHandler((e) => console.error('❌ Échec chèque service', e))
+                            .saveCheckPromissory(serviceCheckRec, currentDbId);
+                    }
+                }
             );
             setTimeout(() => setBtnLoading(saveBtn, false), 1000);
             closeModal('serviceModal');
@@ -1945,4 +1959,4 @@
             const printWindow = window.open('', '_blank');
             printWindow.document.write(html);
             printWindow.document.close();
-        }
+        }
