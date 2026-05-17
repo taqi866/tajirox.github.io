@@ -1,3 +1,31 @@
+        function getNextInvoiceId(type) {
+            const currentYear = new Date().getFullYear();
+            const targetType = type === 'خدمة' ? 'خدمة' : 'بيع';
+            
+            // Filter invoices by type
+            const invoices = (allData && allData.invoices) ? allData.invoices.filter(inv => inv.type === targetType) : [];
+            
+            let maxCounter = 0;
+            
+            invoices.forEach(inv => {
+                const idStr = String(inv.id); // e.g. "0012.2026"
+                const parts = idStr.split('.');
+                if (parts.length === 2) {
+                    const counter = parseInt(parts[0], 10);
+                    const year = parseInt(parts[1], 10);
+                    if (!isNaN(counter) && year === currentYear) {
+                        if (counter > maxCounter) {
+                            maxCounter = counter;
+                        }
+                    }
+                }
+            });
+            
+            const nextCounter = maxCounter + 1;
+            const paddedCounter = String(nextCounter).padStart(4, '0');
+            return `${paddedCounter}.${currentYear}`;
+        }
+
         function toggleDiscountType() {
             const btn = document.getElementById('discountTypeBtn');
             const input = document.getElementById('discountType');
@@ -138,7 +166,7 @@
             cart = [];
             isEditingInvoice = false;
             document.getElementById('invoiceModalMainTitle').innerText = t('create_invoice_title');
-            const invoiceNumber = Date.now().toString().slice(-6);
+            const invoiceNumber = getNextInvoiceId('بيع');
             document.getElementById('invAutoId').innerText = 'INV-' + invoiceNumber;
             document.getElementById('iDate').value = new Date().toISOString().split('T')[0];
 
@@ -1570,6 +1598,7 @@
 
             if (inv) {
                 document.getElementById('serviceId').value = inv.id;
+                document.getElementById('serviceAutoId').innerText = 'SERV-' + inv.id;
                 document.getElementById('serviceDate').value = inv.date;
                 document.getElementById('serviceDescription').value = inv.description || (inv.items && inv.items[0] ? inv.items[0].name : '');
 
@@ -1604,7 +1633,9 @@
                 toggleServiceDueDateField();
 
             } else {
-                document.getElementById('serviceId').value = '';
+                const serviceNumber = getNextInvoiceId('خدمة');
+                document.getElementById('serviceId').value = serviceNumber;
+                document.getElementById('serviceAutoId').innerText = 'SERV-' + serviceNumber;
                 document.getElementById('serviceDate').value = new Date().toISOString().split('T')[0];
                 customerSelect.value = '';
                 customerInput.value = '';
@@ -1651,7 +1682,7 @@
             }
 
             const id = document.getElementById('serviceId').value;
-            const isEditing = !!id;
+            const isEditing = allData.invoices.some(i => String(i.id) === String(id));
 
             const serviceDescription = document.getElementById('serviceDescription').value.trim();
             const serviceAmount = safeNum(document.getElementById('serviceAmount').value);
@@ -1914,4 +1945,4 @@
             const printWindow = window.open('', '_blank');
             printWindow.document.write(html);
             printWindow.document.close();
-        }
+        }
