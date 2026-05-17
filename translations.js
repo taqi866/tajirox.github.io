@@ -643,7 +643,9 @@ free_trial_title: " استفد من نسخة مجانية لمدة 14 يوم ",
                 delete_msg: "هل أنت متأكد من الحذف؟",
                 amount: "المبلغ",
                 description: "ملاحظات",
-                delete_success: "تم الحذف بنجاح"
+                delete_success: "تم الحذف بنجاح",
+                initial_payment_invoice: "دفعة أولية - فاتورة {id}",
+                initial_payment_expense: "دفعة أولية - مصروف: {category}"
             },
             fr: {
                 // Dashboard Checks
@@ -1339,6 +1341,8 @@ free_trial_title: " استفد من نسخة مجانية لمدة 14 يوم ",
                 delete_msg: "Êtes-vous sûr de vouloir supprimer ?",
                 amount: "Montant",
                 description: "Notes",
-                delete_success: "Supprimé avec succès"
+                delete_success: "Supprimé avec succès",
+                initial_payment_invoice: "Acompte - Facture {id}",
+                initial_payment_expense: "Acompte - Dépense : {category}"
             }
         };
