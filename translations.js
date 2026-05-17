@@ -1245,7 +1245,7 @@ free_trial_title: " استفد من نسخة مجانية لمدة 14 يوم ",
                 cert_valid_to: "Au",
                 cert_ref: "Réf Certificat",
                 cert_footer: "Ce certificat est un document électronique approuvé",
-                system_features_btn: "Découvrir les fonctions du système"
+                system_features_btn: "Découvrir les fonctionnalités du système"
                 , send_custom_email: "Envoyer un e-mail personnalisé",
                 custom_email_title: "Envoyer un e-mail personnalisé",
                 select_shop: "Sélectionner un magasin",
