@@ -269,7 +269,7 @@
                     method: exp.method,
                     reference: exp.payment_reference || '',
                     amount: exp.paid,
-                    description: 'دفعة أولية - مصروف: ' + (exp.description || exp.category),
+                    description: t('initial_payment_expense', { category: (exp.description || exp.category) }),
                     debt_id: exp.id,
                     debt_type: 'expense',
                     created_at: new Date().toISOString().split('T')[0]
