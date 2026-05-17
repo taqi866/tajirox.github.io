@@ -965,7 +965,7 @@
             if (searchVal) {
                 allMovements = allMovements.filter(m => 
                     (m.client_name && m.client_name.toLowerCase().includes(searchVal)) || 
-                    (m.description && m.description.toLowerCase().includes(searchVal)) ||
+                    (m.description && translatePaymentDescription(m.description).toLowerCase().includes(searchVal)) ||
                     (m.id && m.id.toLowerCase().includes(searchVal))
                 );
             }
@@ -1038,7 +1038,7 @@
                             <div>
                                 <h4 class="font-black text-slate-800 text-sm">${title}</h4>
                                 <p class="text-[10px] text-slate-400">${subtitle} • ${m.date}</p>
-                                ${m.description ? `<p class="text-[9px] text-slate-500 mt-1 italic">${m.description}</p>` : ''}
+                                ${m.description ? `<p class="text-[9px] text-slate-500 mt-1 italic">${translatePaymentDescription(m.description)}</p>` : ''}
                             </div>
                         </div>
                         <div class="text-right">
@@ -1537,4 +1537,4 @@
             if (typeof filterChecks === 'function') {
                 filterChecks();
             }
-        }
+        }
