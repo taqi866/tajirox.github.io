@@ -599,7 +599,8 @@ free_trial_title: " استفد من نسخة مجانية لمدة 14 يوم ",
                 cert_valid_from: "صالح من",
                 cert_valid_to: "إلى غاية",
                 cert_ref: "رقم الشهادة",
-                cert_footer: "هذه الشهادة وثيقة إلكترونية معتمدة من النظام"
+                cert_footer: "هذه الشهادة وثيقة إلكترونية معتمدة من النظام",
+                system_features_btn: "إكتشف وظائف النظام"
                 , send_custom_email: "إرسال بريد مخصص",
                 custom_email_title: "إرسال بريد إلكتروني مخصص",
                 select_shop: "اختر المحل",
@@ -1243,7 +1244,8 @@ free_trial_title: " استفد من نسخة مجانية لمدة 14 يوم ",
                 cert_valid_from: "Valide du",
                 cert_valid_to: "Au",
                 cert_ref: "Réf Certificat",
-                cert_footer: "Ce certificat est un document électronique approuvé"
+                cert_footer: "Ce certificat est un document électronique approuvé",
+                system_features_btn: "Découvrir les fonctions du système"
                 , send_custom_email: "Envoyer un e-mail personnalisé",
                 custom_email_title: "Envoyer un e-mail personnalisé",
                 select_shop: "Sélectionner un magasin",
