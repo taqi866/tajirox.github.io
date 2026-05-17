@@ -48,6 +48,26 @@
             return text;
         }
 
+        function translatePaymentDescription(desc) {
+            if (!desc) return '';
+            if (currentLang === 'fr') {
+                if (desc.startsWith('دفعة أولية - فاتورة ')) {
+                    return desc.replace('دفعة أولية - فاتورة ', 'Acompte - Facture ');
+                }
+                if (desc.startsWith('دفعة أولية - مصروف: ')) {
+                    return desc.replace('دفعة أولية - مصروف: ', 'Acompte - Dépense : ');
+                }
+            } else { // 'ar'
+                if (desc.startsWith('Acompte - Facture ')) {
+                    return desc.replace('Acompte - Facture ', 'دفعة أولية - فاتورة ');
+                }
+                if (desc.startsWith('Acompte - Dépense : ')) {
+                    return desc.replace('Acompte - Dépense : ', 'دفعة أولية - مصروف: ');
+                }
+            }
+            return desc;
+        }
+
         function changeLanguage(lang) {
             if (lang !== 'ar' && lang !== 'fr') lang = 'ar';
             currentLang = lang;
@@ -57,6 +77,7 @@
 
         window.changeLanguage = changeLanguage;
         window.toggleHeroFeatures = toggleHeroFeatures;
+        window.translatePaymentDescription = translatePaymentDescription;
 
         function toggleLanguage() {
             changeLanguage(currentLang === 'ar' ? 'fr' : 'ar');
@@ -491,4 +512,4 @@
             setTimeout(() => {
                 generateAndPrintInvoice(invoiceId, 'Thermal', thermalWidth);
             }, 500);
-        }
+        }
