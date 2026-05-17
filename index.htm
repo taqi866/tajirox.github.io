@@ -32,6 +32,14 @@
         <!-- القسم الأيمن (معلومات ترويجية وجذابة) -->
 <div
     class="flex flex-col w-full min-h-screen lg:min-h-0 lg:flex lg:w-1/2 bg-blue-600 relative items-center justify-center p-6 lg:p-12 text-white overflow-hidden">
+    <!-- Language Switcher in Hero -->
+    <div class="absolute top-4 right-4 z-30 flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20 shadow-md">
+        <button onclick="changeLanguage('ar')"
+            class="text-[10px] font-black text-white hover:text-amber-300 transition-colors uppercase">Ar</button>
+        <span class="text-white/20 text-[10px]">|</span>
+        <button onclick="changeLanguage('fr')"
+            class="text-[10px] font-black text-white hover:text-amber-300 transition-colors uppercase">Fr</button>
+    </div>
     <div
         class="absolute inset-0 z-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1556742049-0cfed4f7a07d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80')] bg-cover bg-center">
     </div>
@@ -57,7 +65,14 @@
     <p class="text-white font-black text-base lg:text-lg mb-1" data-i18n="free_trial_title"> استفد من نسخة مجانية لمدة 14 يوم </p>
 </div>
 
-        <div class="grid grid-cols-2 gap-3 lg:gap-4 mb-8 lg:mb-0">
+        <!-- زر وظائف النظام -->
+        <button id="showFeaturesBtn" onclick="toggleHeroFeatures()"
+            class="flex items-center justify-center gap-2 mx-auto lg:mx-0 bg-white/10 hover:bg-white/20 active:scale-95 border border-white/20 text-white font-black text-xs py-3 px-5 rounded-2xl transition-all duration-300 mb-6 shadow-md">
+            <i id="featuresBtnIcon" class="fas fa-th"></i>
+            <span id="featuresBtnText" data-i18n="system_features_btn">إكتشف وظائف النظام</span>
+        </button>
+
+        <div id="heroFeaturesGrid" class="grid grid-cols-2 gap-3 lg:gap-4 mb-8 lg:mb-0 hidden">
 
             <!-- إدارة المخزون -->
             <div
@@ -106,7 +121,7 @@
                 <i class="fas fa-wallet text-rose-400 text-xl mb-2"></i>
                 <h3 class="font-bold text-xs lg:text-sm" data-i18n="hero_expenses_manage">إدارة المصاريف</h3>
                 <p class="text-[9px] lg:text-[10px] text-blue-200 mt-1" data-i18n="hero_expenses_manage_desc">
-                    تتبع ومراقبة المصروفات
+                    تتبع ومراقبة المصروفات بدقة
                 </p>
             </div>
 
@@ -116,7 +131,7 @@
                 <i class="fas fa-money-check-alt text-emerald-400 text-xl mb-2"></i>
                 <h3 class="font-bold text-xs lg:text-sm" data-i18n="hero_checks_manage">إدارة الشيكات والكمبيالات</h3>
                 <p class="text-[9px] lg:text-[10px] text-blue-200 mt-1" data-i18n="hero_checks_manage_desc">
-                    متابعة تواريخ الاستحقاق
+                    متابعة تواريخ الاستحقاق والصرف
                 </p>
             </div>
         </div>
@@ -142,7 +157,7 @@
             <div class="w-full max-w-md">
                 <div class="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-xl border border-slate-100">
                     <!-- Language Switcher Top -->
-                    <div class="flex justify-end gap-3 mb-2">
+                    <div class="flex justify-end gap-3 mb-2 hidden">
                         <button onclick="changeLanguage('ar')"
                             class="text-[10px] font-black text-slate-400 hover:text-blue-600 transition-colors uppercase">Ar</button>
                         <span class="text-slate-200 text-[10px]">|</span>
