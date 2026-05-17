@@ -54,6 +54,22 @@
             changeLanguage(currentLang === 'ar' ? 'fr' : 'ar');
         }
 
+        function toggleHeroFeatures() {
+            const grid = document.getElementById('heroFeaturesGrid');
+            const icon = document.getElementById('featuresBtnIcon');
+            if (grid) {
+                if (grid.classList.contains('hidden')) {
+                    grid.classList.remove('hidden');
+                    grid.classList.add('grid');
+                    if (icon) icon.className = 'fas fa-chevron-up';
+                } else {
+                    grid.classList.add('hidden');
+                    grid.classList.remove('grid');
+                    if (icon) icon.className = 'fas fa-th';
+                }
+            }
+        }
+
         function updateUI() {
             // Update HTML dir and lang
             document.documentElement.lang = currentLang;
@@ -467,4 +483,4 @@
             setTimeout(() => {
                 generateAndPrintInvoice(invoiceId, 'Thermal', thermalWidth);
             }, 500);
-        }
+        }
