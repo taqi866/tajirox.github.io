@@ -424,7 +424,7 @@
             checkDueDateAlerts();
             checkLowStockAlert();
 
-            showToast('✅ تم حفظ الفاتورة محلياً', 'success');
+            showToast(t('invoice_saved_locally'), 'success');
 
             // Impression automatique si configurée
             if (currentUser && currentUser.invoiceSize === 'Thermal') {
