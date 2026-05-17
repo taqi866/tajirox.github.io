@@ -201,6 +201,7 @@
             }
 
             // 3. [--- GESTION DES CHÈQUES - SOLUTION FINALE ---]
+            let newCheckRec = null;
             if (exp.method === 'شيك' || exp.method === 'كمبيالة') {
 
                 // ÉTAPE 1: Supprimer TOUS les anciens chèques associés à cette dépense
@@ -218,7 +219,7 @@
                 // ÉTAPE 2: Créer un NOUVEAU chèque (UN SEUL) si un montant est payé
                 if (exp.paid > 0) {
                     console.log('🆕 Création d\'un nouveau chèque pour dépense:', exp.id);
-                    const newCheck = {
+                    newCheckRec = {
                         id: 'CHK-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
                         reference: exp.payment_reference || '',
                         type: exp.method,
@@ -232,7 +233,7 @@
                     };
 
                     if (!allData.checks_promissory) allData.checks_promissory = [];
-                    allData.checks_promissory.unshift(newCheck);
+                    allData.checks_promissory.unshift(newCheckRec);
                 }
 
             } else {
@@ -310,6 +311,17 @@
                     setTimeout(() => refreshData(), 2000);
                 })
                 .saveExpense(exp, existingExpenseIndex !== -1, currentDbId);
+
+            if (newCheckRec) {
+                google.script.run
+                    .withSuccessHandler(() => {
+                        console.log('✅ Synchronisation serveur réussie pour chèque/traite de dépense:', newCheckRec.id);
+                    })
+                    .withFailureHandler((e) => {
+                        console.error('❌ Échec synchronisation chèque/traite de dépense:', e);
+                    })
+                    .saveCheckPromissory(newCheckRec, currentDbId);
+            }
 
             setTimeout(() => setBtnLoading(saveBtn, false), 1000);
             closeModal('expenseModal');
@@ -768,4 +780,4 @@
             </div>
         </div>
     `;
-        }
+        }
