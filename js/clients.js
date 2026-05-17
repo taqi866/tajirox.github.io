@@ -1111,7 +1111,7 @@
 
                     // البحث في معلومات الدفع
                     const paymentReference = payment.reference ? payment.reference.toLowerCase() : '';
-                    const paymentDescription = payment.description ? payment.description.toLowerCase() : '';
+                    const paymentDescription = payment.description ? translatePaymentDescription(payment.description).toLowerCase() : '';
                     const paymentMethod = payment.method ? payment.method.toLowerCase() : '';
                     const paymentId = payment.id ? payment.id.toLowerCase() : '';
 
@@ -1125,7 +1125,7 @@
                         paymentId.includes(searchTerm) ||
                         (payment.debt_id && payment.debt_id.toLowerCase().includes(searchTerm)) ||
                         // البحث باسم المنتج إذا كان موجوداً في الوصف
-                        payment.description.toLowerCase().includes(searchTerm)
+                        translatePaymentDescription(payment.description).toLowerCase().includes(searchTerm)
                     );
                 });
             }
@@ -1200,7 +1200,7 @@
                     
                     <div class="mb-3">
                         <p class="text-[9px] text-slate-400 font-bold mb-1">${t('description_placeholder')}</p>
-                        <p class="text-xs text-slate-600">${payment.description || t('none')}</p>
+                        <p class="text-xs text-slate-600">${translatePaymentDescription(payment.description) || t('none')}</p>
                     </div>
                     
                     <div class="flex justify-between items-center">
@@ -1316,7 +1316,7 @@
             
             <div class="mb-3">
                 <p class="text-[9px] text-slate-400 font-bold mb-1">${t('description_placeholder')}</p>
-                <p class="text-xs text-slate-600">${payment.description || t('none')}</p>
+                <p class="text-xs text-slate-600">${translatePaymentDescription(payment.description) || t('none')}</p>
             </div>
             
             <div class="flex justify-between items-center">
@@ -1741,4 +1741,4 @@
                     reference: paymentReference,
                     description: paymentDescription
                 }, checkAction, checkDataToSave, currentDbId);
-        }
+        }
