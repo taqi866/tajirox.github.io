@@ -36,19 +36,19 @@
                 class="absolute inset-0 z-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1556742049-0cfed4f7a07d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80')] bg-cover bg-center">
             </div>
             <div class="absolute inset-0 bg-gradient-to-br from-blue-600 to-indigo-900 z-10 opacity-90"></div>
+            <!-- Absolute Language Switcher at the top of Hero section -->
+            <div class="absolute top-6 start-6 lg:start-12 z-30">
+                <div class="flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20 shadow-md">
+                    <button onclick="changeLanguage('ar')"
+                        class="text-[10px] font-black text-white hover:text-amber-300 transition-colors uppercase">Ar</button>
+                    <span class="text-white/20 text-[10px]">|</span>
+                    <button onclick="changeLanguage('fr')"
+                        class="text-[10px] font-black text-white hover:text-amber-300 transition-colors uppercase">Fr</button>
+                </div>
+            </div>
 
             <div class="relative z-20 max-w-lg text-center lg:ltr:text-left lg:rtl:text-right w-full">
-                <!-- Language Switcher in Hero -->
-                <div class="flex justify-center lg:justify-start mb-6">
-                    <div class="flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20 shadow-md">
-                        <button onclick="changeLanguage('ar')"
-                            class="text-[10px] font-black text-white hover:text-amber-300 transition-colors uppercase">Ar</button>
-                        <span class="text-white/20 text-[10px]">|</span>
-                        <button onclick="changeLanguage('fr')"
-                            class="text-[10px] font-black text-white hover:text-amber-300 transition-colors uppercase">Fr</button>
-                    </div>
-                </div>
-
+                
                 <div
                     class="w-16 h-16 lg:w-20 lg:h-20 mx-auto lg:mx-0 bg-white/15 backdrop-blur-md rounded-2xl flex items-center justify-center mb-6 lg:mb-8 shadow-2xl border border-white/30 hover:scale-105 transition-transform duration-300">
                     <i class="fas fa-store-alt text-white text-3xl lg:text-4xl drop-shadow-lg"></i>
@@ -383,9 +383,13 @@
                 </div>
                 <div class="flex items-center gap-2">
                     <!-- Language Switcher Header -->
-                    <button onclick="toggleLanguage()"
-                        class="w-9 h-9 bg-slate-50 text-slate-600 rounded-xl flex items-center justify-center hover:bg-slate-100 transition-all font-bold text-xs"
-                        id="headerLangBtn">FR</button>
+                    <div class="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-100 shadow-sm">
+                        <button onclick="changeLanguage('ar')"
+                            class="text-[10px] font-black text-slate-400 hover:text-blue-600 transition-colors uppercase">Ar</button>
+                        <span class="text-slate-200 text-[10px]">|</span>
+                        <button onclick="changeLanguage('fr')"
+                            class="text-[10px] font-black text-slate-400 hover:text-blue-600 transition-colors uppercase">Fr</button>
+                    </div>
 
                     <!-- زر تنبيهات المخزون -->
                     <button id="lowStockAlertBtn" onclick="showPage('inventory'); filterInventory('critical')"
