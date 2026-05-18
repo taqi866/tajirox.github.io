@@ -56,23 +56,29 @@
             const btn = document.getElementById('requestRenewalBtn');
             setBtnLoading(btn, true, t('sending'));
 
-            google.script.run.withSuccessHandler(res => {
-                setBtnLoading(btn, false);
-                if (res.success) {
-                    document.getElementById('renewalSection').classList.add('hidden');
-                    
-                    // تحديث رسالة التأكيد ديناميكياً بناءً على نوع الحساب
-                    const sentMsgSpan = document.querySelector('#renewalSentMessage span');
-                    if (sentMsgSpan) {
-                        sentMsgSpan.innerText = currentUser.isTrial ? (t('activation_sent_msg') || "تم إرسال طلب التفعيل بنجاح. سيتم التواصل معك قريباً لإتمام العملية.") : t('renewal_sent_msg');
+            google.script.run
+                .withSuccessHandler(res => {
+                    setBtnLoading(btn, false);
+                    if (res.success) {
+                        document.getElementById('renewalSection').classList.add('hidden');
+                        
+                        // تحديث رسالة التأكيد ديناميكياً بناءً على نوع الحساب
+                        const sentMsgSpan = document.querySelector('#renewalSentMessage span');
+                        if (sentMsgSpan) {
+                            sentMsgSpan.innerText = currentUser.isTrial ? (t('activation_sent_msg') || "تم إرسال طلب التفعيل بنجاح. سيتم التواصل معك قريباً لإتمام العملية.") : t('renewal_sent_msg');
+                        }
+                        
+                        document.getElementById('renewalSentMessage').classList.remove('hidden');
+                        showToast(currentUser.isTrial ? (t('activation_request_sent') || "تم إرسال طلب التفعيل بنجاح. سيظهر زر التفعيل لدى المشرف.") : t('renewal_request_sent'));
+                    } else {
+                        showToast(t('op_failed') + ': ' + res.message, 'error');
                     }
-                    
-                    document.getElementById('renewalSentMessage').classList.remove('hidden');
-                    showToast(currentUser.isTrial ? (t('activation_request_sent') || "تم إرسال طلب التفعيل بنجاح. سيظهر زر التفعيل لدى المشرف.") : t('renewal_request_sent'));
-                } else {
-                    showToast(t('op_failed') + ': ' + res.message, 'error');
-                }
-            }).requestShopRenewal(currentUser.shopName, currentUser.username, currentUser.email);
+                })
+                .withFailureHandler(err => {
+                    setBtnLoading(btn, false);
+                    showToast(t('connection_error'), 'error');
+                })
+                .requestShopRenewal(currentUser.shopName, currentUser.username, currentUser.email);
         }
 
         function openCustomEmailModal() {
@@ -102,9 +108,13 @@
                 return;
             }
 
+            const btn = document.getElementById('sendCustomEmailBtn');
+            setBtnLoading(btn, true, t('sending'));
+
             // Call the Apps Script function to send the email
             google.script.run
                 .withSuccessHandler(result => {
+                    setBtnLoading(btn, false);
                     if (result.success) {
                         showToast(t(result.message) || "تم إرسال البريد الإلكتروني بنجاح");
                         closeModal('customEmailModal');
@@ -112,7 +122,10 @@
                         showToast("فشل إرسال البريد الإلكتروني: " + result.message, 'error');
                     }
                 })
-                .withFailureHandler(error => showToast("حدث خطأ أثناء إرسال البريد الإلكتروني: " + error, 'error'))
+                .withFailureHandler(error => {
+                    setBtnLoading(btn, false);
+                    showToast("حدث خطأ أثناء إرسال البريد الإلكتروني: " + error, 'error');
+                })
                 .handleSendCustomEmail(shopCode, subject, body);
         }
 
@@ -147,7 +160,10 @@
             }
 
             document.getElementById('settingInvoiceDesign').value = currentUser.invoiceDesign || 'standard';
-            document.getElementById('settingInvoiceFooter').value = currentUser.invoiceFooter || '';
+            const footerInput = document.getElementById('settingInvoiceFooter');
+            if (footerInput) {
+                footerInput.value = currentUser.invoiceFooter || '';
+            }
 
             toggleInvoiceSettings();
             toggleBarcodeSettings();
@@ -170,7 +186,8 @@
 
             const invoiceColor = document.getElementById('settingInvoiceColor').value;
             const invoiceDesign = document.getElementById('settingInvoiceDesign').value;
-            const invoiceFooter = document.getElementById('settingInvoiceFooter').value.trim();
+            const footerInput = document.getElementById('settingInvoiceFooter');
+            const invoiceFooter = footerInput ? footerInput.value.trim() : '';
 
             // حفظ اللون في localStorage فوراً
             localStorage.setItem('invoiceColor', invoiceColor);
@@ -432,4 +449,4 @@
                 console.error(err);
                 showToast(t('error_generating_pdf'), 'error');
             });
-        }
+        }
