@@ -1,6 +1,6 @@
 // === PROXY GOOGLE APPS SCRIPT API ===
 // Remplacez cette URL par l'URL de votre Web App Google Apps Script
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxmx97O3ec98EGc82t4jUNyDk4X8xp4-GR5L-Uo75qufYkl7cbJrj10wPpeaZSuYTWZiQ/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwf4jYEAZgfRpE74fu1Ugv5VUxx0o_nTUPTzNsNtkqzTnG4XudFhqOK1sC616uLW7FnCQ/exec";
 
 window.google = {
     script: {
