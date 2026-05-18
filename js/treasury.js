@@ -662,8 +662,39 @@
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // Trier par date (plus récent d'abord)
-    filteredChecks.sort((a, b) => new Date(b.date) - new Date(a.date));
+    // ترتيب الشيكات والكمبيالات: النشطة (المعلقة) التي قرب تاريخ استحقاقها/صرفها أولاً في الأعلى، والأخرى (المدفوعة/الملغاة) في الأسفل
+    filteredChecks.sort((a, b) => {
+        const isPendingA = a.status === 'pending' || !a.status;
+        const isPendingB = b.status === 'pending' || !b.status;
+
+        // 1. الشيكات المعلقة لها الأولوية في الظهور بالأعلى
+        if (isPendingA && !isPendingB) return -1;
+        if (!isPendingA && isPendingB) return 1;
+
+        // 2. إذا كانت كلا الشيكين معلقين، نرتب حسب تاريخ الاستحقاق تصاعدياً (الأقرب تاريخ صرف أولاً)
+        if (isPendingA && isPendingB) {
+            const dateA = new Date(a.due_date || a.date);
+            const dateB = new Date(b.due_date || b.date);
+            const timeA = isNaN(dateA.getTime()) ? Infinity : dateA.getTime();
+            const timeB = isNaN(dateB.getTime()) ? Infinity : dateB.getTime();
+            
+            if (timeA !== timeB) return timeA - timeB;
+            
+            // ترتيب فرعي: تاريخ الإصدار الأحدث أولاً
+            const issueA = new Date(a.date);
+            const issueB = new Date(b.date);
+            const issueTimeA = isNaN(issueA.getTime()) ? Infinity : issueA.getTime();
+            const issueTimeB = isNaN(issueB.getTime()) ? Infinity : issueB.getTime();
+            return issueTimeB - issueTimeA;
+        }
+
+        // 3. إذا كانت كلا الشيكين غير معلقين (مدفوع أو ملغي)، نرتب تنازلياً حسب تاريخ الاستحقاق (الأحدث أولاً في الأسفل)
+        const dateA = new Date(a.due_date || a.date);
+        const dateB = new Date(b.due_date || b.date);
+        const timeA = isNaN(dateA.getTime()) ? 0 : dateA.getTime();
+        const timeB = isNaN(dateB.getTime()) ? 0 : dateB.getTime();
+        return timeB - timeA;
+    });
 
     filteredChecks.forEach(check => {
         // Déterminer la direction (entrant/sortant)
@@ -1537,4 +1568,4 @@
             if (typeof filterChecks === 'function') {
                 filterChecks();
             }
-        }
+        }
