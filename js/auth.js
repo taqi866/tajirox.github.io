@@ -244,7 +244,10 @@
                     document.getElementById('forgotStep1').classList.add('hidden');
                     document.getElementById('forgotStep2').classList.remove('hidden');
                     document.getElementById('otpInput').focus();
+                    
+                    const step2Msg = document.querySelector('#forgotStep2 p');
                     showToast(t('otp_sent'));
+                    if (step2Msg) step2Msg.innerText = t('otp_sent_msg');
                 } else { showToast(res.message, 'error'); }
             }).sendOtp(email, currentLang);
         }
@@ -325,4 +328,17 @@
                 setBtnLoading(btn, false);
                 showToast('حدث خطأ: ' + error, 'error');
             }
-        }
+        }
+
+        function togglePasswordVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (!input || !icon) return;
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fas fa-eye-slash text-sm';
+            } else {
+                input.type = 'password';
+                icon.className = 'fas fa-eye text-sm';
+            }
+        }
