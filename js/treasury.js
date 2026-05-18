@@ -731,7 +731,11 @@
 
         // Essayer d'obtenir le nom depuis les données liées
         if (check.debt_type === 'invoice' && check.debt_id) {
-            const invoice = allData.invoices?.find(i => String(i.id) === String(check.debt_id));
+            const invoice = allData.invoices?.find(i => 
+                String(i.id) === String(check.debt_id) || 
+                'INV-' + String(i.id) === String(check.debt_id) || 
+                String(i.id) === 'INV-' + String(check.debt_id)
+            );
             if (invoice && invoice.customer) {
                 clientName = invoice.customer;
             }
@@ -1272,7 +1276,11 @@
             // 1. العثور على الدين المرتبط (فاتورة أو مصروف)
             if (check.debt_id && check.debt_type) {
                 if (check.debt_type === 'invoice') {
-                    const invoice = allData.invoices.find(i => String(i.id) === String(check.debt_id));
+                    const invoice = allData.invoices.find(i => 
+                        String(i.id) === String(check.debt_id) || 
+                        'INV-' + String(i.id) === String(check.debt_id) || 
+                        String(i.id) === 'INV-' + String(check.debt_id)
+                    );
                     if (invoice) {
                         // إعادة المبلغ للدين
                         invoice.paid = safeNum(invoice.paid) - safeNum(check.amount);
