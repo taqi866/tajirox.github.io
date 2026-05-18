@@ -128,6 +128,11 @@
                 }
             }
 
+            // تهيئة الدخول ببصمة الوجه
+            if (typeof initBiometricUI === 'function') {
+                initBiometricUI();
+            }
+
             // ============================================
             // 7. Initialisation de QZ Tray (impression directe)
             // ============================================
@@ -288,4 +293,4 @@
         // تحديث عند تغيير حجم النافذة
         window.addEventListener('resize', function () {
             // لا حاجة لتغيير DOM هنا، CSS سيتكفل بالتحسينات
-        });
+        });
