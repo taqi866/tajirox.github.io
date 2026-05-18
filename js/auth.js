@@ -357,7 +357,15 @@
         // ==========================================
 
         function isBiometricSupported() {
-            return !!window.PublicKeyCredential;
+            const hasCredSupport = !!window.PublicKeyCredential;
+            
+            // تحقق صارم مما إذا كان الجهاز هاتفاً أو تابلت وليس كمبيوتر ديسك توب
+            const ua = navigator.userAgent.toLowerCase();
+            const isMobileOrTablet = /android|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(ua) ||
+                                     (/(ipad|tablet|(android(?!.*mobile))|(windows(?!.*phone)(.*touch))|kindle|playbook|silk)/i.test(ua)) ||
+                                     (('ontouchstart' in window || navigator.maxTouchPoints > 0) && window.innerWidth <= 1024);
+
+            return hasCredSupport && isMobileOrTablet;
         }
 
         async function initBiometricUI() {
@@ -365,14 +373,9 @@
             if (!faceIdBtn) return;
 
             if (isBiometricSupported()) {
-                const isEnrolled = localStorage.getItem('biometric_enrolled') === 'true';
-                if (isEnrolled) {
-                    faceIdBtn.classList.remove('hidden');
-                } else {
-                    faceIdBtn.classList.add('hidden');
-                }
+                faceIdBtn.classList.remove('hidden'); // يظهر دائماً على الهواتف والتابلت
             } else {
-                faceIdBtn.classList.add('hidden');
+                faceIdBtn.classList.add('hidden'); // يختفي على الكمبيوتر
             }
         }
 
@@ -380,14 +383,24 @@
         async function updateBiometricUIState() {
             const badge = document.getElementById('biometricStatusBadge');
             const btn = document.getElementById('btnToggleBiometric');
-            if (!badge || !btn) return;
-
+            const settingsCard = document.getElementById('biometricSettingsCard');
+            
             if (!isBiometricSupported()) {
-                badge.innerText = t('biometric_not_supported') || "غير مدعوم";
-                badge.className = "bg-rose-50 text-rose-600 px-3 py-1.5 rounded-full font-black text-[9px]";
-                btn.style.display = 'none';
+                if (settingsCard) {
+                    settingsCard.style.display = 'none'; // إخفاء الميزة تماماً من إعدادات الكمبيوتر
+                }
+                if (badge && btn) {
+                    badge.innerText = t('biometric_not_supported') || "غير مدعوم";
+                    badge.className = "bg-rose-50 text-rose-600 px-3 py-1.5 rounded-full font-black text-[9px]";
+                    btn.style.display = 'none';
+                }
                 return;
             }
+
+            if (settingsCard) {
+                settingsCard.style.display = 'block'; // التأكد من ظهوره على الهاتف والتابلت
+            }
+            if (!badge || !btn) return;
 
             const isEnrolled = localStorage.getItem('biometric_enrolled') === 'true';
             if (isEnrolled) {
@@ -517,7 +530,9 @@
             const dbId = localStorage.getItem('biometric_db_id');
 
             if (!u || !token || !dbId) {
-                if (isExplicit) showToast("لم يتم إعداد بصمة الجهاز لهذا الحساب", 'error');
+                if (isExplicit) {
+                    showToast(t('biometric_not_configured') || "لم يتم تفعيل بصمة الوجه (Face ID) لهذا المتجر بعد. يرجى تفعيلها من إعدادات المتجر بعد تسجيل الدخول.", 'info');
+                }
                 return;
             }
 
