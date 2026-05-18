@@ -201,6 +201,9 @@
                                 <input type="password" id="loginPass" onkeydown="if(event.key==='Enter') handleLogin()"
                                     placeholder="••••••••"
                                     class="w-full px-12 py-3.5 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500 outline-none font-bold text-slate-700 text-sm">
+                                <button onclick="togglePasswordVisibility('loginPass', 'eyeIconLogin')" class="absolute top-4 text-slate-300 hover:text-slate-500 transition-colors focus:outline-none left-4 rtl:left-4 rtl:right-auto ltr:right-4 ltr:left-auto z-10">
+                                    <i id="eyeIconLogin" class="fas fa-eye text-sm"></i>
+                                </button>
                             </div>
                         </div>
 
@@ -1478,10 +1481,15 @@
                 <input type="text" id="regPhone" placeholder="رقم الهاتف"
                     class="w-full p-3 bg-slate-50 rounded-xl border-none font-bold outline-none focus:ring-2 focus:ring-blue-500"
                     dir="ltr" data-i18n-placeholder="phone_placeholder">
-                <input type="password" id="regPass" onkeydown="if(event.key==='Enter') handleRegister()"
-                    placeholder="كلمة المرور"
-                    class="w-full p-3 bg-slate-50 rounded-xl border-none font-bold outline-none focus:ring-2 focus:ring-blue-500"
-                    data-i18n-placeholder="password">
+                <div class="relative">
+                    <input type="password" id="regPass" onkeydown="if(event.key==='Enter') handleRegister()"
+                        placeholder="كلمة المرور"
+                        class="w-full p-3 pl-12 pr-12 bg-slate-50 rounded-xl border-none font-bold outline-none focus:ring-2 focus:ring-blue-500"
+                        data-i18n-placeholder="password">
+                    <button onclick="togglePasswordVisibility('regPass', 'eyeIconReg')" class="absolute top-3.5 text-slate-300 hover:text-slate-500 transition-colors focus:outline-none left-4 rtl:left-4 rtl:right-auto ltr:right-4 ltr:left-auto z-10">
+                        <i id="eyeIconReg" class="fas fa-eye text-sm"></i>
+                    </button>
+                </div>
 
                 <div class="grid grid-cols-2 gap-2 pt-4">
                     <button onclick="closeModal('registerModal')"
@@ -1503,12 +1511,12 @@
                 data-i18n="recover_pass_title">استعادة كلمة المرور</h3>
 
             <div id="forgotStep1" class="space-y-4">
-                <p class="text-slate-500 text-[10px] font-bold text-center" data-i18n="recover_pass_desc">أدخل بريدك
-                    الإلكتروني المسجل لإرسال رمز التحقق</p>
+                <p class="text-slate-500 text-[10px] font-bold text-center" data-i18n="recover_pass_desc">أدخل بريدك الإلكتروني المسجل لإرسال رمز التحقق</p>
                 <input type="email" id="forgotEmailInput" onkeydown="if(event.key==='Enter') handleRequestOtp()"
                     placeholder="البريد الإلكتروني"
                     class="w-full p-3 bg-slate-50 rounded-xl border-none font-bold outline-none focus:ring-2 focus:ring-blue-500"
                     data-i18n-placeholder="email_placeholder">
+
                 <div class="grid grid-cols-2 gap-2 pt-2">
                     <button onclick="closeModal('forgotPassModal')"
                         class="py-3 bg-slate-100 rounded-xl font-black text-slate-400 text-xs"
@@ -1525,10 +1533,15 @@
                 <input type="text" id="otpInput" placeholder="رمز التحقق (6 أرقام)"
                     class="w-full p-3 bg-slate-50 rounded-xl border-none font-black text-center outline-none focus:ring-2 focus:ring-emerald-500"
                     maxlength="6" data-i18n-placeholder="otp_placeholder">
-                <input type="password" id="resetNewPassInput" onkeydown="if(event.key==='Enter') handleVerifyAndReset()"
-                    placeholder="كلمة المرور الجديدة"
-                    class="w-full p-3 bg-slate-50 rounded-xl border-none font-bold outline-none focus:ring-2 focus:ring-blue-500"
-                    data-i18n-placeholder="new_pass_placeholder">
+                <div class="relative">
+                    <input type="password" id="resetNewPassInput" onkeydown="if(event.key==='Enter') handleVerifyAndReset()"
+                        placeholder="كلمة المرور الجديدة"
+                        class="w-full p-3 pl-12 pr-12 bg-slate-50 rounded-xl border-none font-bold outline-none focus:ring-2 focus:ring-blue-500"
+                        data-i18n-placeholder="new_pass_placeholder">
+                    <button onclick="togglePasswordVisibility('resetNewPassInput', 'eyeIconReset')" class="absolute top-3.5 text-slate-300 hover:text-slate-500 transition-colors focus:outline-none left-4 rtl:left-4 rtl:right-auto ltr:right-4 ltr:left-auto z-10">
+                        <i id="eyeIconReset" class="fas fa-eye text-sm"></i>
+                    </button>
+                </div>
                 <div class="grid grid-cols-2 gap-2 pt-2">
                     <button onclick="closeModal('forgotPassModal')"
                         class="py-3 bg-slate-100 rounded-xl font-black text-slate-400 text-xs"
@@ -1548,13 +1561,23 @@
             <h3 class="text-lg font-black mb-6 text-slate-800 text-center" data-i18n="change_pass_title">تغيير كلمة
                 المرور</h3>
             <div class="space-y-4">
-                <input type="password" id="oldPassInput" placeholder="كلمة المرور الحالية"
-                    class="w-full p-3 bg-slate-50 rounded-xl border-none font-bold outline-none focus:ring-2 focus:ring-blue-500"
-                    data-i18n-placeholder="old_pass_placeholder">
-                <input type="password" id="newPassInput" onkeydown="if(event.key==='Enter') submitChangePass()"
-                    placeholder="كلمة المرور الجديدة"
-                    class="w-full p-3 bg-slate-50 rounded-xl border-none font-bold outline-none focus:ring-2 focus:ring-blue-500"
-                    data-i18n-placeholder="new_pass_placeholder">
+                <div class="relative">
+                    <input type="password" id="oldPassInput" placeholder="كلمة المرور الحالية"
+                        class="w-full p-3 pl-12 pr-12 bg-slate-50 rounded-xl border-none font-bold outline-none focus:ring-2 focus:ring-blue-500"
+                        data-i18n-placeholder="old_pass_placeholder">
+                    <button onclick="togglePasswordVisibility('oldPassInput', 'eyeIconOld')" class="absolute top-3.5 text-slate-300 hover:text-slate-500 transition-colors focus:outline-none left-4 rtl:left-4 rtl:right-auto ltr:right-4 ltr:left-auto z-10">
+                        <i id="eyeIconOld" class="fas fa-eye text-sm"></i>
+                    </button>
+                </div>
+                <div class="relative">
+                    <input type="password" id="newPassInput" onkeydown="if(event.key==='Enter') submitChangePass()"
+                        placeholder="كلمة المرور الجديدة"
+                        class="w-full p-3 pl-12 pr-12 bg-slate-50 rounded-xl border-none font-bold outline-none focus:ring-2 focus:ring-blue-500"
+                        data-i18n-placeholder="new_pass_placeholder">
+                    <button onclick="togglePasswordVisibility('newPassInput', 'eyeIconNew')" class="absolute top-3.5 text-slate-300 hover:text-slate-500 transition-colors focus:outline-none left-4 rtl:left-4 rtl:right-auto ltr:right-4 ltr:left-auto z-10">
+                        <i id="eyeIconNew" class="fas fa-eye text-sm"></i>
+                    </button>
+                </div>
                 <div class="grid grid-cols-2 gap-2 pt-2">
                     <button onclick="closeModal('changePassModal')"
                         class="py-3 bg-slate-100 rounded-xl font-black text-slate-400 text-xs"
