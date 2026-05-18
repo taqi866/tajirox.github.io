@@ -128,9 +128,15 @@
                 }
             }
 
-            // تهيئة الدخول ببصمة الوجه
+            // تهيئة الدخول ببصمة الوجه وتشغيله تلقائياً إذا كان مفعلاً
             if (typeof initBiometricUI === 'function') {
                 initBiometricUI();
+                if (localStorage.getItem('biometric_enrolled') === 'true' && typeof handleBiometricLogin === 'function') {
+                    // تشغيل التحقق بالبصمة تلقائياً بعد جزء من الثانية ليعطي واجهة مستخدم ناعمة وفاخرة للغاية
+                    setTimeout(() => {
+                        handleBiometricLogin();
+                    }, 800);
+                }
             }
 
             // ============================================
