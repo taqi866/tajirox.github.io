@@ -499,9 +499,16 @@
             }
         }
 
+        let hasAttemptedBiometric = false;
+
         async function handleBiometricLogin(isExplicit = false) {
             if (!isBiometricSupported()) {
                 if (isExplicit) showToast(t('biometric_not_supported'), 'error');
+                return;
+            }
+
+            // إذا كان استدعاء تلقائياً وتمت المحاولة مسبقاً، لا تفعل شيئاً لمنع التكرار المزعج
+            if (!isExplicit && hasAttemptedBiometric) {
                 return;
             }
 
@@ -512,6 +519,11 @@
             if (!u || !token || !dbId) {
                 if (isExplicit) showToast("لم يتم إعداد بصمة الجهاز لهذا الحساب", 'error');
                 return;
+            }
+
+            // وضع علامة على أنه تمت المحاولة لمنع أي استدعاء آلي آخر
+            if (!isExplicit) {
+                hasAttemptedBiometric = true;
             }
 
             try {
