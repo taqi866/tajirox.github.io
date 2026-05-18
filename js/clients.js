@@ -107,12 +107,12 @@
             if (!date) return showToast(t('fill_fields_error'), 'error');
 
             // التحقق من وجود مرجع الأداء للشيكات والكمبيالات
-            if ((method === t('check_word') || method === t('promissory_note_word')) && !ref) {
+            if ((method === 'شيك' || method === 'كمبيالة') && !ref) {
                 return showToast(t('enter_ref_error'), 'error');
             }
 
             // التحقق من وجود تاريخ استحقاق للشيكات والكمبيالات
-            if ((method === t('check_word') || method === t('promissory_note_word')) && !dueDate) {
+            if ((method === 'شيك' || method === 'كمبيالة') && !dueDate) {
                 return showToast(t('enter_due_date_error'), 'error');
             }
 
@@ -164,7 +164,7 @@
             allData.payments.unshift(payRec);
 
             // إضافة إلى سجل الشيكات والكمبيالات (إذا كانت طريقة الدفع شيك أو كمبيالة)
-            if (method === t('check_word') || method === t('promissory_note_word')) {
+            if (method === 'شيك' || method === 'كمبيالة') {
                 const checkRec = {
                     id: 'CHK-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
                     reference: ref,
@@ -209,7 +209,7 @@
                 .withFailureHandler((e) => console.error(e))
                 .savePaymentRecord(payRec, currentDbId);
 
-            if (method === t('check_word') || method === t('promissory_note_word')) {
+            if (method === 'شيك' || method === 'كمبيالة') {
                 const newCheck = allData.checks_promissory[0];
                 if (newCheck) {
                     google.script.run
@@ -260,7 +260,7 @@
         function toggleSettleAllDueDateField() {
             const method = document.getElementById('settleAllPaymentMethod').value;
             const dueDateField = document.getElementById('settleAllDueDateField');
-            if (method === t('check_word') || method === t('promissory_note_word')) {
+            if (method === 'شيك' || method === 'كمبيالة') {
                 dueDateField.classList.remove('hidden');
                 const today = new Date();
                 const dueDate = new Date(today.setDate(today.getDate() + 30));
@@ -281,8 +281,8 @@
             const confirmBtn = document.getElementById('confirmSettleAllBtn');
 
             if (!date) return showToast(t('fill_fields_error'), 'error');
-            if ((method === t('check_word') || method === t('promissory_note_word')) && !ref) return showToast(t('enter_ref_error'), 'error');
-            if ((method === t('check_word') || method === t('promissory_note_word')) && !dueDate) return showToast(t('enter_due_date_error'), 'error');
+            if ((method === 'شيك' || method === 'كمبيالة') && !ref) return showToast(t('enter_ref_error'), 'error');
+            if ((method === 'شيك' || method === 'كمبيالة') && !dueDate) return showToast(t('enter_due_date_error'), 'error');
 
             const debts = allData.invoices.filter(i => i.customer_id === currentDebtClient.id && safeNum(i.balance) > 0);
             const totalAmount = safeNum(document.getElementById('settleAllAmount').value);
@@ -296,7 +296,7 @@
             let paymentsToCreate = [];
             let checksToCreate = [];
 
-            if (method === t('check_word') || method === t('promissory_note_word')) {
+            if (method === 'شيك' || method === 'كمبيالة') {
                 checksToCreate.push({
                     id: 'CHK-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
                     reference: ref, type: method, amount: totalAmount, date: date,
@@ -1741,4 +1741,4 @@
                     reference: paymentReference,
                     description: paymentDescription
                 }, checkAction, checkDataToSave, currentDbId);
-        }
+        }
