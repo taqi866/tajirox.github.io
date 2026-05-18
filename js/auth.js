@@ -499,15 +499,18 @@
             }
         }
 
-        async function handleBiometricLogin() {
-            if (!isBiometricSupported()) return showToast(t('biometric_not_supported'), 'error');
+        async function handleBiometricLogin(isExplicit = false) {
+            if (!isBiometricSupported()) {
+                if (isExplicit) showToast(t('biometric_not_supported'), 'error');
+                return;
+            }
 
             const u = localStorage.getItem('biometric_username');
             const token = localStorage.getItem('biometric_token');
             const dbId = localStorage.getItem('biometric_db_id');
 
             if (!u || !token || !dbId) {
-                showToast("لم يتم إعداد بصمة الجهاز لهذا الحساب", 'error');
+                if (isExplicit) showToast("لم يتم إعداد بصمة الجهاز لهذا الحساب", 'error');
                 return;
             }
 
@@ -527,25 +530,27 @@
                 if (assertion) {
                     setLoading(true);
                     const faceIdBtn = document.getElementById('faceIdBtn');
-                    setBtnLoading(faceIdBtn, true, "...");
+                    if (faceIdBtn) setBtnLoading(faceIdBtn, true, "...");
 
                     document.getElementById('loginUser').value = u;
                     document.getElementById('loginPass').value = "••••••••";
 
                     google.script.run
                         .withSuccessHandler(res => {
-                            setBtnLoading(faceIdBtn, false);
+                            if (faceIdBtn) setBtnLoading(faceIdBtn, false);
                             handleLoginSuccess(res, faceIdBtn);
                         })
                         .withFailureHandler(err => {
                             setLoading(false);
-                            setBtnLoading(faceIdBtn, false);
+                            if (faceIdBtn) setBtnLoading(faceIdBtn, false);
                             showToast(t('connection_error') + ': ' + (err.message || err), 'error');
                         })
                         .loginWithBiometricToken(u, token, dbId);
                 }
             } catch (err) {
                 console.error("Biometric authentication error:", err);
-                showToast("فشلت عملية التحقق بالبصمة", 'error');
+                if (isExplicit) {
+                    showToast("فشلت عملية التحقق بالبصمة", 'error');
+                }
             }
         }
