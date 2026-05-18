@@ -341,9 +341,12 @@
             if (inv.payment_method === 'شيك' || inv.payment_method === 'كمبيالة') {
                 if (allData.checks_promissory && allData.checks_promissory.length > 0) {
                     const avant = allData.checks_promissory.length;
-                    allData.checks_promissory = allData.checks_promissory.filter(c =>
-                        !(String(c.debt_id) === String(inv.id) && c.debt_type === 'invoice')
-                    );
+                    allData.checks_promissory = allData.checks_promissory.filter(c => {
+                        const isSame = String(c.debt_id) === String(inv.id) || 
+                                       'INV-' + String(c.debt_id) === String(inv.id) || 
+                                       String(c.debt_id) === 'INV-' + String(inv.id);
+                        return !(isSame && c.debt_type === 'invoice');
+                    });
                     const apres = allData.checks_promissory.length;
                     if (avant !== apres) {
                         console.log(`🗑️ Suppression de ${avant - apres} ancien(s) chèque(s) pour facture ${inv.id}`);
@@ -360,7 +363,7 @@
                         due_date: inv.due_date || inv.date,
                         status: 'pending',
                         client_name: inv.customer,
-                        debt_id: inv.id,
+                        debt_id: inv.type === 'بيع' ? 'INV-' + inv.id : inv.id,
                         debt_type: 'invoice'
                     };
                     if (!allData.checks_promissory) allData.checks_promissory = [];
@@ -369,9 +372,12 @@
             } else {
                 if (allData.checks_promissory && allData.checks_promissory.length > 0) {
                     const avant = allData.checks_promissory.length;
-                    allData.checks_promissory = allData.checks_promissory.filter(c =>
-                        !(String(c.debt_id) === String(inv.id) && c.debt_type === 'invoice')
-                    );
+                    allData.checks_promissory = allData.checks_promissory.filter(c => {
+                        const isSame = String(c.debt_id) === String(inv.id) || 
+                                       'INV-' + String(c.debt_id) === String(inv.id) || 
+                                       String(c.debt_id) === 'INV-' + String(inv.id);
+                        return !(isSame && c.debt_type === 'invoice');
+                    });
                     const apres = allData.checks_promissory.length;
                     if (avant !== apres) {
                         console.log(`🗑️ Suppression des chèques (méthode non-chèque) pour facture ${inv.id}`);
@@ -382,9 +388,12 @@
             // 5. Gestion des paiements
             if (inv.paid > 0) {
                 if (allData.payments && allData.payments.length > 0) {
-                    allData.payments = allData.payments.filter(p =>
-                        !(String(p.debt_id) === String(inv.id) && p.debt_type === 'invoice')
-                    );
+                    allData.payments = allData.payments.filter(p => {
+                        const isSame = String(p.debt_id) === String(inv.id) || 
+                                       'INV-' + String(p.debt_id) === String(inv.id) || 
+                                       String(p.debt_id) === 'INV-' + String(inv.id);
+                        return !(isSame && p.debt_type === 'invoice');
+                    });
                 }
                 const payRec = {
                     id: 'PAY-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
@@ -452,16 +461,7 @@
                 })
                 .saveInvoice(inv, existingInvoiceIndex !== -1, currentDbId);
 
-            if (newCheck) {
-                google.script.run
-                    .withSuccessHandler(() => {
-                        console.log('✅ Synchronisation serveur réussie pour chèque/traite de facture:', newCheck.id);
-                    })
-                    .withFailureHandler((e) => {
-                        console.error('❌ Échec synchronisation chèque/traite de facture:', e);
-                    })
-                    .saveCheckPromissory(newCheck, currentDbId);
-            }
+            // Le chèque est automatiquement enregistré par saveInvoice sur le serveur pour éviter les doublons
 
             setTimeout(() => setBtnLoading(saveBtn, false), 1000);
             closeModal('invoiceModal');
@@ -1396,7 +1396,12 @@
                             const check = allData.checks_promissory[i];
 
                             // إذا كان الشيك غير مرتبط بهذه الفاتورة، احتفظ به
-                            if (!(String(check.debt_id) === String(id) && check.debt_type === 'invoice')) {
+                            const isSame = String(check.debt_id) === String(id) || 
+                                           'INV-' + String(check.debt_id) === String(id) || 
+                                           String(check.debt_id) === 'INV-' + String(id) ||
+                                           'SERV-' + String(check.debt_id) === String(id) || 
+                                           String(check.debt_id) === 'SERV-' + String(id);
+                            if (!(isSame && check.debt_type === 'invoice')) {
                                 remainingChecks.push(check);
                                 console.log('الاحتفاظ بشيك غير مرتبط:', check.id, check.reference);
                             } else {
@@ -1417,7 +1422,12 @@
                         for (let i = 0; i < allData.payments.length; i++) {
                             const payment = allData.payments[i];
 
-                            if (!(String(payment.debt_id) === String(id) && payment.debt_type === 'invoice')) {
+                            const isSame = String(payment.debt_id) === String(id) || 
+                                           'INV-' + String(payment.debt_id) === String(id) || 
+                                           String(payment.debt_id) === 'INV-' + String(id) ||
+                                           'SERV-' + String(payment.debt_id) === String(id) || 
+                                           String(payment.debt_id) === 'SERV-' + String(id);
+                            if (!(isSame && payment.debt_type === 'invoice')) {
                                 remainingPayments.push(payment);
                             } else {
                                 console.log('حذف دفعة مرتبطة:', payment.id, payment.amount);
@@ -1742,9 +1752,12 @@
                     // إضافة الدفعة الأولية
                     // 1. تنظيف وإضافة الشيكات والكمبيالات
                     if (allData.checks_promissory && allData.checks_promissory.length > 0) {
-                        allData.checks_promissory = allData.checks_promissory.filter(c =>
-                            !(String(c.debt_id) === String(serviceData.id) && c.debt_type === 'invoice')
-                        );
+                        allData.checks_promissory = allData.checks_promissory.filter(c => {
+                            const isSame = String(c.debt_id) === String(serviceData.id) || 
+                                           String(c.debt_id) === 'SERV-' + String(serviceData.id) || 
+                                           'SERV-' + String(c.debt_id) === String(serviceData.id);
+                            return !(isSame && c.debt_type === 'invoice');
+                        });
                     }
                     if ((serviceData.payment_method === 'شيك' || serviceData.payment_method === 'كمبيالة') && safeNum(serviceData.paid) > 0) {
                         serviceCheckRec = {
@@ -1765,9 +1778,12 @@
 
                     // 2. تنظيف وإضافة الدفعات
                     if (allData.payments && allData.payments.length > 0) {
-                        allData.payments = allData.payments.filter(p =>
-                            !(String(p.debt_id) === String(serviceData.id) && p.debt_type === 'invoice')
-                        );
+                        allData.payments = allData.payments.filter(p => {
+                            const isSame = String(p.debt_id) === String(serviceData.id) || 
+                                           String(p.debt_id) === 'SERV-' + String(serviceData.id) || 
+                                           'SERV-' + String(p.debt_id) === String(serviceData.id);
+                            return !(isSame && p.debt_type === 'invoice');
+                        });
                     }
                     if (safeNum(serviceData.paid) > 0) {
                         const payRec = {
@@ -1808,12 +1824,7 @@
                 },
                 (runner) => {
                     runner.saveInvoice(serviceData, isEditing, currentDbId);
-                    if (serviceCheckRec) {
-                        google.script.run
-                            .withSuccessHandler(() => console.log('✅ Synchronisation chèque réussie pour facture service:', serviceData.id))
-                            .withFailureHandler((e) => console.error('❌ Échec chèque service', e))
-                            .saveCheckPromissory(serviceCheckRec, currentDbId);
-                    }
+                    // Le chèque est automatiquement enregistré par saveInvoice sur le serveur pour éviter les doublons
                 }
             );
             setTimeout(() => setBtnLoading(saveBtn, false), 1000);
@@ -1959,4 +1970,4 @@
             const printWindow = window.open('', '_blank');
             printWindow.document.write(html);
             printWindow.document.close();
-        }
+        }
