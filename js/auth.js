@@ -416,100 +416,103 @@
             }
         }
 
-        async function toggleBiometricAuth() {
-            const isEnrolled = localStorage.getItem('biometric_enrolled') === 'true';
-            if (isEnrolled) {
-                // إلغاء التفعيل من السيرفر والمحلي
-                if (!currentUser) return showToast("يرجى تسجيل الدخول أولاً", "error");
-                
-                setLoading(true);
-                google.script.run
-                    .withSuccessHandler(res => {
+        async function enrollBiometricOnLogin(u, rawPass) {
+            setLoading(true);
+            const faceIdBtn = document.getElementById('faceIdBtn');
+            if (faceIdBtn) setBtnLoading(faceIdBtn, true, "...");
+
+            const hashed = await hashPassword(rawPass);
+
+            // 1. تحقق من صحة الحساب على السيرفر أولاً
+            google.script.run
+                .withSuccessHandler(async res => {
+                    if (!res.success) {
                         setLoading(false);
-                        localStorage.removeItem('biometric_enrolled');
-                        localStorage.removeItem('biometric_username');
-                        localStorage.removeItem('biometric_token');
-                        localStorage.removeItem('biometric_db_id');
-                        showToast(t('biometric_btn_disable') + " " + t('settings_saved'), 'info');
-                        updateBiometricUIState();
-                        initBiometricUI();
-                    })
-                    .withFailureHandler(err => {
-                        setLoading(false);
-                        showToast("خطأ في الاتصال بالخادم لإلغاء التفعيل", "error");
-                    })
-                    .removeBiometricToken(currentUser.id, currentDbId);
-            } else {
-                // تفعيل جديد
-                if (!currentUser) return showToast("يرجى تسجيل الدخول أولاً", "error");
-
-                setLoading(true);
-                try {
-                    // توليد التحدي للـ WebAuthn
-                    const challenge = new Uint8Array(32);
-                    window.crypto.getRandomValues(challenge);
-
-                    const userId = new Uint8Array(4);
-                    window.crypto.getRandomValues(userId);
-
-                    const publicKeyOptions = {
-                        challenge: challenge,
-                        rp: {
-                            name: "Tajirox",
-                            id: window.location.hostname
-                        },
-                        user: {
-                            id: userId,
-                            name: currentUser.username,
-                            displayName: currentUser.username
-                        },
-                        pubKeyCredParams: [{
-                            type: "public-key",
-                            alg: -7 // ES256
-                        }],
-                        authenticatorSelection: {
-                            authenticatorAttachment: "platform",
-                            userVerification: "required"
-                        },
-                        timeout: 60000
-                    };
-
-                    const credential = await navigator.credentials.create({ publicKey: publicKeyOptions });
-                    if (credential) {
-                        // توليد التوكن الآمن للغاية لتسجيله على السيرفر ومحلياً
-                        const token = Array.from(window.crypto.getRandomValues(new Uint8Array(32)))
-                            .map(b => b.toString(16).padStart(2, '0')).join('');
-
-                        google.script.run
-                            .withSuccessHandler(res => {
-                                setLoading(false);
-                                if (res.success) {
-                                    localStorage.setItem('biometric_enrolled', 'true');
-                                    localStorage.setItem('biometric_username', currentUser.username);
-                                    localStorage.setItem('biometric_token', token);
-                                    localStorage.setItem('biometric_db_id', currentDbId);
-
-                                    showToast(t('biometric_enroll_success') || "تم تفعيل الدخول ببصمة الوجه بنجاح!");
-                                    updateBiometricUIState();
-                                    initBiometricUI();
-                                } else {
-                                    showToast("فشل تسجيل البصمة على الخادم: " + res.message, "error");
-                                }
-                            })
-                            .withFailureHandler(err => {
-                                setLoading(false);
-                                showToast("فشل الاتصال بالخادم لتسجيل البصمة", "error");
-                            })
-                            .registerBiometricToken(currentUser.id, token, currentDbId);
-                    } else {
-                        setLoading(false);
+                        if (faceIdBtn) setBtnLoading(faceIdBtn, false);
+                        showToast(res.message, 'error');
+                        return;
                     }
-                } catch (err) {
-                    console.error("Biometric registration error:", err);
-                    showToast(t('biometric_not_supported') || "فشل تفعيل البصمة أو البصمة غير مدعومة", 'error');
+
+                    // 2. إطلاق بصمة الوجه للجهاز لتسجيل البصمة محلياً
+                    try {
+                        const challenge = new Uint8Array(32);
+                        window.crypto.getRandomValues(challenge);
+
+                        const userId = new Uint8Array(4);
+                        window.crypto.getRandomValues(userId);
+
+                        const publicKeyOptions = {
+                            challenge: challenge,
+                            rp: {
+                                name: "Tajirox",
+                                id: window.location.hostname
+                            },
+                            user: {
+                                id: userId,
+                                name: u,
+                                displayName: u
+                            },
+                            pubKeyCredParams: [{
+                                type: "public-key",
+                                alg: -7 // ES256
+                            }],
+                            authenticatorSelection: {
+                                userVerification: "required"
+                            },
+                            timeout: 60000
+                        };
+
+                        const credential = await navigator.credentials.create({ publicKey: publicKeyOptions });
+                        if (credential) {
+                            // توليد التوكن الآمن
+                            const token = Array.from(window.crypto.getRandomValues(new Uint8Array(32)))
+                                .map(b => b.toString(16).padStart(2, '0')).join('');
+                            const dbId = res.dbId || res.shopDbId;
+
+                            // 3. حفظ توكن البصمة على السيرفر
+                            google.script.run
+                                .withSuccessHandler(regRes => {
+                                    setLoading(false);
+                                    if (faceIdBtn) setBtnLoading(faceIdBtn, false);
+
+                                    if (regRes.success) {
+                                        // حفظ البيانات محلياً
+                                        localStorage.setItem('biometric_enrolled', 'true');
+                                        localStorage.setItem('biometric_username', u);
+                                        localStorage.setItem('biometric_token', token);
+                                        localStorage.setItem('biometric_db_id', dbId);
+
+                                        showToast(t('biometric_enroll_success') || "تم تفعيل الدخول ببصمة الوجه بنجاح!");
+                                        
+                                        // تسجيل الدخول الفوري
+                                        handleLoginSuccess(res, faceIdBtn);
+                                    } else {
+                                        showToast("فشل تسجيل البصمة على الخادم: " + regRes.message, "error");
+                                    }
+                                })
+                                .withFailureHandler(err => {
+                                    setLoading(false);
+                                    if (faceIdBtn) setBtnLoading(faceIdBtn, false);
+                                    showToast("فشل الاتصال بالخادم لتسجيل البصمة", "error");
+                                })
+                                .registerBiometricToken(res.user.id, token, dbId);
+                        } else {
+                            setLoading(false);
+                            if (faceIdBtn) setBtnLoading(faceIdBtn, false);
+                        }
+                    } catch (err) {
+                        console.error("Biometric registration error:", err);
+                        showToast(t('biometric_not_supported') || "فشل تفعيل البصمة أو البصمة غير مدعومة", 'error');
+                        setLoading(false);
+                        if (faceIdBtn) setBtnLoading(faceIdBtn, false);
+                    }
+                })
+                .withFailureHandler(err => {
                     setLoading(false);
-                }
-            }
+                    if (faceIdBtn) setBtnLoading(faceIdBtn, false);
+                    showToast(t('connection_error') + ': ' + (err.message || err), 'error');
+                })
+                .login(u, hashed);
         }
 
         let hasAttemptedBiometric = false;
@@ -531,7 +534,15 @@
 
             if (!u || !token || !dbId) {
                 if (isExplicit) {
-                    showToast(t('biometric_not_configured') || "لم يتم تفعيل بصمة الوجه (Face ID) لهذا المتجر بعد. يرجى تفعيلها من إعدادات المتجر بعد تسجيل الدخول.", 'info');
+                    const enteredUser = document.getElementById('loginUser').value.trim();
+                    const enteredPass = document.getElementById('loginPass').value.trim();
+
+                    if (enteredUser && enteredPass) {
+                        // تفعيل فوري وبدون إعدادات!
+                        enrollBiometricOnLogin(enteredUser, enteredPass);
+                    } else {
+                        showToast(t('biometric_not_configured') || "لتفعيل بصمة الوجه (Face ID)، يرجى كتابة اسم المستخدم وكلمة المرور أولاً ثم الضغط على هذا الزر لتأكيد جهازك.", 'info');
+                    }
                 }
                 return;
             }
