@@ -132,10 +132,26 @@
             if (typeof initBiometricUI === 'function') {
                 initBiometricUI();
                 if (localStorage.getItem('biometric_enrolled') === 'true' && typeof handleBiometricLogin === 'function') {
-                    // تشغيل التحقق بالبصمة تلقائياً بعد جزء من الثانية ليعطي واجهة مستخدم ناعمة وفاخرة للغاية
+                    // 1. محاولة التشغيل التلقائي الهادئ فور تحميل الصفحة
                     setTimeout(() => {
-                        handleBiometricLogin();
-                    }, 800);
+                        handleBiometricLogin(false);
+                    }, 500);
+
+                    // 2. تفعيل الاستدعاء الفوري والسلس بمجرد لمس أو الضغط في أي مكان في الصفحة أو التركيز على حقول الدخول (حل مشكلة حماية المتصفح للمس الشاشة User Gesture)
+                    const triggerBiometricGesture = () => {
+                        handleBiometricLogin(false);
+                        // إزالة المستمعين لتجنب التكرار المزعج
+                        document.removeEventListener('click', triggerBiometricGesture);
+                        document.removeEventListener('touchstart', triggerBiometricGesture);
+                    };
+                    document.addEventListener('click', triggerBiometricGesture);
+                    document.addEventListener('touchstart', triggerBiometricGesture);
+
+                    const uField = document.getElementById('loginUser');
+                    if (uField) uField.addEventListener('focus', () => handleBiometricLogin(false));
+                    
+                    const pField = document.getElementById('loginPass');
+                    if (pField) pField.addEventListener('focus', () => handleBiometricLogin(false));
                 }
             }
 
