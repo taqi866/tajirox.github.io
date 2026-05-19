@@ -465,6 +465,11 @@
 
             setTimeout(() => setBtnLoading(saveBtn, false), 1000);
             closeModal('invoiceModal');
+            
+            // فتح المعاينة التفاعلية فور نجاح الحفظ لتمكين الطباعة أو المشاركة السريعة عبر الواتساب
+            setTimeout(() => {
+                openInvoiceResponsivePreview(inv.id);
+            }, 300);
 
             // Réinitialiser le panier
             cart = [];
@@ -487,10 +492,131 @@
         }
 
         function downloadInvoiceTicketLocal(id) {
-            // الطباعة مباشرة بناءً على الإعدادات
+            openInvoiceResponsivePreview(id);
+        }
+
+        // ===================================================
+        // نظام المعاينة الذكية والتفاعلية للهواتف والأجهزة اللوحية (Responsive POS Receipt View)
+        // ===================================================
+        function openInvoiceResponsivePreview(id) {
+            const inv = allData.invoices.find(i => String(i.id) === String(id));
+            if (!inv) {
+                showToast(t('invoice_not_found_local'), 'error');
+                return;
+            }
+            
+            document.getElementById('responsivePreviewInvoiceId').value = id;
+            
+            // نستخدم المعاينة الحرارية كوضع افتراضي لإيصالات الموبايل التفاعلية لأنها تبدو واقعية ورائعة
+            const size = currentUser?.invoiceSize || 'Thermal';
+            const width = currentUser?.invoiceWidth || 80;
+            
+            const ticketHTML = generateTicketHTML(inv, size, width);
+            document.getElementById('invoicePreviewContainer').innerHTML = ticketHTML;
+            
+            openModal('invoicePreviewModal');
+        }
+
+        function confirmResponsivePrint() {
+            const id = document.getElementById('responsivePreviewInvoiceId').value;
+            if (!id) return;
             const size = currentUser?.invoiceSize || 'A4';
             const width = currentUser?.invoiceWidth || 80;
             generateAndPrintInvoice(id, size, width);
+        }
+
+        function confirmResponsiveWhatsApp() {
+            const id = document.getElementById('responsivePreviewInvoiceId').value;
+            if (!id) return;
+            const inv = allData.invoices.find(i => String(i.id) === String(id));
+            if (!inv) return;
+            
+            let customerPhone = '';
+            if (inv.customer_id) {
+                const client = allData.clients.find(c => String(c.id) === String(inv.customer_id));
+                if (client && client.phone) {
+                    customerPhone = client.phone.trim();
+                }
+            }
+            
+            const shopName = currentUser?.shopName || 'متجرنا';
+            const currencySymbol = 'د.م';
+            
+            let itemsText = '';
+            try {
+                const items = typeof inv.items === 'string' ? JSON.parse(inv.items) : inv.items;
+                items.forEach((it, index) => {
+                    itemsText += `  ${index + 1}. *${it.name}* (×${it.selectedQty}) = _${(it.salePrice * it.selectedQty).toFixed(2)} ${currencySymbol}_\n`;
+                });
+            } catch (e) {
+                console.error(e);
+            }
+            
+            const whatsappText = 
+`🧾 *إيصال مبيعات رقم #INV-${inv.id}* 🧾
+🏪 *${shopName}*
+---------------------------------------
+📅 *التاريخ:* ${inv.date}
+👤 *الزبون:* ${inv.customer || 'زبون عام'}
+💳 *طريقة الدفع:* ${inv.payment_method}
+---------------------------------------
+📦 *المنتجات:*
+${itemsText}
+---------------------------------------
+💵 *المجموع:* ${inv.total.toFixed(2)} ${currencySymbol}
+${inv.discount > 0 ? `✨ *الخصم:* -${inv.discount.toFixed(2)} ${currencySymbol}\n` : ''}💰 *الصافي للدفع:* ${(inv.total - inv.discount).toFixed(2)} ${currencySymbol}
+✅ *المدفوع:* ${inv.paid.toFixed(2)} ${currencySymbol}
+🔴 *الباقي:* ${inv.balance.toFixed(2)} ${currencySymbol}
+---------------------------------------
+🙏 شكراً لتعاملكم معنا ونسعد بزيارتكم القادمة!`;
+
+            const encodedText = encodeURIComponent(whatsappText);
+            
+            if (customerPhone) {
+                let cleanPhone = customerPhone.replace(/[^\d+]/g, '');
+                if (!cleanPhone.startsWith('+') && !cleanPhone.startsWith('00')) {
+                    if (cleanPhone.startsWith('0')) {
+                        cleanPhone = '212' + cleanPhone.substring(1);
+                    }
+                }
+                window.open(`https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodedText}`, '_blank');
+            } else {
+                const promptMsg = currentLang === 'ar' ? 'أدخل رقم هاتف الزبون لإرسال الفاتورة عبر واتساب (مثال: 0612345678):' : 'Entrez le numéro WhatsApp du client :';
+                const inputPhone = prompt(promptMsg);
+                if (inputPhone) {
+                    let cleanPhone = inputPhone.replace(/[^\d+]/g, '');
+                    if (cleanPhone.startsWith('0')) {
+                        cleanPhone = '212' + cleanPhone.substring(1);
+                    }
+                    window.open(`https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodedText}`, '_blank');
+                }
+            }
+        }
+
+        function confirmResponsivePDF() {
+            const id = document.getElementById('responsivePreviewInvoiceId').value;
+            if (!id) return;
+            const container = document.getElementById('invoicePreviewContainer');
+            if (typeof html2pdf === 'undefined') {
+                showToast("مكتبة توليد PDF غير متوفرة حالياً", "error");
+                return;
+            }
+            
+            showToast("جاري توليد ملف PDF...", "info");
+            const opt = {
+                margin:       [10, 10, 10, 10],
+                filename:     `receipt_INV-${id}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            
+            html2pdf().from(container).set(opt).save().then(() => {
+                showToast("تم تحميل إيصال الـ PDF بنجاح!", "success");
+            }).catch(err => {
+                console.error("خطأ توليد PDF:", err);
+                showToast("حدث خطأ أثناء حفظ الملف", "error");
+            });
         }
 
         function confirmPrintInvoice() {
@@ -1829,6 +1955,11 @@
             );
             setTimeout(() => setBtnLoading(saveBtn, false), 1000);
             closeModal('serviceModal');
+            
+            // فتح المعاينة التفاعلية فور نجاح الحفظ لتمكين الطباعة أو المشاركة السريعة عبر الواتساب
+            setTimeout(() => {
+                openInvoiceResponsivePreview(serviceData.id);
+            }, 300);
         }
 
         function printConsolidatedDebtInvoice(debts, customerName, totalPaid, paymentRef, date, method, checkRef) {
