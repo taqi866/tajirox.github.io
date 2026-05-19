@@ -86,14 +86,65 @@
                         نسخة مجانية لمدة 14 يوم </p>
                 </div>
 
-                <!-- زر وظائف النظام -->
-                <button id="showFeaturesBtn" onclick="toggleHeroFeatures()"
-                    class="flex items-center justify-center gap-2 mx-auto lg:mx-0 bg-white/10 hover:bg-white/20 active:scale-95 border border-white/20 text-white font-black text-xs py-3 px-5 rounded-2xl transition-all duration-300 mb-6 shadow-md">
-                    <i id="featuresBtnIcon" class="fas fa-th"></i>
-                    <span id="featuresBtnText" data-i18n="system_features_btn">إكتشف وظائف النظام</span>
-                </button>
+                <!-- أزرار الهيرو -->
+                <div class="flex flex-wrap items-center justify-center lg:justify-start gap-3 mb-6">
+                    <!-- زر وظائف النظام -->
+                    <button id="showFeaturesBtn" onclick="toggleHeroFeatures()"
+                        class="flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 active:scale-95 border border-white/20 text-white font-black text-xs py-3 px-5 rounded-2xl transition-all duration-300 shadow-md">
+                        <i id="featuresBtnIcon" class="fas fa-th"></i>
+                        <span id="featuresBtnText" data-i18n="system_features_btn">إكتشف وظائف النظام</span>
+                    </button>
+                    <!-- زر خطة الاشتراك -->
+                    <button id="showPlanDetailsBtn" onclick="toggleHeroPlanDetails()"
+                        class="flex items-center justify-center gap-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 active:scale-95 text-white font-black text-xs py-3 px-5 rounded-2xl transition-all duration-300 shadow-md border border-amber-400/30">
+                        <i class="fas fa-gem"></i>
+                        <span data-i18n="subscription_plan_btn">تفاصيل خطة الاشتراك</span>
+                    </button>
+                </div>
+
+                <!-- تفاصيل خطة الاشتراك في الهيرو -->
+                <div id="heroPlanDetailsGrid" class="bg-white/10 p-6 rounded-2xl backdrop-blur-md border border-white/20 mb-8 max-w-sm mx-auto lg:mx-0 hidden transition-all duration-300">
+                    <div class="text-center lg:text-right rtl:lg:text-right ltr:lg:text-left">
+                        <div class="flex items-center gap-2 mb-3 justify-center lg:justify-start">
+                            <i class="fas fa-gem text-amber-400 text-lg"></i>
+                            <h3 class="text-white font-black text-sm" data-i18n="plan_title">خطة الاشتراك النشطة</h3>
+                        </div>
+                        <p class="text-white text-base font-black mb-2">
+                            <span data-i18n="plan_price_label">سعر خطة الاشتراك :</span>
+                            <span class="text-amber-400 font-extrabold text-lg" data-i18n="plan_price_value">1 200 درهم</span> / <span data-i18n="year_word">سنة</span>
+                        </p>
+                        <ul class="text-blue-100 text-[10px] space-y-2 list-none p-0 mt-3 font-bold">
+                            <li class="flex items-center gap-2 justify-center lg:justify-start">
+                                <i class="fas fa-check-circle text-emerald-400 text-xs"></i>
+                                <span data-i18n="plan_feature_1">2 مستخدمين كحد أقصى (المدير + موظف واحد)</span>
+                            </li>
+                            <li class="flex items-center gap-2 justify-center lg:justify-start">
+                                <i class="fas fa-check-circle text-emerald-400 text-xs"></i>
+                                <span data-i18n="plan_feature_2">إدارة كاملة للمخزون والمنتجات</span>
+                            </li>
+                            <li class="flex items-center gap-2 justify-center lg:justify-start">
+                                <i class="fas fa-check-circle text-emerald-400 text-xs"></i>
+                                <span data-i18n="plan_feature_3">فواتير احترافية وتقارير مالية ذكية</span>
+                            </li>
+                            <li class="flex items-center gap-2 justify-center lg:justify-start">
+                                <i class="fas fa-check-circle text-emerald-400 text-xs"></i>
+                                <span data-i18n="plan_feature_4">تدبير كامل للخزينة والحسابات البنكية</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
 
                 <div id="heroFeaturesGrid" class="grid grid-cols-2 gap-3 lg:gap-4 mb-8 lg:mb-0 hidden">
+
+                    <!-- لوحة التحكم -->
+                    <div
+                        class="bg-white/10 p-3 lg:p-4 rounded-2xl backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all cursor-default">
+                        <i class="fas fa-chart-pie text-blue-400 text-xl mb-2"></i>
+                        <h3 class="font-bold text-xs lg:text-sm" data-i18n="hero_dashboard">لوحة التحكم</h3>
+                        <p class="text-[9px] lg:text-[10px] text-blue-200 mt-1" data-i18n="hero_dashboard_desc">
+                            نظرة عامة على المبيعات، الأرباح والمصاريف
+                        </p>
+                    </div>
 
                     <!-- إدارة المخزون -->
                     <div
@@ -154,6 +205,16 @@
                             والكمبيالات</h3>
                         <p class="text-[9px] lg:text-[10px] text-blue-200 mt-1" data-i18n="hero_checks_manage_desc">
                             متابعة تواريخ الاستحقاق والصرف
+                        </p>
+                    </div>
+
+                    <!-- تدبير الخزينة -->
+                    <div
+                        class="bg-white/10 p-3 lg:p-4 rounded-2xl backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all cursor-default">
+                        <i class="fas fa-vault text-yellow-400 text-xl mb-2"></i>
+                        <h3 class="font-bold text-xs lg:text-sm" data-i18n="hero_treasury">تدبير الخزينة</h3>
+                        <p class="text-[9px] lg:text-[10px] text-blue-200 mt-1" data-i18n="hero_treasury_desc">
+                            تتبع الأرصدة المالية، التحويلات، وحالة السيولة
                         </p>
                     </div>
                 </div>
@@ -1229,6 +1290,29 @@
                             <div id="subProgressBar"
                                 class="bg-indigo-600 h-4 rounded-full transition-all duration-1000 shadow-lg"
                                 style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <!-- تفاصيل خطة الاشتراك المفعّلة / Tarifs d'abonnement -->
+                    <div class="mb-8 bg-gradient-to-br from-indigo-50 to-blue-50 p-6 rounded-3xl border border-indigo-100 text-right rtl:text-right ltr:text-left">
+                        <h3 class="text-sm font-black text-indigo-900 mb-4 flex items-center gap-2">
+                            <i class="fas fa-gem text-indigo-600"></i>
+                            <span data-i18n="active_plan_details">تفاصيل خطة الاشتراك</span>
+                        </h3>
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div>
+                                <p class="text-lg font-black text-slate-800">
+                                    <span data-i18n="plan_price_label">سعر خطة الاشتراك :</span> 
+                                    <span class="text-indigo-600 font-extrabold text-xl" data-i18n="plan_price_value">1 200 درهم</span> / <span data-i18n="year_word">سنة</span>
+                                </p>
+                                <p class="text-xs text-slate-500 font-bold mt-1" data-i18n="plan_features_label">
+                                    يتضمن 2 مستخدمين كحد أقصى (المدير + موظف واحد) مع الاحتفاظ بكافة مميزات النظام.
+                                </p>
+                            </div>
+                            <div class="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-2xl shadow-md self-start md:self-auto">
+                                <i class="fas fa-users text-sm"></i>
+                                <span class="text-xs font-black">2 <span data-i18n="users">مستخدمين</span></span>
+                            </div>
                         </div>
                     </div>
 
