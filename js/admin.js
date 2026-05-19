@@ -1,0 +1,452 @@
+        let adminShopsCache = [];
+
+        function downloadMyCertificate() {
+            if (currentUser) downloadSubscriptionCertificate(currentUser);
+        }
+
+        function renderSubscriptionPage() {
+            if (!currentUser || !currentUser.subscription) return;
+
+            const start = parseDate(currentUser.subscription.start);
+            const end = parseDate(currentUser.subscription.end);
+            const today = new Date();
+
+            document.getElementById('subStartDate').innerText = formatDateSimple(start);
+            document.getElementById('subEndDate').innerText = formatDateSimple(end);
+
+            const totalDuration = end - start;
+            const elapsed = today - start;
+            const remaining = end - today;
+            const daysLeft = Math.ceil(remaining / (1000 * 60 * 60 * 24));
+
+            // حساب النسبة المئوية للتقدم
+            let percentage = (elapsed / totalDuration) * 100;
+            percentage = Math.min(Math.max(percentage, 0), 100); // حصر بين 0 و 100
+
+            document.getElementById('subProgressBar').style.width = `${percentage}%`;
+            document.getElementById('subDaysLeft').innerText = daysLeft > 0 ? t('sub_warning', { days: daysLeft }) : t('expired');
+
+            // تلوين الشريط حسب الحالة
+            const bar = document.getElementById('subProgressBar');
+            if (daysLeft <= 30) {
+                bar.classList.remove('bg-indigo-600', 'bg-emerald-500');
+                bar.classList.add('bg-rose-500');
+                
+                // تحديث الرسالة والزر حسب حالة التجربة
+                const msgEl = document.querySelector('[data-i18n="sub_expiring_msg"]');
+                const btnEl = document.querySelector('[data-i18n="request_renewal"]');
+                
+                if (currentUser.isTrial) {
+                    if (msgEl) msgEl.innerText = t('activate_sub_msg');
+                    if (btnEl) btnEl.innerText = t('activate_account_or_sub') || "تفعيل الحساب أو الإشتراك";
+                } else {
+                    if (msgEl) msgEl.innerText = t('sub_expiring_msg');
+                    if (btnEl) btnEl.innerText = t('request_renewal');
+                }
+
+                document.getElementById('renewalSection').classList.remove('hidden');
+            } else {
+                bar.classList.remove('bg-rose-500');
+                bar.classList.add('bg-indigo-600');
+                document.getElementById('renewalSection').classList.add('hidden');
+            }
+        }
+
+        function requestRenewal() {
+            const btn = document.getElementById('requestRenewalBtn');
+            setBtnLoading(btn, true, t('sending'));
+
+            google.script.run
+                .withSuccessHandler(res => {
+                    setBtnLoading(btn, false);
+                    if (res.success) {
+                        document.getElementById('renewalSection').classList.add('hidden');
+                        
+                        // تحديث رسالة التأكيد ديناميكياً بناءً على نوع الحساب
+                        const sentMsgSpan = document.querySelector('#renewalSentMessage span');
+                        if (sentMsgSpan) {
+                            sentMsgSpan.innerText = currentUser.isTrial ? (t('activation_sent_msg') || "تم إرسال طلب التفعيل بنجاح. سيتم التواصل معك قريباً لإتمام العملية.") : t('renewal_sent_msg');
+                        }
+                        
+                        document.getElementById('renewalSentMessage').classList.remove('hidden');
+                        showToast(currentUser.isTrial ? (t('activation_request_sent') || "تم إرسال طلب التفعيل بنجاح. سيظهر زر التفعيل لدى المشرف.") : t('renewal_request_sent'));
+                    } else {
+                        showToast(t('op_failed') + ': ' + res.message, 'error');
+                    }
+                })
+                .withFailureHandler(err => {
+                    setBtnLoading(btn, false);
+                    showToast(t('connection_error'), 'error');
+                })
+                .requestShopRenewal(currentUser.shopName, currentUser.username, currentUser.email);
+        }
+
+        function openCustomEmailModal() {
+            const shopSelect = document.getElementById('customEmailShopCode');
+            shopSelect.innerHTML = '';
+
+            shopSelect.innerHTML += `<option value="all" class="font-bold text-blue-600">${t('all_shops')}</option>`;
+            if (adminShopsCache && adminShopsCache.length > 0) {
+                adminShopsCache.forEach(shop => {
+                    shopSelect.innerHTML += `<option value="${shop.username}">${shop.name} (${shop.email})</option>`;
+                });
+            }
+            openModal('customEmailModal');
+
+            document.getElementById('customEmailSubject').value = '';
+            document.getElementById('customEmailBody').value = '';
+        }
+
+        function sendCustomEmail() {
+            const shopCode = document.getElementById('customEmailShopCode').value;
+            const subject = document.getElementById('customEmailSubject').value;
+            const body = document.getElementById('customEmailBody').value;
+
+            // Validate inputs
+            if (!shopCode || !subject || !body) {
+                showToast("الرجاء ملء جميع الحقول", 'error');
+                return;
+            }
+
+            const btn = document.getElementById('sendCustomEmailBtn');
+            setBtnLoading(btn, true, t('sending'));
+
+            // Call the Apps Script function to send the email
+            google.script.run
+                .withSuccessHandler(result => {
+                    setBtnLoading(btn, false);
+                    if (result.success) {
+                        showToast(t(result.message) || "تم إرسال البريد الإلكتروني بنجاح");
+                        closeModal('customEmailModal');
+                    } else {
+                        showToast("فشل إرسال البريد الإلكتروني: " + result.message, 'error');
+                    }
+                })
+                .withFailureHandler(error => {
+                    setBtnLoading(btn, false);
+                    showToast("حدث خطأ أثناء إرسال البريد الإلكتروني: " + error, 'error');
+                })
+                .handleSendCustomEmail(shopCode, subject, body);
+        }
+
+        function openShopSettings() {
+            if (!currentUser) return;
+
+            document.getElementById('shopPhoneInput').value = currentUser.shopPhone || '';
+            document.getElementById('shopAddressInput').value = currentUser.shopAddress || '';
+            document.getElementById('shopLogoInput').value = currentUser.shopLogo || '';
+            document.getElementById('shopNameDisplay').value = currentUser.shopName || '';
+            document.getElementById('shopOwnerDisplay').value = currentUser.ownerName || '';
+            document.getElementById('scanSkipQtyInput').checked = currentUser.scanSkipQty || false;
+            document.getElementById('settingPurchaseOnly').checked = currentUser.purchaseOnly || false;
+            document.getElementById('settingShowPurchaseToEmployee').checked = currentUser.showPurchaseToEmployee || false;
+
+            document.getElementById('settingInvoiceSize').value = currentUser.invoiceSize || 'A4';
+            document.getElementById('settingInvoiceWidth').value = currentUser.invoiceWidth || 80;
+
+            document.getElementById('settingBarcodeSize').value = currentUser.barcodeSize || 'A4';
+            document.getElementById('settingBarcodeWidth').value = currentUser.barcodeWidth || 40;
+            document.getElementById('settingBarcodeHeight').value = currentUser.barcodeHeight || 25;
+
+            // استعادة لون الفاتورة
+            const savedColor = localStorage.getItem('invoiceColor');
+            if (savedColor) {
+                document.getElementById('settingInvoiceColor').value = savedColor;
+                currentUser.invoiceColor = savedColor;
+            } else if (currentUser.invoiceColor) {
+                document.getElementById('settingInvoiceColor').value = currentUser.invoiceColor;
+            } else {
+                document.getElementById('settingInvoiceColor').value = '#000000';
+            }
+
+            document.getElementById('settingInvoiceDesign').value = currentUser.invoiceDesign || 'standard';
+            const footerInput = document.getElementById('settingInvoiceFooter');
+            if (footerInput) {
+                footerInput.value = currentUser.invoiceFooter || '';
+            }
+
+            toggleInvoiceSettings();
+            toggleBarcodeSettings();
+            addQZTraySettingsToPage();
+        }
+
+        function saveShopSettings() {
+            const phone = document.getElementById('shopPhoneInput').value.trim();
+            const address = document.getElementById('shopAddressInput').value.trim();
+            const logo = document.getElementById('shopLogoInput').value.trim();
+            const scanSkipQty = document.getElementById('scanSkipQtyInput').checked;
+            const purchaseOnly = document.getElementById('settingPurchaseOnly').checked;
+            const showPurchaseToEmployee = document.getElementById('settingShowPurchaseToEmployee').checked;
+
+            const invoiceSize = document.getElementById('settingInvoiceSize').value;
+            const invoiceWidth = document.getElementById('settingInvoiceWidth').value;
+            const barcodeSize = document.getElementById('settingBarcodeSize').value;
+            const barcodeWidth = document.getElementById('settingBarcodeWidth').value;
+            const barcodeHeight = document.getElementById('settingBarcodeHeight').value;
+
+            const invoiceColor = document.getElementById('settingInvoiceColor').value;
+            const invoiceDesign = document.getElementById('settingInvoiceDesign').value;
+            const footerInput = document.getElementById('settingInvoiceFooter');
+            const invoiceFooter = footerInput ? footerInput.value.trim() : '';
+
+            // حفظ اللون في localStorage فوراً
+            localStorage.setItem('invoiceColor', invoiceColor);
+
+            const btn = document.getElementById('saveShopSettingsBtn');
+
+            setBtnLoading(btn, true, t('saving'));
+
+            google.script.run.withSuccessHandler(res => {
+                setBtnLoading(btn, false);
+                if (res.success) {
+                    currentUser.shopPhone = phone;
+                    currentUser.shopAddress = address;
+                    currentUser.shopLogo = logo;
+                    currentUser.scanSkipQty = scanSkipQty;
+                    currentUser.purchaseOnly = purchaseOnly;
+                    currentUser.showPurchaseToEmployee = showPurchaseToEmployee;
+
+                    currentUser.invoiceSize = invoiceSize;
+                    currentUser.invoiceWidth = invoiceWidth;
+                    currentUser.barcodeSize = barcodeSize;
+                    currentUser.barcodeWidth = barcodeWidth;
+                    currentUser.barcodeHeight = barcodeHeight;
+                    currentUser.invoiceColor = invoiceColor;
+                    currentUser.invoiceDesign = invoiceDesign;
+                    currentUser.invoiceFooter = invoiceFooter;
+
+                    if (logo) {
+                        document.getElementById('sidebarUserIcon').innerHTML = `<img src="${logo}" class="w-full h-full object-cover rounded-2xl" alt="Logo">`;
+                    } else {
+                        document.getElementById('sidebarUserIcon').innerHTML = `<i class="fas fa-user-circle text-3xl"></i>`;
+                    }
+
+                    showToast(t('settings_saved'));
+
+                    if (invoiceSize === 'Thermal') {
+                        showToast('🖨️ سيتم طباعة الفواتير تلقائياً بعد الإنشاء', 'success');
+                    }
+
+                    // إعادة عرض الصفحة الحالية لتحديث اللون
+                    const currentPage = document.querySelector('.page-content:not(.hidden)')?.id.replace('page-', '');
+                    if (currentPage) {
+                        showPage(currentPage);
+                    }
+                } else {
+                    showToast(t(res.message) || res.message, 'error');
+                }
+            }).updateShopSettings(currentUser.shopCode, phone, address, logo, scanSkipQty, purchaseOnly, invoiceSize, invoiceWidth, barcodeSize, barcodeWidth, barcodeHeight, invoiceColor, invoiceDesign, invoiceFooter, showPurchaseToEmployee);
+        }
+
+        function loadAdminData() {
+            setLoading(true);
+            google.script.run
+                .withSuccessHandler(shops => {
+                    setLoading(false);
+                    adminShopsCache = shops || [];
+                    renderAdminShops(shops);
+                })
+                .withFailureHandler(err => {
+                    setLoading(false);
+                    showToast(t('connection_error'), 'error');
+                })
+                .getAllShops();
+        }
+
+        function renderAdminShops(shops) {
+            const tbody = document.getElementById('adminShopsList');
+            tbody.innerHTML = '';
+
+            if (!shops || shops.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center p-4">${t('no_shops')}</td></tr>`;
+                return;
+            }
+
+            shops.forEach(shop => {
+                const isActive = shop.isActive;
+                const today = new Date();
+                const subEnd = shop.subscriptionEnd ? new Date(shop.subscriptionEnd) : new Date(today.getFullYear() - 1, 0, 1); // تاريخ قديم إذا لم يوجد
+                const isExpired = subEnd < today;
+                const renewalRequested = shop.renewalRequested; // هل تم طلب التجديد؟
+
+                let statusBadge = '';
+                if (!isActive) statusBadge = `<span class="bg-slate-100 text-slate-500 px-2 py-1 rounded-full text-[9px]">${t('suspended')}</span>`;
+                else if (isExpired) statusBadge = `<span class="bg-rose-100 text-rose-600 px-2 py-1 rounded-full text-[9px]">${t('expired')}</span>`;
+                else statusBadge = `<span class="bg-emerald-100 text-emerald-600 px-2 py-1 rounded-full text-[9px]">${t('active')}</span>`;
+
+                tbody.innerHTML += `
+                    <tr class="border-b border-slate-50 hover:bg-slate-50 transition-all">
+                        <td class="py-3 px-2">${shop.name}</td>
+                        <td class="py-3 px-2">${shop.owner}</td>
+                        <td class="py-3 px-2 text-[10px] text-slate-400 font-bold">${shop.email}</td>
+                        <td class="py-3 px-2 text-[10px]">${shop.created_at}</td>
+                        <td class="py-3 px-2 text-[10px] font-bold ${isExpired ? 'text-rose-600' : 'text-emerald-600'}">${shop.subscriptionEnd || t('unknown')}</td>
+                        <td class="py-3 px-2 text-center">${statusBadge}</td>
+                        <td class="py-3 px-2 text-center">
+                            <div class="flex justify-center gap-2">
+                                <button onclick="toggleShopStatus('${shop.username}', ${!isActive})" class="w-7 h-7 ${isActive ? 'bg-rose-100 text-rose-600' : 'bg-emerald-100 text-emerald-600'} rounded-lg flex items-center justify-center hover:scale-110 transition-all" title="${isActive ? t('stop_account') : t('activate_account')}">
+                                    <i class="fas ${isActive ? 'fa-ban' : 'fa-check'} text-xs"></i>
+                                </button>
+                                <button onclick='downloadSubscriptionCertificate(${JSON.stringify(shop)})' class="w-7 h-7 bg-slate-100 text-slate-600 rounded-lg flex items-center justify-center hover:scale-110 transition-all" title="${t('download_cert')}">
+                                    <i class="fas fa-certificate text-amber-500 text-xs"></i>
+                                </button>
+                                ${renewalRequested ? `
+                                    <button onclick="openRenewModal('${shop.username}')" class="w-7 h-7 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center hover:scale-110 transition-all animate-pulse" title="${shop.isTrial ? t('activate_sub_req') : t('renew_sub_req')}">
+                                        <i class="fas fa-calendar-plus text-xs"></i>
+                                    </button>
+                                ` : ''}
+                                <button onclick="promptDeleteShop('${shop.username}', '${shop.name}')" class="w-7 h-7 bg-rose-100 text-rose-600 rounded-lg flex items-center justify-center hover:scale-110 transition-all" title="${t('delete_shop')}">
+                                    <i class="fas fa-trash text-xs"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function toggleShopStatus(shopCode, newStatus) {
+            setLoading(true);
+            google.script.run.withSuccessHandler(() => {
+                showToast(t('status_updated', { status: newStatus ? t('activated') : t('deactivated') }));
+                loadAdminData(); // إعادة تحميل البيانات
+            }).updateShopStatus(shopCode, newStatus);
+        }
+
+        function promptDeleteShop(shopCode, shopName) {
+            openConfirm({
+                title: t('delete_shop_title'),
+                msg: t('delete_shop_msg', { name: shopName }),
+                iconClass: "fas fa-trash-alt", colorClass: "bg-rose-600",
+                onConfirm: () => {
+                    setLoading(true);
+                    google.script.run.withSuccessHandler(() => {
+                        showToast(t('shop_deleted'));
+                        loadAdminData();
+                    }).deleteShop(shopCode);
+                }
+            });
+        }
+
+        function openRenewModal(shopCode) {
+            document.getElementById('renewShopId').value = shopCode;
+            document.getElementById('renewDuration').value = '1';
+            openModal('renewSubscriptionModal');
+        }
+
+        function saveRenewal() {
+            const shopCode = document.getElementById('renewShopId').value;
+            const years = parseInt(document.getElementById('renewDuration').value);
+            const confirmBtn = document.getElementById('confirmRenewBtn');
+
+            setBtnLoading(confirmBtn, true, t('saving'));
+
+            // حساب تاريخ الانتهاء الجديد (من اليوم + عدد السنوات)
+            const today = new Date();
+            const newEndDate = new Date(today.setFullYear(today.getFullYear() + years)).toISOString().split('T')[0];
+
+            google.script.run.withSuccessHandler(() => {
+                setBtnLoading(confirmBtn, false);
+                closeModal('renewSubscriptionModal');
+                showToast(t('renew_success', { years: years }));
+                loadAdminData();
+            }).renewShopSubscription(shopCode, newEndDate);
+        }
+
+        function downloadSubscriptionCertificate(shopData) {
+            showToast(t('generating_pdf'), 'info');
+
+            // تجهيز البيانات
+            // إذا كانت البيانات قادمة من currentUser (صفحة اشتراكي) تكون الهيكلة مختلفة قليلاً عن Admin
+            let shopName, ownerName, startDate, endDate, shopCode;
+
+            if (shopData.subscription) { // currentUser format
+                shopName = shopData.shopName;
+                ownerName = shopData.ownerName;
+                startDate = formatDateSimple(parseDate(shopData.subscription.start));
+                endDate = formatDateSimple(parseDate(shopData.subscription.end));
+                shopCode = shopData.shopCode || shopData.username;
+            } else { // Admin table format
+                shopName = shopData.name;
+                ownerName = shopData.owner;
+                startDate = shopData.created_at; // Admin table has formatted string
+                endDate = shopData.subscriptionEnd; // Admin table has formatted string
+                shopCode = shopData.username;
+            }
+
+            const refId = `CERT-${shopCode}-${new Date().getFullYear()}`;
+            const isRtl = currentLang === 'ar';
+            const dir = isRtl ? 'rtl' : 'ltr';
+            const align = isRtl ? 'right' : 'left';
+
+            const element = document.createElement('div');
+            const htmlContent = `
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <style>
+                        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
+                    </style>
+                </head>
+                <body>
+                    <div style="font-family: 'Cairo', sans-serif; padding: 40px; background: #fff; direction: ${dir}; text-align: ${align}; border: 10px double #2563eb; height: 100%; position: relative;">
+                        
+                        <!-- Header -->
+                        <div style="text-align: center; margin-bottom: 40px;">
+                            <div style="width: 80px; height: 80px; background-color: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto;">
+                                <svg style="width: 40px; height: 40px; color: #2563eb;" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            </div>
+                            <h1 style="color: #1e293b; font-size: 32px; font-weight: 900; margin: 0; text-transform: uppercase; letter-spacing: 1px;">${t('cert_title')}</h1>
+                            <p style="color: #64748b; font-size: 14px; margin-top: 10px;">${t('cert_ref')}: <strong>${refId}</strong></p>
+                        </div>
+
+                        <!-- Content -->
+                        <div style="margin-bottom: 40px; padding: 30px; background-color: #f8fafc; border-radius: 20px; border: 1px solid #e2e8f0;">
+                            <p style="font-size: 16px; color: #475569; margin-bottom: 30px; text-align: center;">${t('cert_subtitle')}</p>
+                            
+                            <div style="display: flex; margin-bottom: 20px; border-bottom: 1px dashed #cbd5e1; padding-bottom: 15px;">
+                                <div style="flex: 1; font-weight: bold; color: #64748b;">${t('cert_shop_label')}</div>
+                                <div style="flex: 2; font-weight: 900; color: #1e293b; font-size: 18px;">${shopName}</div>
+                            </div>
+                            
+                            <div style="display: flex; margin-bottom: 20px; border-bottom: 1px dashed #cbd5e1; padding-bottom: 15px;">
+                                <div style="flex: 1; font-weight: bold; color: #64748b;">${t('cert_owner_label')}</div>
+                                <div style="flex: 2; font-weight: 900; color: #1e293b; font-size: 18px;">${ownerName}</div>
+                            </div>
+
+                            <div style="display: flex; margin-bottom: 20px; border-bottom: 1px dashed #cbd5e1; padding-bottom: 15px;">
+                                <div style="flex: 1; font-weight: bold; color: #64748b;">${t('cert_valid_from')}</div>
+                                <div style="flex: 2; font-weight: bold; color: #2563eb;">${startDate}</div>
+                            </div>
+
+                            <div style="display: flex;">
+                                <div style="flex: 1; font-weight: bold; color: #64748b;">${t('cert_valid_to')}</div>
+                                <div style="flex: 2; font-weight: bold; color: #2563eb;">${endDate}</div>
+                            </div>
+                        </div>
+
+                        <!-- Footer -->
+                        <div style="text-align: center; margin-top: 60px;">
+                            <div style="display: inline-block; padding: 10px 30px; border-top: 2px solid #cbd5e1;">
+                                <p style="margin: 0; font-size: 12px; color: #94a3b8; font-weight: bold;">${t('cert_footer')}</p>
+                                <p style="margin: 5px 0 0 0; font-size: 10px; color: #cbd5e1;">${new Date().toLocaleDateString()}</p>
+                            </div>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `;
+
+            const opt = {
+                margin: 10,
+                filename: `Certificate-${shopCode}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(htmlContent).save().catch(err => {
+                console.error(err);
+                showToast(t('error_generating_pdf'), 'error');
+            });
+        }
