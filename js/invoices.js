@@ -465,11 +465,6 @@
 
             setTimeout(() => setBtnLoading(saveBtn, false), 1000);
             closeModal('invoiceModal');
-            
-            // فتح المعاينة التفاعلية فور نجاح الحفظ لتمكين الطباعة أو المشاركة السريعة عبر الواتساب
-            setTimeout(() => {
-                openInvoiceResponsivePreview(inv.id);
-            }, 300);
 
             // Réinitialiser le panier
             cart = [];
@@ -1955,11 +1950,6 @@ ${inv.discount > 0 ? `✨ *الخصم:* -${inv.discount.toFixed(2)} ${currencySy
             );
             setTimeout(() => setBtnLoading(saveBtn, false), 1000);
             closeModal('serviceModal');
-            
-            // فتح المعاينة التفاعلية فور نجاح الحفظ لتمكين الطباعة أو المشاركة السريعة عبر الواتساب
-            setTimeout(() => {
-                openInvoiceResponsivePreview(serviceData.id);
-            }, 300);
         }
 
         function printConsolidatedDebtInvoice(debts, customerName, totalPaid, paymentRef, date, method, checkRef) {
