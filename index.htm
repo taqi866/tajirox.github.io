@@ -229,6 +229,7 @@
                             </button>
                         </div>
 
+
                         <div class="text-center pt-6 border-t border-slate-50 mt-6">
                             <p class="text-slate-400 text-xs font-bold mb-3" data-i18n="no_account">ليس لديك حساب؟</p>
                             <button onclick="openRegisterModal()"
@@ -245,9 +246,9 @@
                         <i class="fas fa-arrow-up rtl:ml-1 ltr:mr-1"></i> العودة للأعلى
                     </button>
                 </div>
-                <p class="text-center text-[10px] text-slate-400 font-bold mt-6">
-                    &copy; 2026 Tajirox
-                </p>
+                <div class="flex items-center justify-center gap-2 mt-6 text-[10px] text-slate-400 font-bold">
+                    <span>&copy; 2026 Tajirox</span><span>•</span><button onclick="openPrivacyModal()" class="hover:text-blue-600 transition-colors underline" data-i18n="privacy_policy_btn">Politique de Confidentialité</button>
+                </div>
             </div>
         </div>
     </section>
@@ -377,6 +378,10 @@
                 <button id="shopSettingsBtn" onclick="showPage('settings')"
                     class="w-full flex items-center gap-3 p-3 text-slate-500 font-bold hover:bg-white rounded-xl transition-all text-[11px] hidden"><i
                         class="fas fa-cog"></i> <span data-i18n="shop_settings">إعدادات المتجر</span></button>
+                <button onclick="openPrivacyModal()"
+                    class="w-full flex items-center gap-3 p-3 text-slate-500 font-bold hover:bg-white rounded-xl transition-all text-[11px]">
+                    <i class="fas fa-user-shield"></i> <span data-i18n="privacy_policy_btn">Politique de Confidentialité</span>
+                </button>
                 <button onclick="promptLogout()"
                     class="w-full flex items-center gap-3 p-3 text-rose-500 font-black hover:bg-rose-100 rounded-xl transition-all"><i
                         class="fas fa-power-off"></i> <span data-i18n="logout">تسجيل الخروج</span></button>
@@ -1467,6 +1472,7 @@
             </div>
 
             <div class="space-y-3">
+
                 <input type="text" id="regShopName" placeholder="اسم المحل / المتجر"
                     class="w-full p-3 bg-slate-50 rounded-xl border-none font-bold outline-none focus:ring-2 focus:ring-blue-500"
                     data-i18n-placeholder="shop_name_placeholder">
@@ -2733,6 +2739,208 @@
     </div>
 
 
+
+    <!-- Modal Politique de Confidentialité -->
+    <div id="privacyModal"
+        class="fixed inset-0 bg-slate-900/60 hidden z-[300] flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white/95 p-6 rounded-[2.5rem] w-full max-w-2xl custom-shadow max-h-[85vh] flex flex-col border border-slate-100">
+            <!-- Header -->
+            <div class="flex justify-between items-center pb-4 border-b border-slate-100">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-user-shield text-lg"></i>
+                    </div>
+                    <h3 class="text-base font-black text-slate-800" data-i18n="privacy_policy_btn">Politique de Confidentialité & Conditions d'Utilisation</h3>
+                </div>
+                <button onclick="closeModal('privacyModal')"
+                    class="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center text-slate-500 hover:bg-rose-100 hover:text-rose-500 transition-all">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Content Area -->
+            <div class="flex-1 overflow-y-auto p-2 my-4 modal-scrollable-content text-slate-600 space-y-4 text-[11px] font-bold leading-relaxed">
+                <!-- VERSION ARABE -->
+                <div class="lang-ar space-y-4 text-right" dir="rtl">
+                    <div class="bg-blue-50/50 p-4 rounded-2xl border border-blue-100/60 mb-2">
+                        <h4 class="text-xs font-black text-blue-800 mb-1 flex items-center gap-2">
+                            <i class="fas fa-info-circle text-blue-600"></i> نظام إدارة البيانات والشفافية
+                        </h4>
+                        <p class="text-slate-500 leading-relaxed text-[10px]">
+                            يرحب بكم نظام <strong>Tajirox</strong>. يلتزم النظام التزاماً تاماً بحماية خصوصية بيانات متجرك وعملائك. نوضح فيما يلي بشفافية كاملة كيفية التعامل مع البيانات وحمايتها، بالإضافة إلى شروط الاستخدام لضمان بيئة عمل آمنة وموثوقة.
+                        </p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 mb-3">
+                            <h5 class="text-xs font-black text-slate-800 flex items-center gap-2 mb-1">
+                                <i class="fas fa-balance-scale text-blue-500"></i> الملكية القانونية والهوية
+                            </h5>
+                            <p class="text-slate-500 text-[10px] mr-3">
+                                هذا النظام هو ملك كامل وحصري لمؤسسه <strong>الحسين تاقي</strong>، صاحب مقاولة فردية مسجلة رسمياً وتحمل اسمه بالسجل التجاري لدى المحكمة الابتدائية بالعيون. يضمن هذا التسجيل القانوني موثوقية كاملة وشفافية مطلقة في كافة المعاملات والخدمات المقدمة.
+                            </p>
+                        </div>
+
+                        <div>
+                            <h5 class="text-xs font-black text-slate-800 flex items-center gap-2 mb-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> 1. البيانات التي يتم جمعها
+                            </h5>
+                            <p class="text-slate-500 mr-3">
+                                يقوم النظام بمعالجة البيانات الضرورية لإدارة متجرك فقط، وتشمل: اسم المحل، بيانات المالك، أسماء المستخدمين، البريد الإلكتروني، أرقام الهواتف، سجلات المبيعات، الفواتير، بيانات المنتجات والمخزون، وتفاصيل المصاريف والدين.
+                            </p>
+                        </div>
+
+                        <div>
+                            <h5 class="text-xs font-black text-slate-800 flex items-center gap-2 mb-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> 2. كيفية استخدام البيانات
+                            </h5>
+                            <p class="text-slate-500 mr-3">
+                                تُسخدم البيانات حصرياً لتقديم خدمات النظام وتسيير نشاطك التجاري: إصدار الفواتير، حساب الأرباح والخسائر، تتبع المخزون، التحقق من صلاحية الاشتراك، وإرسال تنبيهات الشيكات والديون.
+                            </p>
+                        </div>
+
+                        <div>
+                            <h5 class="text-xs font-black text-slate-800 flex items-center gap-2 mb-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> 3. سرية البيانات وأمانها
+                            </h5>
+                            <p class="text-slate-500 mr-3">
+                                بياناتك مشفرة ومحمية بالكامل. يتم تشفير كلمات المرور باستخدام تقنية التجزئة الآمنة (SHA-256) قبل مزامنتها. لا يمكن لأي طرف ثالث أو غير مصرح له الاطلاع على بيانات معاملاتك المالية أو التجارية.
+                            </p>
+                        </div>
+
+                        <div>
+                            <h5 class="text-xs font-black text-slate-800 flex items-center gap-2 mb-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> 4. التخزين المحلي والمزامنة
+                            </h5>
+                            <p class="text-slate-500 mr-3">
+                                يدعم النظام العمل دون اتصال بالإنترنت عن طريق تخزين البيانات مؤقتاً في ذاكرة المتصفح المحلية (localStorage/IndexedDB)، وتتم مزامنتها تلقائياً وبأمان مع قاعدة البيانات السحابية المؤمنة فور عودة الاتصال.
+                            </p>
+                        </div>
+
+                        <div>
+                            <h5 class="text-xs font-black text-slate-800 flex items-center gap-2 mb-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> 5. حقوقك والتحكم الكامل في بياناتك
+                            </h5>
+                            <p class="text-slate-500 mr-3">
+                                بصفتك مالك المتجر، لديك السيطرة المطلقة على بياناتك. يمكنك في أي وقت تعديل أو حذف المنتجات، العملاء، الفواتير، أو تعديل صلاحيات المستخدمين والوظائف وتصدير البيانات بالكامل بصيغة Excel أو PDF.
+                            </p>
+                        </div>
+
+                        <div>
+                            <h5 class="text-xs font-black text-slate-800 flex items-center gap-2 mb-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> 6. شروط الاستخدام
+                            </h5>
+                            <p class="text-slate-500 mr-3">
+                                باستخدامك لنظام Tajirox، فإنك توافق على استخدام النظام للأغراض التجارية المشروعة فقط. يلتزم المستخدم بالحفاظ على سرية معلومات حسابه وكلمة المرور الخاصة به. النظام يقدم الأدوات التقنية لتسهيل الإدارة، ويكون المستخدم مسؤولاً بشكل كامل عن دقة البيانات المدخلة ومعاملاته المالية.
+                            </p>
+                        </div>
+
+                        <div class="bg-blue-50/30 p-3 rounded-xl border border-blue-100/40 mt-2">
+                            <h5 class="text-xs font-black text-blue-800 flex items-center gap-2 mb-1">
+                                <i class="fas fa-envelope"></i> بند التواصل والدعم
+                            </h5>
+                            <p class="text-slate-500 mr-3 text-[10px]">
+                                لأي استفسار أو لطلب الدعم الفني المتعلق بسياسة الخصوصية أو شروط الاستخدام، يسعدنا تواصلكم معنا مباشرة عبر البريد الإلكتروني الرسمي: <a href="mailto:tajiroxapp@gmail.com" class="text-blue-600 underline font-black">tajiroxapp@gmail.com</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VERSION FRANÇAISE -->
+                <div class="lang-fr space-y-4 text-left" dir="ltr">
+                    <div class="bg-blue-50/50 p-4 rounded-2xl border border-blue-100/60 mb-2">
+                        <h4 class="text-xs font-black text-blue-800 mb-1 flex items-center gap-2">
+                            <i class="fas fa-info-circle text-blue-600"></i> Transparence & Système de Données
+                        </h4>
+                        <p class="text-slate-500 leading-relaxed text-[10px]">
+                            Bienvenue sur <strong>Tajirox</strong>. Notre système s'engage fermement à protéger la confidentialité de votre boutique et de vos clients. Nous détaillons ici en toute transparence comment vos informations sont collectées, gérées et protégées, ainsi que les conditions d'utilisation du système.
+                        </p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 mb-3">
+                            <h5 class="text-xs font-black text-slate-800 flex items-center gap-2 mb-1">
+                                <i class="fas fa-balance-scale text-blue-500"></i> Propriété Légale & Identité
+                            </h5>
+                            <p class="text-slate-500 text-[10px] ml-3">
+                                Ce système est la propriété exclusive de son fondateur, <strong>El Houssine Taqi</strong>, titulaire d'une entreprise individuelle portant son nom, inscrite officiellement au registre du commerce auprès du Tribunal de Première Instance de Laâyoune. Cet enregistrement garantit une confiance totale et une transparence juridique absolue pour nos utilisateurs.
+                            </p>
+                        </div>
+
+                        <div>
+                            <h5 class="text-xs font-black text-slate-800 flex items-center gap-2 mb-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> 1. Données Collectées
+                            </h5>
+                            <p class="text-slate-500 ml-3">
+                                Le système traite uniquement les données essentielles au bon fonctionnement de votre commerce : nom de la boutique, informations du propriétaire, identifiants, emails, téléphones, ventes, factures, produits, état du stock, dépenses et dettes.
+                            </p>
+                        </div>
+
+                        <div>
+                            <h5 class="text-xs font-black text-slate-800 flex items-center gap-2 mb-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> 2. Utilisation des Informations
+                            </h5>
+                            <p class="text-slate-500 ml-3">
+                                Vos données sont exclusivement utilisées pour la fourniture des services de l'application : génération de rapports financiers, édition de factures, suivi de l'état des stocks, vérification de validité de votre abonnement et alertes automatiques.
+                            </p>
+                        </div>
+
+                        <div>
+                            <h5 class="text-xs font-black text-slate-800 flex items-center gap-2 mb-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> 3. Sécurité et Confidentialité Strictes
+                            </h5>
+                            <p class="text-slate-500 ml-3">
+                                L'infrastructure du système assure une protection maximale. Les mots de passe sont hachés de manière sécurisée en local (SHA-256) avant d'être synchronisés. Aucune tierce partie n'a accès à vos données comptables ou commerciales.
+                            </p>
+                        </div>
+
+                        <div>
+                            <h5 class="text-xs font-black text-slate-800 flex items-center gap-2 mb-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> 4. Stockage Local et Mode Hors-ligne
+                            </h5>
+                            <p class="text-slate-500 ml-3">
+                                Afin de vous permettre de travailler sans interruption, les données sont stockées temporairement dans la base de données locale du navigateur (localStorage/IndexedDB) et se synchronisent en toute sécurité dès qu'une connexion Internet stable est rétablie.
+                            </p>
+                        </div>
+
+                        <div>
+                            <h5 class="text-xs font-black text-slate-800 flex items-center gap-2 mb-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> 5. Vos Droits & Contrôle Total
+                            </h5>
+                            <p class="text-slate-500 ml-3">
+                                En tant qu'administrateur, vous disposez d'un contrôle absolu. Vous pouvez à tout moment ajouter, modifier ou supprimer définitivement des produits, des ventes, des clients ou des utilisateurs, ainsi qu'exporter l'intégralité de vos bases au format Excel ou PDF.
+                            </p>
+                        </div>
+
+                        <div>
+                            <h5 class="text-xs font-black text-slate-800 flex items-center gap-2 mb-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> 6. Conditions d'Utilisation
+                            </h5>
+                            <p class="text-slate-500 ml-3">
+                                En utilisant Tajirox, vous acceptez d'utiliser le système uniquement à des fins commerciales licites. L'utilisateur est responsable de la confidentialité de ses identifiants. Le système fournit des outils de gestion, et l'utilisateur est seul responsable de l'exactitude des données saisies et de ses transactions financières.
+                            </p>
+                        </div>
+
+                        <div class="bg-blue-50/30 p-3 rounded-xl border border-blue-100/40 mt-2">
+                            <h5 class="text-xs font-black text-blue-800 flex items-center gap-2 mb-1">
+                                <i class="fas fa-envelope"></i> Contact & Support
+                            </h5>
+                            <p class="text-slate-500 ml-3 text-[10px]">
+                                Pour toute question ou demande d'assistance concernant la politique de confidentialité ou les conditions d'utilisation, n'hésitez pas à nous contacter directement à notre adresse email officielle : <a href="mailto:tajiroxapp@gmail.com" class="text-blue-600 underline font-black">tajiroxapp@gmail.com</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="pt-4 border-t border-slate-100 flex justify-end">
+                <button onclick="closeModal('privacyModal')"
+                    class="px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-500 rounded-xl font-black transition-all text-xs"
+                    data-i18n="cancel">Fermer</button>
+            </div>
+        </div>
+    </div>
 
     <script src="translations.js?v=2026"></script>
     <script src="js/state.js?v=2026"></script>
