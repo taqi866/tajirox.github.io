@@ -177,7 +177,7 @@
             <div class="w-full max-w-md">
                 <div class="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-xl border border-slate-100">
                     <!-- Language Switcher Top -->
-                    <div class="flex justify-end gap-3 mb-2">
+                    <div class="flex justify-end gap-3 mb-2 hidden">
                         <button onclick="changeLanguage('ar')"
                             class="text-[10px] font-black text-slate-400 hover:text-blue-600 transition-colors uppercase">Ar</button>
                         <span class="text-slate-200 text-[10px]">|</span>
@@ -258,8 +258,9 @@
                         <i class="fas fa-arrow-up rtl:ml-1 ltr:mr-1"></i> العودة للأعلى
                     </button>
                 </div>
-                <div class="flex items-center justify-center gap-2 mt-6 text-[10px] text-slate-400 font-bold">
-                    <span>&copy; 2026 Tajirox</span><span>•</span><button onclick="openPrivacyModal()" class="hover:text-blue-600 transition-colors underline" data-i18n="privacy_policy_btn">Politique de Confidentialité</button>
+                <div class="flex flex-col items-center justify-center gap-1.5 mt-6 text-[10px] text-slate-400 font-bold">
+                    <button onclick="openPrivacyModal()" class="hover:text-blue-600 transition-colors underline" data-i18n="privacy_policy_btn">سياسة الخصوصية وشروط الاستخدام</button>
+                    <span class="text-slate-300 font-medium text-[8px] tracking-wider">tajirox2026</span>
                 </div>
             </div>
         </div>
@@ -2789,7 +2790,7 @@
                                 <i class="fas fa-balance-scale text-blue-500"></i> الملكية القانونية والهوية
                             </h5>
                             <p class="text-slate-500 text-[10px] mr-3">
-                                هذا النظام هو ملك كامل وحصري لمؤسسه <strong>الحسين تاقي</strong>، صاحب مقاولة فردية مسجلة رسمياً وتحمل اسمه بالسجل التجاري لدى المحكمة الابتدائية بالعيون. يضمن هذا التسجيل القانوني موثوقية كاملة وشفافية مطلقة في كافة المعاملات والخدمات المقدمة.
+                                هذا النظام من تطوير وتسويق الحسين تاقي، صاحب مقاولة فردية مسجلة قانونياً بالسجل التجاري لدى المحكمة الابتدائية بالعيون، ويُستغل في إطار نشاط مهني منظم وفق القوانين الجاري بها العمل.
                             </p>
                         </div>
 
@@ -2813,25 +2814,7 @@
 
                         <div>
                             <h5 class="text-xs font-black text-slate-800 flex items-center gap-2 mb-1">
-                                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> 3. سرية البيانات وأمانها
-                            </h5>
-                            <p class="text-slate-500 mr-3">
-                                بياناتك مشفرة ومحمية بالكامل. يتم تشفير كلمات المرور باستخدام تقنية التجزئة الآمنة (SHA-256) قبل مزامنتها. لا يمكن لأي طرف ثالث أو غير مصرح له الاطلاع على بيانات معاملاتك المالية أو التجارية.
-                            </p>
-                        </div>
-
-                        <div>
-                            <h5 class="text-xs font-black text-slate-800 flex items-center gap-2 mb-1">
-                                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> 4. التخزين المحلي والمزامنة
-                            </h5>
-                            <p class="text-slate-500 mr-3">
-                                يدعم النظام العمل دون اتصال بالإنترنت عن طريق تخزين البيانات مؤقتاً في ذاكرة المتصفح المحلية (localStorage/IndexedDB)، وتتم مزامنتها تلقائياً وبأمان مع قاعدة البيانات السحابية المؤمنة فور عودة الاتصال.
-                            </p>
-                        </div>
-
-                        <div>
-                            <h5 class="text-xs font-black text-slate-800 flex items-center gap-2 mb-1">
-                                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> 5. حقوقك والتحكم الكامل في بياناتك
+                                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> 3. حقوقك والتحكم الكامل في بياناتك
                             </h5>
                             <p class="text-slate-500 mr-3">
                                 بصفتك مالك المتجر، لديك السيطرة المطلقة على بياناتك. يمكنك في أي وقت تعديل أو حذف المنتجات، العملاء، الفواتير، أو تعديل صلاحيات المستخدمين والوظائف وتصدير البيانات بالكامل بصيغة Excel أو PDF.
@@ -2840,7 +2823,7 @@
 
                         <div>
                             <h5 class="text-xs font-black text-slate-800 flex items-center gap-2 mb-1">
-                                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> 6. شروط الاستخدام
+                                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> 4. شروط الاستخدام
                             </h5>
                             <p class="text-slate-500 mr-3">
                                 باستخدامك لنظام Tajirox، فإنك توافق على استخدام النظام للأغراض التجارية المشروعة فقط. يلتزم المستخدم بالحفاظ على سرية معلومات حسابه وكلمة المرور الخاصة به. النظام يقدم الأدوات التقنية لتسهيل الإدارة، ويكون المستخدم مسؤولاً بشكل كامل عن دقة البيانات المدخلة ومعاملاته المالية.
@@ -2875,7 +2858,7 @@
                                 <i class="fas fa-balance-scale text-blue-500"></i> Propriété Légale & Identité
                             </h5>
                             <p class="text-slate-500 text-[10px] ml-3">
-                                Ce système est la propriété exclusive de son fondateur, <strong>El Houssine Taqi</strong>, titulaire d'une entreprise individuelle portant son nom, inscrite officiellement au registre du commerce auprès du Tribunal de Première Instance de Laâyoune. Cet enregistrement garantit une confiance totale et une transparence juridique absolue pour nos utilisateurs.
+                                Ce système est développé et commercialisé par El Houssine Taqi, propriétaire d'une entreprise individuelle légalement enregistrée au registre du commerce auprès du Tribunal de Première Instance de Laâyoune, et il est exploité dans le cadre d'une activité professionnelle réglementée conformément aux lois en vigueur.
                             </p>
                         </div>
 
@@ -2899,25 +2882,7 @@
 
                         <div>
                             <h5 class="text-xs font-black text-slate-800 flex items-center gap-2 mb-1">
-                                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> 3. Sécurité et Confidentialité Strictes
-                            </h5>
-                            <p class="text-slate-500 ml-3">
-                                L'infrastructure du système assure une protection maximale. Les mots de passe sont hachés de manière sécurisée en local (SHA-256) avant d'être synchronisés. Aucune tierce partie n'a accès à vos données comptables ou commerciales.
-                            </p>
-                        </div>
-
-                        <div>
-                            <h5 class="text-xs font-black text-slate-800 flex items-center gap-2 mb-1">
-                                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> 4. Stockage Local et Mode Hors-ligne
-                            </h5>
-                            <p class="text-slate-500 ml-3">
-                                Afin de vous permettre de travailler sans interruption, les données sont stockées temporairement dans la base de données locale du navigateur (localStorage/IndexedDB) et se synchronisent en toute sécurité dès qu'une connexion Internet stable est rétablie.
-                            </p>
-                        </div>
-
-                        <div>
-                            <h5 class="text-xs font-black text-slate-800 flex items-center gap-2 mb-1">
-                                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> 5. Vos Droits & Contrôle Total
+                                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> 3. Vos Droits & Contrôle Total
                             </h5>
                             <p class="text-slate-500 ml-3">
                                 En tant qu'administrateur, vous disposez d'un contrôle absolu. Vous pouvez à tout moment ajouter, modifier ou supprimer définitivement des produits, des ventes, des clients ou des utilisateurs, ainsi qu'exporter l'intégralité de vos bases au format Excel ou PDF.
@@ -2926,7 +2891,7 @@
 
                         <div>
                             <h5 class="text-xs font-black text-slate-800 flex items-center gap-2 mb-1">
-                                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> 6. Conditions d'Utilisation
+                                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> 4. Conditions d'Utilisation
                             </h5>
                             <p class="text-slate-500 ml-3">
                                 En utilisant Tajirox, vous acceptez d'utiliser le système uniquement à des fins commerciales licites. L'utilisateur est responsable de la confidentialité de ses identifiants. Le système fournit des outils de gestion, et l'utilisateur est seul responsable de l'exactitude des données saisies et de ses transactions financières.
