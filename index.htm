@@ -200,6 +200,7 @@
                                 <input type="text" id="loginUser"
                                     onkeydown="if(event.key==='Enter') document.getElementById('loginPass').focus()"
                                     placeholder="اسم المستخدم"
+                                    autocomplete="username"
                                     class="w-full px-12 py-3.5 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500 outline-none font-bold text-slate-700 text-sm"
                                     dir="ltr" data-i18n-placeholder="username">
                             </div>
@@ -213,6 +214,7 @@
                                     class="fas fa-lock absolute right-4 top-4 text-slate-300 rtl:right-4 rtl:left-auto ltr:left-4 ltr:right-auto"></i>
                                 <input type="password" id="loginPass" onkeydown="if(event.key==='Enter') handleLogin()"
                                     placeholder="••••••••"
+                                    autocomplete="current-password"
                                     class="w-full px-12 py-3.5 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500 outline-none font-bold text-slate-700 text-sm">
                                 <button onclick="togglePasswordVisibility('loginPass', 'eyeIconLogin')" class="absolute top-4 text-slate-300 hover:text-slate-500 transition-colors focus:outline-none left-4 rtl:left-4 rtl:right-auto ltr:right-4 ltr:left-auto z-10">
                                     <i id="eyeIconLogin" class="fas fa-eye text-sm"></i>
@@ -1493,17 +1495,21 @@
                     class="w-full p-3 bg-slate-50 rounded-xl border-none font-bold outline-none focus:ring-2 focus:ring-blue-500"
                     data-i18n-placeholder="owner_name_placeholder">
                 <input type="text" id="regUsername" placeholder="اسم المستخدم (بالفرنسية)"
+                    autocomplete="username"
                     class="w-full p-3 bg-slate-50 rounded-xl border-none font-bold outline-none focus:ring-2 focus:ring-blue-500"
                     dir="ltr" data-i18n-placeholder="username_fr_label">
                 <input type="email" id="regEmail" placeholder="البريد الإلكتروني"
+                    autocomplete="email"
                     class="w-full p-3 bg-slate-50 rounded-xl border-none font-bold outline-none focus:ring-2 focus:ring-blue-500"
                     dir="ltr" data-i18n-placeholder="email_placeholder">
                 <input type="text" id="regPhone" placeholder="رقم الهاتف"
+                    autocomplete="tel"
                     class="w-full p-3 bg-slate-50 rounded-xl border-none font-bold outline-none focus:ring-2 focus:ring-blue-500"
                     dir="ltr" data-i18n-placeholder="phone_placeholder">
                 <div class="relative">
                     <input type="password" id="regPass" onkeydown="if(event.key==='Enter') handleRegister()"
                         placeholder="كلمة المرور"
+                        autocomplete="new-password"
                         class="w-full p-3 pl-12 pr-12 bg-slate-50 rounded-xl border-none font-bold outline-none focus:ring-2 focus:ring-blue-500"
                         data-i18n-placeholder="password">
                     <button onclick="togglePasswordVisibility('regPass', 'eyeIconReg')" class="absolute top-3.5 text-slate-300 hover:text-slate-500 transition-colors focus:outline-none left-4 rtl:left-4 rtl:right-auto ltr:right-4 ltr:left-auto z-10">
