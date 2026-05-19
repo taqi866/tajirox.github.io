@@ -179,7 +179,11 @@
                 iconClass: "fas fa-sign-out-alt",
                 colorClass: "bg-rose-600",
                 onConfirm: () => {
+                    if (currentDbId && typeof clearLocalCache === 'function') {
+                        clearLocalCache(currentDbId);
+                    }
                     currentUser = null;
+                    currentDbId = null;
                     document.getElementById('appSection').classList.add('hidden');
                     document.getElementById('authSection').classList.remove('hidden');
                     document.getElementById('whatsappBtn').classList.remove('hidden'); // إظهار زر الواتساب عند الخروج
