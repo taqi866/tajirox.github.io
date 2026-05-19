@@ -77,6 +77,7 @@
 
         window.changeLanguage = changeLanguage;
         window.toggleHeroFeatures = toggleHeroFeatures;
+        window.toggleHeroPlanDetails = toggleHeroPlanDetails;
         window.translatePaymentDescription = translatePaymentDescription;
 
         function toggleLanguage() {
@@ -91,10 +92,34 @@
                     grid.classList.remove('hidden');
                     grid.classList.add('grid');
                     if (icon) icon.className = 'fas fa-chevron-up';
+                    
+                    // Hide plan details if open
+                    const planGrid = document.getElementById('heroPlanDetailsGrid');
+                    if (planGrid) planGrid.classList.add('hidden');
                 } else {
                     grid.classList.add('hidden');
                     grid.classList.remove('grid');
                     if (icon) icon.className = 'fas fa-th';
+                }
+            }
+        }
+
+        function toggleHeroPlanDetails() {
+            const grid = document.getElementById('heroPlanDetailsGrid');
+            if (grid) {
+                if (grid.classList.contains('hidden')) {
+                    grid.classList.remove('hidden');
+                    
+                    // Hide features grid if open
+                    const featGrid = document.getElementById('heroFeaturesGrid');
+                    const featIcon = document.getElementById('featuresBtnIcon');
+                    if (featGrid) {
+                        featGrid.classList.add('hidden');
+                        featGrid.classList.remove('grid');
+                    }
+                    if (featIcon) featIcon.className = 'fas fa-th';
+                } else {
+                    grid.classList.add('hidden');
                 }
             }
         }
@@ -512,4 +537,4 @@
             setTimeout(() => {
                 generateAndPrintInvoice(invoiceId, 'Thermal', thermalWidth);
             }, 500);
-        }
+        }
