@@ -1,5 +1,28 @@
+        let isFirstLoad = true;
+
         function refreshData() {
             setLoading(true);
+
+            // محاولة التحميل الفوري من الكاش لسرعة استجابة فائقة (Instant Boot Cache)
+            if (isFirstLoad && currentDbId && typeof getLocalCache === 'function') {
+                getLocalCache(currentDbId).then(cache => {
+                    if (cache && cache.allData) {
+                        allData = cache.allData;
+                        
+                        ['inventory', 'invoices', 'expenses', 'users', 'clients', 'payments', 'consumptions', 'checks_promissory'].forEach(k => {
+                            if (!allData[k]) allData[k] = [];
+                        });
+
+                        renderInventory();
+                        checkDueDateAlerts();
+                        renderAll();
+                        calculateStockStats();
+                        console.log("⚡ [Dexie.js] تم تحميل الواجهة فورياً من الكاش المحلي. جاري التحديث من السحابة في الخلفية...");
+                    }
+                }).catch(e => console.error("❌ خطأ تحميل كاش البدء:", e));
+                isFirstLoad = false;
+            }
+
             google.script.run
                 .withSuccessHandler(data => {
                     try {
@@ -8,6 +31,11 @@
                             if (!allData.inventory) allData = { inventory: [], invoices: [], expenses: [], users: [], clients: [], payments: [], consumptions: [], checks_promissory: [] };
                         } else {
                             allData = data || { inventory: [], invoices: [], expenses: [], users: [], clients: [], payments: [], consumptions: [], checks_promissory: [] };
+
+                            // حفظ الكاش السحابي محلياً فور الاستجابة الناجحة
+                            if (currentDbId && typeof saveLocalCache === 'function') {
+                                saveLocalCache(currentDbId, allData, currentUser);
+                            }
 
                             // ====== إضافة هذا الجزء: استعادة لون الفاتورة من الإعدادات ======
                             const colorInput = document.getElementById('settingInvoiceColor');
@@ -52,7 +80,32 @@
                 })
                 .withFailureHandler(err => {
                     setLoading(false);
-                    showToast(t('connection_error'), 'error');
+                    
+                    // التراجع للكاش المحلي في حالة فشل الشبكة أو وضع الأوفلاين
+                    if (currentDbId && typeof getLocalCache === 'function') {
+                        getLocalCache(currentDbId).then(cache => {
+                            if (cache && cache.allData) {
+                                allData = cache.allData;
+                                showToast('⚠️ وضع الأوفلاين: تم تحميل أحدث نسخة مخزنة محلياً بنجاح', 'warning');
+                                
+                                ['inventory', 'invoices', 'expenses', 'users', 'clients', 'payments', 'consumptions', 'checks_promissory'].forEach(k => {
+                                    if (!allData[k]) allData[k] = [];
+                                });
+
+                                renderInventory();
+                                checkDueDateAlerts();
+                                renderAll();
+                                calculateStockStats();
+                            } else {
+                                showToast(t('connection_error'), 'error');
+                            }
+                        }).catch(e => {
+                            console.error(e);
+                            showToast(t('connection_error'), 'error');
+                        });
+                    } else {
+                        showToast(t('connection_error'), 'error');
+                    }
                 })
                 .getAllData(currentDbId);
         }
@@ -583,4 +636,4 @@
                     }
                 }
             });
-        }
+        }
