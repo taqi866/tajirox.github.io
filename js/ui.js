@@ -312,4 +312,8 @@
 
         function closeModal(id) {
             document.getElementById(id).classList.add('hidden');
-        }
+        }
+
+        function openPrivacyModal() {
+            openModal('privacyModal');
+        }
