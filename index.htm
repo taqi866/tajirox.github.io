@@ -2535,19 +2535,46 @@
         </div>
     </div>
 
-    <!-- Modal معاينة الفاتورة -->
+    <!-- Modal معاينة الفاتورة - Responsive POS View -->
     <div id="invoicePreviewModal"
-        class="fixed inset-0 bg-slate-900/60 hidden z-[250] flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-white p-4 md:p-6 rounded-[2rem] w-full max-w-2xl custom-shadow max-h-[90vh] flex flex-col">
+        class="fixed inset-0 bg-slate-900/60 hidden z-[250] flex items-center justify-center p-2 md:p-4 backdrop-blur-sm">
+        <div class="bg-white p-4 md:p-6 rounded-[2rem] w-full max-w-lg custom-shadow max-h-[92vh] flex flex-col">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-black text-slate-800" data-i18n="preview_invoice">معاينة الفاتورة</h3>
+                <h3 class="text-sm font-black text-slate-800 flex items-center gap-2">
+                    <i class="fas fa-file-invoice text-blue-500"></i>
+                    <span>معاينة إيصال المبيعات (Responsive POS)</span>
+                </h3>
                 <button onclick="closeModal('invoicePreviewModal')"
-                    class="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center text-slate-500 hover:bg-rose-100 hover:text-rose-500 transition-all"><i
-                        class="fas fa-times"></i></button>
+                    class="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center text-slate-500 hover:bg-rose-100 hover:text-rose-500 transition-all">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            <div id="invoicePreviewContainer"
-                class="flex-1 overflow-y-auto no-scrollbar bg-slate-100 p-2 md:p-4 rounded-xl border border-slate-200">
-                <!-- Preview content here -->
+            
+            <!-- وعاء المعاينة التفاعلية لإيصال حقيقي -->
+            <div class="flex-1 overflow-y-auto no-scrollbar bg-slate-50 p-2 md:p-4 rounded-2xl border border-slate-100 mb-4">
+                <input type="hidden" id="responsivePreviewInvoiceId">
+                <div id="invoicePreviewContainer" class="bg-white p-4 md:p-6 rounded-xl shadow-md border border-slate-200 relative overflow-hidden" style="border-style: dashed; border-width: 1px 0;">
+                    <!-- سيتم تعبئة ورقة الإيصال الحرارية الافتراضية هنا -->
+                </div>
+            </div>
+            
+            <!-- أزرار الإجراءات السريعة للهواتف والأجهزة اللوحية -->
+            <div class="grid grid-cols-3 gap-2">
+                <button onclick="confirmResponsivePrint()" 
+                    class="py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-black text-[10px] md:text-xs shadow-md transition-all flex items-center justify-center gap-1.5">
+                    <i class="fas fa-print"></i>
+                    <span data-i18n="print">طباعة</span>
+                </button>
+                <button onclick="confirmResponsiveWhatsApp()" 
+                    class="py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black text-[10px] md:text-xs shadow-md transition-all flex items-center justify-center gap-1.5">
+                    <i class="fab fa-whatsapp"></i>
+                    <span>واتساب</span>
+                </button>
+                <button onclick="confirmResponsivePDF()" 
+                    class="py-3 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-black text-[10px] md:text-xs shadow-md transition-all flex items-center justify-center gap-1.5">
+                    <i class="fas fa-file-pdf"></i>
+                    <span>تنزيل PDF</span>
+                </button>
             </div>
         </div>
     </div>
