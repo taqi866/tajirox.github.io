@@ -116,6 +116,51 @@
             }
         }
 
+        function toggleServiceDiscountType() {
+            const btn = document.getElementById('serviceDiscountTypeBtn');
+            const input = document.getElementById('serviceDiscountType');
+            const discInput = document.getElementById('serviceDiscount');
+
+            if (input.value === 'amount') {
+                input.value = 'percent';
+                btn.innerText = '%';
+                btn.className = "bg-blue-100 text-blue-600 px-2 rounded-l-xl font-black text-xs border border-l border-y border-blue-200 hover:bg-blue-200 transition-all w-12";
+                discInput.placeholder = "0%";
+            } else {
+                input.value = 'amount';
+                btn.innerText = 'د.م';
+                btn.className = "bg-amber-100 text-amber-600 px-2 rounded-l-xl font-black text-xs border border-l border-y border-amber-200 hover:bg-amber-200 transition-all w-12";
+                discInput.placeholder = "0.00";
+            }
+            applyServiceDiscount();
+        }
+
+        function getServiceNetTotal() {
+            const total = safeNum(document.getElementById('serviceAmount').value);
+            const discountInput = safeNum(document.getElementById('serviceDiscount').value);
+            const type = document.getElementById('serviceDiscountType').value;
+
+            let discountAmount = 0;
+            if (type === 'percent') {
+                discountAmount = total * (discountInput / 100);
+            } else {
+                discountAmount = discountInput;
+            }
+
+            return Math.max(0, total - discountAmount);
+        }
+
+        function applyServiceDiscount() {
+            const netTotal = getServiceNetTotal();
+            document.getElementById('serviceNetTotal').innerText = formatCurrency(netTotal);
+            const serviceId = document.getElementById('serviceId').value;
+            const isEditing = allData.invoices.some(i => String(i.id) === String(serviceId));
+            if (!isEditing) {
+                document.getElementById('servicePaid').value = netTotal.toFixed(2);
+            }
+            calculateServiceBalance();
+        }
+
         function toggleInvoiceSettings() {
             const size = document.getElementById('settingInvoiceSize').value;
             const group = document.getElementById('settingInvoiceThermalGroup');
@@ -133,8 +178,8 @@
         }
 
         function fillServiceAmountInPaid() {
-            const amount = safeNum(document.getElementById('serviceAmount').value);
-            document.getElementById('servicePaid').value = amount;
+            const netTotal = getServiceNetTotal();
+            document.getElementById('servicePaid').value = netTotal.toFixed(2);
             calculateServiceBalance();
         }
 
@@ -1602,9 +1647,7 @@
         }
 
         function onServiceAmountChange() {
-            const amount = document.getElementById('serviceAmount').value;
-            document.getElementById('servicePaid').value = amount;
-            calculateServiceBalance();
+            applyServiceDiscount();
         }
 
         function openServiceModal(inv = null) {
@@ -1636,6 +1679,15 @@
                 document.getElementById('servicePaymentMethod').value = inv.payment_method;
                 document.getElementById('servicePaymentReference').value = inv.payment_reference || '';
 
+                // load discount
+                document.getElementById('serviceDiscount').value = safeNum(inv.discount) || '';
+                document.getElementById('serviceDiscountType').value = 'amount';
+                const discBtn = document.getElementById('serviceDiscountTypeBtn');
+                if (discBtn) {
+                    discBtn.innerText = 'د.م';
+                    discBtn.className = "bg-amber-100 text-amber-600 px-2 rounded-l-xl font-black text-xs border border-l border-y border-amber-200 hover:bg-amber-200 transition-all w-12";
+                }
+
                 // تفعيل حقل تاريخ الاستحقاق إذا كان موجوداً
                 if (inv.due_date) {
                     document.getElementById('serviceDueDate').value = inv.due_date;
@@ -1653,6 +1705,7 @@
 
                 // استدعاء الدالة لتحديث ظهور حقل التاريخ حسب طريقة الدفع
                 toggleServiceDueDateField();
+                applyServiceDiscount(); // Recalculate net total and balance!
 
             } else {
                 const serviceNumber = getNextInvoiceId('خدمة');
@@ -1670,10 +1723,21 @@
                 document.getElementById('servicePaymentMethod').value = 'صندوق';
                 document.getElementById('servicePaymentReference').value = '';
                 document.getElementById('serviceDueDate').value = '';
+
+                // reset discount
+                document.getElementById('serviceDiscount').value = '';
+                document.getElementById('serviceDiscountType').value = 'amount';
+                const discBtn = document.getElementById('serviceDiscountTypeBtn');
+                if (discBtn) {
+                    discBtn.innerText = 'د.م';
+                    discBtn.className = "bg-amber-100 text-amber-600 px-2 rounded-l-xl font-black text-xs border border-l border-y border-amber-200 hover:bg-amber-200 transition-all w-12";
+                }
+
                 document.getElementById('saveServiceBtn').innerText = t('save_invoice_btn');
 
                 // استدعاء الدالة لتحديث ظهور حقل التاريخ (سيتم إخفاؤه لأن القيمة افتراضياً 'صندوق')
                 toggleServiceDueDateField();
+                applyServiceDiscount(); // Reset net total and balance!
             }
 
             openModal('serviceModal');
@@ -1681,9 +1745,17 @@
         }
 
         function calculateServiceBalance() {
-            const amount = safeNum(document.getElementById('serviceAmount').value);
-            const paid = safeNum(document.getElementById('servicePaid').value);
-            document.getElementById('serviceBalance').value = (amount - paid).toFixed(2);
+            const netTotal = getServiceNetTotal();
+            const paymentMethod = document.getElementById('servicePaymentMethod').value;
+            let paid = safeNum(document.getElementById('servicePaid').value);
+
+            if (paymentMethod === 'دين') {
+                paid = 0;
+                document.getElementById('servicePaid').value = 0;
+            }
+
+            const balance = netTotal - paid;
+            document.getElementById('serviceBalance').value = balance.toFixed(2);
         }
 
         function saveServiceInvoice() {
@@ -1712,6 +1784,16 @@
             const paymentReference = document.getElementById('servicePaymentReference').value.trim();
             const dueDate = document.getElementById('serviceDueDate')?.value || null;
 
+            const netTotal = getServiceNetTotal();
+            const inputDiscountAmount = serviceAmount - netTotal;
+            let finalDiscount = inputDiscountAmount;
+            let discountType = '';
+            if (inputDiscountAmount > 0) {
+                const discountInput = document.getElementById('serviceDiscount').value;
+                const type = document.getElementById('serviceDiscountType').value;
+                discountType = type === 'percent' ? `${t('discount')} ${discountInput}%` : t('discount');
+            }
+
             const serviceData = {
                 id: id || 'SERV-' + Date.now().toString().slice(-6),
                 date: document.getElementById('serviceDate').value,
@@ -1730,8 +1812,8 @@
                 total: serviceAmount,
                 paid: safeNum(document.getElementById('servicePaid').value),
                 balance: safeNum(document.getElementById('serviceBalance').value),
-                discount: 0,
-                discount_type: '',
+                discount: finalDiscount,
+                discount_type: discountType || 'خصم',
                 cancelled_remainder: 0,
                 type: 'خدمة'
             };
@@ -1970,4 +2052,4 @@
             const printWindow = window.open('', '_blank');
             printWindow.document.write(html);
             printWindow.document.close();
-        }
+        }
