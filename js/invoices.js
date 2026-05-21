@@ -1662,21 +1662,31 @@
             });
 
             if (inv) {
-                document.getElementById('serviceId').value = inv.id;
-                document.getElementById('serviceAutoId').innerText = 'SERV-' + inv.id;
-                document.getElementById('serviceDate').value = inv.date;
-                document.getElementById('serviceDescription').value = inv.description || (inv.items && inv.items[0] ? inv.items[0].name : '');
+                document.getElementById('serviceId').value = inv.id || '';
+                document.getElementById('serviceAutoId').innerText = 'SERV-' + (inv.id || '');
+                document.getElementById('serviceDate').value = inv.date || '';
 
-                let parsedItems = [];
-                try {
-                    parsedItems = typeof inv.items === 'string' ? JSON.parse(inv.items) : (inv.items || []);
-                } catch (e) { }
-                document.getElementById('serviceDescription').value = inv.description || (parsedItems.length > 0 ? parsedItems[0].name : '');
+                // Extract service description safely
+                let serviceDesc = inv.description || '';
+                if (!serviceDesc && inv.items) {
+                    let parsedItems = [];
+                    try {
+                        parsedItems = typeof inv.items === 'string' ? JSON.parse(inv.items) : inv.items;
+                    } catch (e) {
+                        console.error('Error parsing inv.items:', e);
+                    }
+                    if (Array.isArray(parsedItems) && parsedItems.length > 0 && parsedItems[0]) {
+                        serviceDesc = parsedItems[0].name || '';
+                    } else if (parsedItems && typeof parsedItems === 'object' && !Array.isArray(parsedItems)) {
+                        serviceDesc = parsedItems.name || '';
+                    }
+                }
+                document.getElementById('serviceDescription').value = serviceDesc;
 
-                document.getElementById('serviceAmount').value = inv.total;
-                document.getElementById('servicePaid').value = inv.paid;
-                document.getElementById('serviceBalance').value = inv.balance;
-                document.getElementById('servicePaymentMethod').value = inv.payment_method;
+                document.getElementById('serviceAmount').value = safeNum(inv.total);
+                document.getElementById('servicePaid').value = safeNum(inv.paid);
+                document.getElementById('serviceBalance').value = safeNum(inv.balance);
+                document.getElementById('servicePaymentMethod').value = inv.payment_method || 'صندوق';
                 document.getElementById('servicePaymentReference').value = inv.payment_reference || '';
 
                 // load discount
@@ -1698,7 +1708,7 @@
                     customerInput.classList.add('hidden');
                 } else {
                     customerSelect.value = "";
-                    customerInput.value = inv.customer;
+                    customerInput.value = inv.customer || '';
                     customerInput.classList.remove('hidden');
                 }
                 document.getElementById('saveServiceBtn').innerText = t('save_changes_btn');
