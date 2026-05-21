@@ -392,12 +392,17 @@
                     <div style="font-family: 'Cairo', sans-serif; padding: 40px; background: #fff; direction: ${dir}; text-align: ${align}; border: 10px double #2563eb; height: 100%; position: relative;">
                         
                         <!-- Header -->
-                        <div style="text-align: center; margin-bottom: 40px;">
-                            <div style="width: 80px; height: 80px; background-color: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto;">
-                                <svg style="width: 40px; height: 40px; color: #2563eb;" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                            </div>
-                            <h1 style="color: #1e293b; font-size: 32px; font-weight: 900; margin: 0; text-transform: uppercase; letter-spacing: 1px;">${t('cert_title')}</h1>
-                            <p style="color: #64748b; font-size: 14px; margin-top: 10px;">${t('cert_ref')}: <strong>${refId}</strong></p>
+                        <div style="text-align: center; margin-bottom: 30px;">
+                            <svg style="width: 90px; height: 90px; margin: 0 auto 15px auto; display: block;" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="50" cy="50" r="48" fill="#f8fafc" stroke="#2563eb" stroke-width="3"/>
+                                <circle cx="50" cy="50" r="42" stroke="#2563eb" stroke-width="1" stroke-dasharray="4 4"/>
+                                <path d="M35 40 H65 V72 C65 75.3137 62.3137 78 59 78 H41 C37.6863 78 35 75.3137 35 72 V40 Z" fill="#2563eb" fill-opacity="0.1" stroke="#2563eb" stroke-width="3" stroke-linejoin="round"/>
+                                <path d="M43 40 V32 C43 28.134 46.134 25 50 25 C53.866 25 57 28.134 57 32 V40" stroke="#d97706" stroke-width="3" stroke-linecap="round"/>
+                                <path d="M42 66 L48 58 L54 62 L60 52" stroke="#d97706" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="60" cy="52" r="3" fill="#d97706"/>
+                            </svg>
+                            <h1 style="color: #1e293b; font-size: 30px; font-weight: 900; margin: 0; text-transform: uppercase; letter-spacing: 1px;">${t('cert_title')}</h1>
+                            <p style="color: #64748b; font-size: 13px; margin-top: 5px;">${t('cert_ref')}: <strong>${refId}</strong></p>
                         </div>
 
                         <!-- Content -->
@@ -426,10 +431,14 @@
                         </div>
 
                         <!-- Footer -->
-                        <div style="text-align: center; margin-top: 60px;">
-                            <div style="display: inline-block; padding: 10px 30px; border-top: 2px solid #cbd5e1;">
-                                <p style="margin: 0; font-size: 12px; color: #94a3b8; font-weight: bold;">${t('cert_footer')}</p>
-                                <p style="margin: 5px 0 0 0; font-size: 10px; color: #cbd5e1;">${new Date().toLocaleDateString()}</p>
+                        <div style="text-align: center; margin-top: 50px; border-top: 2px solid #e2e8f0; padding-top: 20px;">
+                            <p style="margin: 0; font-size: 11px; color: #64748b; font-weight: bold; line-height: 1.5;">${t('cert_footer')}</p>
+                            <p style="margin: 3px 0 15px 0; font-size: 9px; color: #94a3b8; direction: ltr;">${new Date().toLocaleDateString()}</p>
+                            <div style="font-size: 11px; color: #475569; line-height: 1.8; direction: ltr; background-color: #f8fafc; padding: 12px; border-radius: 12px; border: 1px dashed #cbd5e1; display: inline-block;">
+                                <strong style="color: #1e293b;">El houssine TAQI (Entrepreneur individuel)</strong><br>
+                                <span style="color: #64748b;">Email :</span> <a href="mailto:tajiroxapp@gmail.com" style="color: #2563eb; text-decoration: none; font-weight: bold;">tajiroxapp@gmail.com</a>
+                                &nbsp;&bull;&nbsp;
+                                <span style="color: #64748b;">Tél :</span> <span style="color: #1e293b; font-weight: bold;">+2126 89 18 82 41</span>
                             </div>
                         </div>
                     </div>
@@ -449,4 +458,4 @@
                 console.error(err);
                 showToast(t('error_generating_pdf'), 'error');
             });
-        }
+        }
