@@ -200,6 +200,7 @@
             document.getElementById('regEmail').value = '';
             document.getElementById('regPhone').value = '';
             document.getElementById('regPass').value = '';
+            document.getElementById('regAcceptTerms').checked = false;
             openModal('registerModal');
         }
 
@@ -218,6 +219,9 @@
             const regBtn = document.getElementById('registerBtn');
 
             if (!data.shopName || !data.ownerName || !data.username || !data.email || !data.password) return showToast(t('fill_fields_error'), 'error');
+
+            const acceptTerms = document.getElementById('regAcceptTerms').checked;
+            if (!acceptTerms) return showToast(t('accept_terms_error'), 'error');
 
             setLoading(true);
             setBtnLoading(regBtn, true, t('creating_account'));
@@ -595,4 +599,4 @@
                     showToast("فشلت عملية التحقق بالبصمة", 'error');
                 }
             }
-        }
+        }
