@@ -1607,6 +1607,14 @@
                     </button>
                 </div>
 
+                <div class="flex items-start gap-2.5 p-3 bg-slate-50 rounded-2xl select-none mt-2">
+                    <input type="checkbox" id="regAcceptTerms" class="w-4 h-4 mt-0.5 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer">
+                    <label for="regAcceptTerms" class="text-[9px] font-bold text-slate-500 cursor-pointer leading-normal">
+                        <span data-i18n="accept_terms_prefix">أوافق على </span>
+                        <a href="javascript:void(0)" onclick="openPrivacyModal()" class="text-blue-600 underline font-black" data-i18n="accept_terms_link">سياسة الخصوصية وشروط الاستخدام</a>
+                    </label>
+                </div>
+
                 <div class="grid grid-cols-2 gap-2 pt-4">
                     <button onclick="closeModal('registerModal')"
                         class="py-3 bg-slate-100 rounded-xl font-black text-slate-400 text-xs"
@@ -2930,14 +2938,7 @@
                     </div>
 
                     <div class="space-y-3">
-                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 mb-3">
-                            <h5 class="text-xs font-black text-slate-800 flex items-center gap-2 mb-1">
-                                <i class="fas fa-balance-scale text-blue-500"></i> الملكية القانونية والهوية
-                            </h5>
-                            <p class="text-slate-500 text-[10px] mr-3">
-                                هذا النظام من تطوير وتسويق الحسين تاقي، صاحب مقاولة فردية مسجلة قانونياً بالسجل التجاري لدى المحكمة الابتدائية بالعيون، ويُستغل في إطار نشاط مهني منظم وفق القوانين الجاري بها العمل.
-                            </p>
-                        </div>
+
 
                         <div>
                             <h5 class="text-xs font-black text-slate-800 flex items-center gap-2 mb-1">
@@ -2975,6 +2976,15 @@
                             </p>
                         </div>
 
+                        <div>
+                            <h5 class="text-xs font-black text-slate-800 flex items-center gap-2 mb-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> 5. صلاحية الحساب واستمرارية الخدمة
+                            </h5>
+                            <p class="text-slate-500 mr-3">
+                                يتم منح صلاحية فتح حساب متجرك لمدة سنة واحدة (12 شهراً). وعند انتهاء هذه الفترة، يجب على المستخدم تجديد اشتراكه السنوي لضمان استمرارية الوصول إلى النظام وللحفاظ على جميع وظائفه وبياناته المسجلة. وفي حالة عدم تجديد الاشتراك خلال 60 يوماً من تاريخ انتهاء الصلاحية، سيتم إغلاق الحساب نهائياً وحذف جميع البيانات المرتبطة به بصفة كلية وغير قابلة للاسترجاع.
+                            </p>
+                        </div>
+
                         <div class="bg-blue-50/30 p-3 rounded-xl border border-blue-100/40 mt-2">
                             <h5 class="text-xs font-black text-blue-800 flex items-center gap-2 mb-1">
                                 <i class="fas fa-envelope"></i> بند التواصل والدعم
@@ -2998,14 +3008,7 @@
                     </div>
 
                     <div class="space-y-3">
-                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 mb-3">
-                            <h5 class="text-xs font-black text-slate-800 flex items-center gap-2 mb-1">
-                                <i class="fas fa-balance-scale text-blue-500"></i> Propriété Légale & Identité
-                            </h5>
-                            <p class="text-slate-500 text-[10px] ml-3">
-                                Ce système est développé et commercialisé par El Houssine Taqi, propriétaire d'une entreprise individuelle légalement enregistrée au registre du commerce auprès du Tribunal de Première Instance de Laâyoune, et il est exploité dans le cadre d'une activité professionnelle réglementée conformément aux lois en vigueur.
-                            </p>
-                        </div>
+
 
                         <div>
                             <h5 class="text-xs font-black text-slate-800 flex items-center gap-2 mb-1">
@@ -3040,6 +3043,15 @@
                             </h5>
                             <p class="text-slate-500 ml-3">
                                 En utilisant Tajirox, vous acceptez d'utiliser le système uniquement à des fins commerciales licites. L'utilisateur est responsable de la confidentialité de ses identifiants. Le système fournit des outils de gestion, et l'utilisateur est seul responsable de l'exactitude des données saisies et de ses transactions financières.
+                            </p>
+                        </div>
+
+                        <div>
+                            <h5 class="text-xs font-black text-slate-800 flex items-center gap-2 mb-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> 5. Durée de Validité & Renouvellement
+                            </h5>
+                            <p class="text-slate-500 ml-3">
+                                L'ouverture de votre compte magasin est accordée pour une durée d'une année (12 mois). À l'expiration de cette période, l'utilisateur doit procéder au renouvellement annuel de son abonnement afin de garantir la continuité d'accès au système et de préserver l'ensemble de ses données et fonctionnalités. En cas de non-renouvellement dans un délai de 60 jours suivant la date d'expiration de l'abonnement, le compte sera définitivement fermé et toutes les données associées seront intégralement et irréversiblement supprimées.
                             </p>
                         </div>
 
