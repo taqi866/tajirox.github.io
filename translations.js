@@ -683,7 +683,8 @@ const translations = {
         plan_feature_2: "إدارة كاملة للمخزون والمنتجات",
         plan_feature_3: "فواتير احترافية وتقارير مالية ذكية",
         plan_feature_4: "تدبير كامل للخزينة",
-        privacy_policy_btn: "سياسة الخصوصية وشروط الاستخدام"
+        privacy_policy_btn: "سياسة الخصوصية وشروط الاستخدام",
+        back_to_top: "العودة للأعلى"
     },
     fr: {
         // Dashboard Checks
@@ -1420,6 +1421,7 @@ const translations = {
         plan_feature_2: "Gestion complète du stock et des produits",
         plan_feature_3: "Facturation pro et rapports intelligents",
         plan_feature_4: "Gestion complète de trésorerie",
-        privacy_policy_btn: "Politique de Confidentialité & Conditions d'Utilisation"
+        privacy_policy_btn: "Politique de Confidentialité & Conditions d'Utilisation",
+        back_to_top: "Retour en haut"
     }
 };
