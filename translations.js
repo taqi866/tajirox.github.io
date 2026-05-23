@@ -684,7 +684,10 @@ const translations = {
         plan_feature_3: "فواتير احترافية وتقارير مالية ذكية",
         plan_feature_4: "تدبير كامل للخزينة",
         privacy_policy_btn: "سياسة الخصوصية وشروط الاستخدام",
-        back_to_top: "العودة للأعلى"
+        back_to_top: "العودة للأعلى",
+        accept_terms_prefix: "أوافق على ",
+        accept_terms_link: "سياسة الخصوصية وشروط الاستخدام",
+        accept_terms_error: "يرجى الموافقة على سياسة الخصوصية وشروط الاستخدام"
     },
     fr: {
         // Dashboard Checks
@@ -1422,6 +1425,9 @@ const translations = {
         plan_feature_3: "Facturation pro et rapports intelligents",
         plan_feature_4: "Gestion complète de trésorerie",
         privacy_policy_btn: "Politique de Confidentialité & Conditions d'Utilisation",
+        accept_terms_prefix: "J'accepte la ",
+        accept_terms_link: "Politique de Confidentialité & Conditions d'Utilisation",
+        accept_terms_error: "Veuillez accepter la politique de confidentialité et les conditions d'utilisation",
         back_to_top: "Retour en haut"
     }
 };
