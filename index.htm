@@ -6,22 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TAJIROX I Système de gestion des magasins</title>
 
+    <!-- PWA & Mobile Optimization -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="TAJIROX">
+    <link rel="apple-touch-icon" href="icon-192.png">
+
+    <!-- External Libraries & Fonts -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <!-- Dans la section <head>, ajoutez ces deux lignes après les autres scripts -->
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TAJIROX I Système de gestion des magasins</title>
-
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <!-- Dans la section <head>, ajoutez ces deux lignes après les autres scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/__qz__@2.2.3/dist/qz-tray-client.min.js"></script>
     <!-- مكتبة توليد الباركود -->
@@ -34,6 +29,17 @@
     <link rel="stylesheet" href="css/style.css?v=2026_v3">
     <script src="js/security.js?v=2026_v3"></script>
     <script src="js/api.js?v=2026_v3"></script>
+
+    <!-- Register Service Worker -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(reg => console.log('🚀 [TAJIROX] Service Worker registered successfully!', reg))
+                    .catch(err => console.error('❌ [TAJIROX] Service Worker registration failed:', err));
+            });
+        }
+    </script>
 </head>
 
 <body class="bg-slate-50 text-slate-900">
@@ -3092,6 +3098,156 @@
     <script src="js/admin.js?v=2026_v3"></script>
     <script src="js/support.js?v=2026_v3"></script>
     <script src="js/init.js?v=2026_v3"></script>
+
+    <!-- ========================================== -->
+    <!-- TAJIROX SMART PWA INSTALL PROMPT FOR IOS & ANDROID -->
+    <!-- ========================================== -->
+    <div id="pwa-install-banner" class="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:max-w-sm bg-white/95 backdrop-blur-xl border border-slate-200/80 p-5 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.15)] z-[9999] transform translate-y-[150%] transition-transform duration-500 hidden flex flex-col gap-4" dir="rtl">
+        <!-- Close button -->
+        <button id="pwa-close-btn" class="absolute top-4 left-4 w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition-colors" title="إغلاق">
+            <i class="fas fa-times text-xs"></i>
+        </button>
+
+        <div class="flex items-center gap-3 mt-1">
+            <div class="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl flex items-center justify-center text-white shadow-lg border border-blue-500/20">
+                <i class="fas fa-store-alt text-xl"></i>
+            </div>
+            <div>
+                <h4 class="font-black text-slate-800 text-sm">تطبيق TAJIROX للآيفون والأندرويد</h4>
+                <p class="text-slate-500 text-[10px] font-bold">حمل التطبيق مجاناً وبسرعة فائقة!</p>
+            </div>
+        </div>
+
+        <div class="text-[11px] text-slate-600 leading-relaxed font-bold border-t border-slate-100/80 pt-3">
+            <p id="pwa-benefit-text">قم بتثبيت التطبيق على شاشتك الرئيسية للوصول السريع إلى المتجر وإدارة عملياتك بسهولة وسرعة ودون الحاجة للمتصفح.</p>
+            
+            <!-- iOS Safari Instructions List -->
+            <ul id="pwa-ios-instructions" class="hidden mt-3 space-y-2 list-none p-0">
+                <li class="flex items-start gap-2 text-slate-700">
+                    <span class="w-5 h-5 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center font-extrabold text-[10px] mt-0.5 flex-shrink-0">1</span>
+                    <span>اضغط على زر **المشاركة** <i class="fas fa-share-square text-blue-600 mx-0.5 text-xs"></i> في أسفل متصفح Safari بالأسفل.</span>
+                </li>
+                <li class="flex items-start gap-2 text-slate-700">
+                    <span class="w-5 h-5 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center font-extrabold text-[10px] mt-0.5 flex-shrink-0">2</span>
+                    <span>مرر للأسفل واختر **إضافة إلى الشاشة الرئيسية** <i class="fas fa-plus-square text-slate-700 mx-0.5 text-xs"></i>.</span>
+                </li>
+                <li class="flex items-start gap-2 text-slate-700">
+                    <span class="w-5 h-5 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center font-extrabold text-[10px] mt-0.5 flex-shrink-0">3</span>
+                    <span>اضغط على **إضافة** (Add) في الزاوية العلوية اليمنى.</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Android/Chrome Install Button -->
+        <button id="pwa-install-btn" class="hidden w-full py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 active:scale-95 text-white font-black text-xs rounded-2xl shadow-lg shadow-blue-200/50 transition-all flex items-center justify-center gap-2">
+            <i class="fas fa-download"></i>
+            <span>تثبيت التطبيق الآن</span>
+        </button>
+
+        <div class="flex items-center justify-between text-[10px] text-slate-400 font-bold border-t border-slate-50 pt-3">
+            <span class="flex items-center gap-1"><i class="fas fa-shield-alt text-emerald-500"></i> آمن 100% ومجاني</span>
+            <button id="pwa-later-btn" class="hover:text-slate-600 underline">ربما لاحقاً</button>
+        </div>
+    </div>
+
+    <!-- PWA Install Prompt Logic -->
+    <script>
+        (function() {
+            const banner = document.getElementById('pwa-install-banner');
+            const closeBtn = document.getElementById('pwa-close-btn');
+            const laterBtn = document.getElementById('pwa-later-btn');
+            const installBtn = document.getElementById('pwa-install-btn');
+            const iosInstructions = document.getElementById('pwa-ios-instructions');
+            const benefitText = document.getElementById('pwa-benefit-text');
+
+            let deferredPrompt = null;
+
+            // 1. Detectors
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                          (/Macintosh/.test(navigator.userAgent) && 'ontouchend' in document);
+            
+            const isStandalone = window.navigator.standalone || 
+                                 window.matchMedia('(display-mode: standalone)').matches;
+
+            // Check if dismissed recently
+            const isDismissed = () => {
+                const dismissTime = localStorage.getItem('tajirox_pwa_dismissed');
+                if (!dismissTime) return false;
+                const sevenDays = 7 * 24 * 60 * 60 * 1000;
+                return (Date.now() - parseInt(dismissTime)) < sevenDays;
+            };
+
+            // 2. Hide / Show Logic
+            const showBanner = () => {
+                banner.classList.remove('hidden');
+                setTimeout(() => {
+                    banner.classList.remove('translate-y-[150%]');
+                }, 100);
+            };
+
+            const hideBanner = (permanently = false) => {
+                banner.classList.add('translate-y-[150%]');
+                if (permanently) {
+                    localStorage.setItem('tajirox_pwa_dismissed', Date.now().toString());
+                }
+                setTimeout(() => {
+                    banner.classList.add('hidden');
+                }, 500);
+            };
+
+            // 3. Setup listeners
+            closeBtn.onclick = () => hideBanner(true);
+            laterBtn.onclick = () => hideBanner(true);
+
+            // 4. Android/Chrome specific flow
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                
+                // If already running standalone or dismissed recently, skip showing custom prompt
+                if (isStandalone || isDismissed()) return;
+
+                // Adjust UI for Android/Chrome direct installation
+                benefitText.innerText = "قم بتثبيت التطبيق على شاشتك الرئيسية للوصول السريع ومراقبة مخزونك وفواتيرك بنقرة واحدة كأي تطبيق هاتف ذكي.";
+                installBtn.classList.remove('hidden');
+                iosInstructions.classList.add('hidden');
+                
+                showBanner();
+            });
+
+            // Trigger native install dialogue when direct button is clicked
+            installBtn.onclick = async () => {
+                if (!deferredPrompt) return;
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`[PWA] Install prompt outcome: ${outcome}`);
+                deferredPrompt = null;
+                hideBanner();
+            };
+
+            // 5. iOS Safari specific flow
+            window.addEventListener('load', () => {
+                // If running standalone or dismissed recently, exit
+                if (isStandalone || isDismissed()) return;
+
+                if (isIOS) {
+                    benefitText.innerText = "تطبيق TAJIROX متوفر للآيفون! قم بتثبيته الآن كأي تطبيق أصلي عبر خطوات بسيطة:";
+                    installBtn.classList.add('hidden');
+                    iosInstructions.classList.remove('hidden');
+                    
+                    // Delay slightly to give time for page to load cleanly
+                    setTimeout(showBanner, 2500);
+                }
+            });
+
+            // Hide banner once app is successfully installed
+            window.addEventListener('appinstalled', () => {
+                console.log('[PWA] TAJIROX was successfully installed.');
+                hideBanner();
+                localStorage.setItem('tajirox_pwa_installed', 'true');
+            });
+        })();
+    </script>
 </body>
 
 </html>
