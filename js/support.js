@@ -5,7 +5,7 @@
 
 // --- Configuration des Horaires de Travail ---
 const WORKING_HOURS_START = 9;  // 09h00
-const WORKING_HOURS_END = 20;    // 20h00
+const WORKING_HOURS_END = 19;    // 19h00
 
 // --- État de session de discussion ---
 let supportChatOpen = false;
@@ -369,7 +369,7 @@ function getSmartBotAnswer(query) {
         },
         {
             keys: ["contact", "support", "humain", "telephone", "email", "mail", "whatsapp"],
-            ans: "Pour joindre un conseiller technique :\n- **Email** : contact@tajirox.com\n- **WhatsApp** : +212 689-178241\n- Heures de support en direct : Lundi au Samedi, de 09:00 à 20:00."
+            ans: "Pour joindre un conseiller technique :\n- **Email** : contact@tajirox.com\n- **WhatsApp** : +212 689-178241\n- Heures de support en direct : Lundi au Samedi, de 09:00 à 19:00."
         }
     ];
 
@@ -397,7 +397,7 @@ function getSmartBotAnswer(query) {
         },
         {
             keys: ["اتصال", "تواصل", "دعم", "هاتف", "رقم", "إيميل", "بريد", "واتساب", "مساعدة"],
-            ans: "يمكنك التواصل مع الدعم الفني المباشر:\n- **البريد الإلكتروني**: contact@tajirox.com\n- **واتساب**: +212 689-178241\n- أوقات العمل والدعم المباشر: من الاثنين إلى السبت (09:00 - 20:00)."
+            ans: "يمكنك التواصل مع الدعم الفني المباشر:\n- **البريد الإلكتروني**: contact@tajirox.com\n- **واتساب**: +212 689-178241\n- أوقات العمل والدعم المباشر: من الاثنين إلى السبت (09:00 - 19:00)."
         }
     ];
 
