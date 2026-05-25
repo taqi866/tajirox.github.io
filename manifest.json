@@ -4,8 +4,8 @@
   "description": "Système de gestion des magasins et de facturation",
   "start_url": "index.htm",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#2563eb",
+  "background_color": "#1d4ed8",
+  "theme_color": "#1d4ed8",
   "orientation": "any",
   "categories": ["business", "productivity"],
   "icons": [
