@@ -26,54 +26,10 @@
     // 3. Splash Screen Logic
     function initMobileSplash() {
         const splash = document.getElementById('premiumSplash');
-        if (!splash) return;
-
-        if (isMobileDevice()) {
-            // Show splash immediately for mobile
-            splash.classList.remove('hidden');
-            document.body.style.overflow = 'hidden'; // Lock scrolling during splash
-
-            const progressBar = document.getElementById('splashProgressBar');
-            const progressText = document.getElementById('splashProgressText');
-            
-            let progress = 0;
-            const duration = 2200; // 2.2 seconds total animation
-            const intervalTime = 40;
-            const steps = duration / intervalTime;
-            const increment = 100 / steps;
-
-            const timer = setInterval(() => {
-                // Add minor random variation to progress increments to make it feel natural
-                const randomVariation = (Math.random() - 0.5) * 2;
-                progress += increment + randomVariation;
-
-                if (progress >= 100) {
-                    progress = 100;
-                    clearInterval(timer);
-                    progressBar.style.width = '100%';
-                    progressText.innerText = '100%';
-
-                    // Smooth fade out and zoom out
-                    setTimeout(() => {
-                        splash.style.opacity = '0';
-                        splash.style.transform = 'scale(1.08)';
-                        splash.style.filter = 'blur(10px)';
-                        
-                        setTimeout(() => {
-                            splash.classList.add('hidden');
-                            document.body.style.overflow = ''; // Unlock scrolling
-                        }, 700);
-                    }, 350);
-                } else {
-                    const roundedProgress = Math.min(100, Math.max(0, Math.round(progress)));
-                    progressBar.style.width = `${roundedProgress}%`;
-                    progressText.innerText = `${roundedProgress}%`;
-                }
-            }, intervalTime);
-        } else {
-            // Keep hidden on desktop
+        if (splash) {
             splash.classList.add('hidden');
         }
+        document.body.style.overflow = ''; // Ensure scrolling is unlocked
     }
 
     // 4. Hook into the existing showPage system
