@@ -776,7 +776,24 @@
 
         /* Splash Screen Styles */
         #splashScreen {
+            display: none !important;
             transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+        }
+
+        /* Force dark blue background during splash launch to eliminate HTML flash */
+        body.splash-active {
+            background-color: #1d4ed8 !important;
+        }
+
+        /* Display the splash screen only when opened as an installed PWA (Standalone Mode) */
+        @media (display-mode: standalone) {
+            #splashScreen {
+                display: flex !important;
+            }
+        }
+
+        .ios-standalone #splashScreen {
+            display: flex !important;
         }
 
         #splashScreen.fade-out {
