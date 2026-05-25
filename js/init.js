@@ -10,6 +10,9 @@
 
         // تهيئة عند تحميل الصفحة
         window.onload = function () {
+            // Check if application is running in PWA standalone mode
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
             // ============================================
             // 0. Splash Screen Progressive Loading
             // ============================================
@@ -20,12 +23,15 @@
             };
 
             const setSplashProgress = (percentage, arText, frText) => {
+                if (!isStandalone) return;
                 if (splashProgressBar) splashProgressBar.style.width = `${percentage}%`;
                 if (splashStatus) splashStatus.innerText = getBilingualText(arText, frText);
             };
 
             // Stage 1: UI Initialization
-            setSplashProgress(20, 'جاري تهيئة واجهة المستخدم...', 'Initialisation de l\'interface...');
+            if (isStandalone) {
+                setSplashProgress(20, 'جاري تهيئة واجهة المستخدم...', 'Initialisation de l\'interface...');
+            }
 
             // ============================================
             // 1. Initialisation de base
@@ -56,7 +62,9 @@
             }
 
             // Stage 2: Event Listeners and Controls
-            setSplashProgress(50, 'إعداد أدوات التحكم والنماذج...', 'Configuration des contrôles...');
+            if (isStandalone) {
+                setSplashProgress(50, 'إعداد أدوات التحكم والنماذج...', 'Configuration des contrôles...');
+            }
 
             // ============================================
             // 2. Initialisation des écouteurs d'événements
@@ -135,7 +143,9 @@
             }
 
             // Stage 3: Auto-login & Biometrics
-            setSplashProgress(75, 'التحقق من بيانات الدخول وبصمة الوجه...', 'Vérification des accès et biométrie...');
+            if (isStandalone) {
+                setSplashProgress(75, 'التحقق من بيانات الدخول وبصمة الوجه...', 'Vérification des accès et biométrie...');
+            }
 
             // ============================================
             // 6. Initialisation de la connexion automatique
@@ -289,7 +299,9 @@
             });
 
             // Stage 4: Sync & Logging
-            setSplashProgress(90, 'تشغيل النظام والتحقق من المزامنة...', 'Démarrage du système et synchronisation...');
+            if (isStandalone) {
+                setSplashProgress(90, 'تشغيل النظام والتحقق من المزامنة...', 'Démarrage du système et synchronisation...');
+            }
 
             // ============================================
             // 13. Journalisation
@@ -317,14 +329,24 @@
             }
 
             // Stage 5: System Ready & Fade out Splash Screen
-            setSplashProgress(100, 'جاهز!', 'Prêt !');
-            setTimeout(() => {
+            if (isStandalone) {
+                setSplashProgress(100, 'جاهز!', 'Prêt !');
+                setTimeout(() => {
+                    const splash = document.getElementById('splashScreen');
+                    if (splash) {
+                        splash.classList.add('fade-out');
+                        setTimeout(() => {
+                            splash.remove();
+                            document.body.classList.remove('splash-active');
+                        }, 600);
+                    }
+                }, 800);
+            } else {
+                // If not in standalone PWA, remove splash immediately and restore background color
                 const splash = document.getElementById('splashScreen');
-                if (splash) {
-                    splash.classList.add('fade-out');
-                    setTimeout(() => splash.remove(), 600);
-                }
-            }, 800);
+                if (splash) splash.remove();
+                document.body.classList.remove('splash-active');
+            }
         };
 
         // تحديث عند تغيير حجم النافذة
