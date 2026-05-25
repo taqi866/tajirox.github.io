@@ -12,10 +12,16 @@
     };
 
     // 2. Initial Setup
-    window.addEventListener('DOMContentLoaded', () => {
+    if (document.readyState === 'loading') {
+        window.addEventListener('DOMContentLoaded', () => {
+            initMobileSplash();
+            initMobileBottomNavScroll();
+        });
+    } else {
+        // DOM is already loaded, initialize immediately
         initMobileSplash();
         initMobileBottomNavScroll();
-    });
+    }
 
     // 3. Splash Screen Logic
     function initMobileSplash() {
