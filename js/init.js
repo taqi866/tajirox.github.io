@@ -11,6 +11,23 @@
         // تهيئة عند تحميل الصفحة
         window.onload = function () {
             // ============================================
+            // 0. Splash Screen Progressive Loading
+            // ============================================
+            const splashProgressBar = document.getElementById('splashProgressBar');
+            const splashStatus = document.getElementById('splashStatus');
+            const getBilingualText = (arStr, frStr) => {
+                return (typeof currentLang !== 'undefined' && currentLang === 'ar') ? arStr : frStr;
+            };
+
+            const setSplashProgress = (percentage, arText, frText) => {
+                if (splashProgressBar) splashProgressBar.style.width = `${percentage}%`;
+                if (splashStatus) splashStatus.innerText = getBilingualText(arText, frText);
+            };
+
+            // Stage 1: UI Initialization
+            setSplashProgress(20, 'جاري تهيئة واجهة المستخدم...', 'Initialisation de l\'interface...');
+
+            // ============================================
             // 1. Initialisation de base
             // ============================================
 
@@ -37,6 +54,9 @@
             if (cDate) {
                 cDate.value = today;
             }
+
+            // Stage 2: Event Listeners and Controls
+            setSplashProgress(50, 'إعداد أدوات التحكم والنماذج...', 'Configuration des contrôles...');
 
             // ============================================
             // 2. Initialisation des écouteurs d'événements
@@ -113,6 +133,9 @@
                 cItemSearch.addEventListener('keyup', searchProductForConsumption);
                 cItemSearch.addEventListener('keydown', (e) => handlePhysicalScan(e, 'consumption_add'));
             }
+
+            // Stage 3: Auto-login & Biometrics
+            setSplashProgress(75, 'التحقق من بيانات الدخول وبصمة الوجه...', 'Vérification des accès et biométrie...');
 
             // ============================================
             // 6. Initialisation de la connexion automatique
@@ -265,6 +288,9 @@
                 showToast('⚠️ Mode hors ligne - Les données sont sauvegardées localement', 'warning');
             });
 
+            // Stage 4: Sync & Logging
+            setSplashProgress(90, 'تشغيل النظام والتحقق من المزامنة...', 'Démarrage du système et synchronisation...');
+
             // ============================================
             // 13. Journalisation
             // ============================================
@@ -289,9 +315,19 @@
                     setTimeout(() => loginUserField.focus(), 100);
                 }
             }
+
+            // Stage 5: System Ready & Fade out Splash Screen
+            setSplashProgress(100, 'جاهز!', 'Prêt !');
+            setTimeout(() => {
+                const splash = document.getElementById('splashScreen');
+                if (splash) {
+                    splash.classList.add('fade-out');
+                    setTimeout(() => splash.remove(), 600);
+                }
+            }, 800);
         };
 
         // تحديث عند تغيير حجم النافذة
         window.addEventListener('resize', function () {
             // لا حاجة لتغيير DOM هنا، CSS سيتكفل بالتحسينات
-        });
+        });
