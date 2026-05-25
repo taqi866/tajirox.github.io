@@ -56,6 +56,44 @@
 
 <body class="bg-slate-50 text-slate-900">
 
+    <!-- Modern Premium Splash Screen (Mobile Only) -->
+    <div id="premiumSplash" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-gradient-to-tr from-slate-950 via-slate-900 to-indigo-950 text-white select-none transition-all duration-700 hidden">
+        <!-- Ambient glowing backgrounds -->
+        <div class="absolute w-72 h-72 rounded-full bg-blue-600/10 blur-[100px] top-1/4 left-1/4 animate-pulse-glow"></div>
+        <div class="absolute w-72 h-72 rounded-full bg-indigo-600/10 blur-[100px] bottom-1/4 right-1/4 animate-pulse-glow" style="animation-delay: 2s;"></div>
+
+        <div class="relative z-10 flex flex-col items-center text-center px-6">
+            <!-- Modern pulsing logo container -->
+            <div class="w-24 h-24 bg-white/5 backdrop-blur-md rounded-[2rem] border border-white/10 flex items-center justify-center mb-6 shadow-2xl relative group overflow-hidden animate-bounce">
+                <div class="absolute inset-0 bg-gradient-to-tr from-blue-500/20 to-indigo-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <!-- Glass reflection shine -->
+                <div class="absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent to-white/10 opacity-40 group-hover:animate-shine"></div>
+                <i class="fas fa-store-alt text-amber-400 text-4xl drop-shadow-[0_0_15px_rgba(251,191,36,0.5)] animate-pulse"></i>
+            </div>
+
+            <!-- Modern animated name -->
+            <h1 class="text-4xl font-extrabold tracking-widest bg-gradient-to-r from-white via-slate-200 to-amber-300 bg-clip-text text-transparent mb-2 uppercase" style="letter-spacing: 0.15em;">
+                TAJIROX
+            </h1>
+            <p class="text-xs text-slate-400 font-medium tracking-wide mb-8" data-i18n="splash_loading_text">
+                جاري تهيئة النظام الفائق...
+            </p>
+
+            <!-- Premium loading bar -->
+            <div class="w-48 h-1.5 bg-white/5 rounded-full overflow-hidden border border-white/10 relative shadow-inner">
+                <div id="splashProgressBar" class="h-full bg-gradient-to-r from-blue-500 via-indigo-500 to-amber-400 w-0 transition-all duration-300 ease-out shadow-[0_0_10px_rgba(59,130,246,0.8)]"></div>
+            </div>
+            
+            <!-- Status indicator text -->
+            <div id="splashProgressText" class="text-[10px] text-slate-500 font-bold mt-2.5">0%</div>
+        </div>
+        
+        <!-- Footer logo/branding -->
+        <div class="absolute bottom-8 text-[9px] text-slate-600 font-black tracking-wider uppercase">
+            Powered by Tajirox Tech 2026
+        </div>
+    </div>
+
     <div id="topLoading" class="fixed top-0 left-0 right-0 h-1 bg-blue-600 z-[110] hidden"></div>
 
     <!-- Section Connexion -->
@@ -351,10 +389,39 @@
     </section>
 
     <!-- Interface principale de l'application -->
-    <section id="appSection" class="hidden min-h-screen flex flex-col md:flex-row">
+    <section id="appSection" class="hidden min-h-screen flex flex-col md:flex-row pb-20 md:pb-0">
         <!-- Mobile Sidebar Backdrop Overlay -->
         <div id="sidebarBackdrop" onclick="closeSidebarMobile()"
             class="fixed inset-0 bg-slate-900/40 z-40 hidden md:hidden"></div>
+
+        <!-- Elegant Glassmorphic Bottom Navigation Bar (Mobile Only) -->
+        <nav id="mobileBottomNav" class="md:hidden fixed bottom-4 left-4 right-4 bg-white/95 backdrop-blur-xl border border-slate-200/50 h-16 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.06)] flex items-center justify-around px-2 z-40 transition-all duration-300">
+            <button onclick="showPage('dashboard')" id="bottomNavDashboard" class="bottom-nav-item bottom-nav-btn flex flex-col items-center justify-center gap-0.5 text-slate-400 font-black active-press transition-all duration-200 flex-1 py-1.5 relative">
+                <i class="fas fa-chart-pie text-lg transition-all duration-200"></i>
+                <span class="text-[9px]" data-i18n="dashboard">لوحة التحكم</span>
+            </button>
+            <button onclick="showPage('inventory')" id="bottomNavInventory" class="bottom-nav-item bottom-nav-btn flex flex-col items-center justify-center gap-0.5 text-slate-400 font-black active-press transition-all duration-200 flex-1 py-1.5 relative">
+                <i class="fas fa-box-open text-lg transition-all duration-200"></i>
+                <span class="text-[9px]" data-i18n="inventory">المخزون</span>
+            </button>
+            <button onclick="showPage('invoices')" id="bottomNavInvoices" class="bottom-nav-item bottom-nav-btn flex flex-col items-center justify-center gap-0.5 text-slate-400 font-black active-press transition-all duration-200 flex-1 py-1.5 relative">
+                <i class="fas fa-file-invoice-dollar text-lg transition-all duration-200"></i>
+                <span class="text-[9px]" data-i18n="invoices">الفواتير</span>
+            </button>
+            <button onclick="showPage('expenses')" id="bottomNavExpenses" class="bottom-nav-item bottom-nav-btn flex flex-col items-center justify-center gap-0.5 text-slate-400 font-black active-press transition-all duration-200 flex-1 py-1.5 relative">
+                <i class="fas fa-wallet text-lg transition-all duration-200"></i>
+                <span class="text-[9px]" data-i18n="expenses">المصاريف</span>
+            </button>
+            <button onclick="openSidebarMobile()" id="bottomNavMore" class="bottom-nav-item flex flex-col items-center justify-center gap-0.5 text-slate-400 font-black active-press transition-all duration-200 flex-1 py-1.5 relative">
+                <i class="fas fa-bars text-lg transition-all duration-200"></i>
+                <span class="text-[9px]" data-i18n="more_nav_label">المزيد</span>
+            </button>
+        </nav>
+
+        <!-- Reactive FAB (Floating Action Button) - Mobile Only -->
+        <button id="mobileFAB" class="md:hidden fixed bottom-24 left-6 w-12 h-12 bg-gradient-to-tr from-blue-600 to-indigo-600 text-white rounded-full shadow-lg shadow-blue-500/30 flex items-center justify-center text-lg active-press hover:scale-105 transition-all duration-300 z-35 hidden">
+            <i class="fas fa-plus"></i>
+        </button>
 
         <!-- Sidebar -->
         <aside id="sidebar"
@@ -3107,6 +3174,7 @@
     <script src="js/users.js?v=2026_v3"></script>
     <script src="js/admin.js?v=2026_v3"></script>
     <script src="js/support.js?v=2026_v3"></script>
+    <script src="js/mobile.js?v=2026_v3"></script>
     <script src="js/init.js?v=2026_v3"></script>
 </body>
 
