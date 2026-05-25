@@ -772,4 +772,88 @@
         }
         .modal-scrollable-content::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
-        }
+        }
+
+        /* ==========================================================================
+           PREMIUM MOBILE UX/UI & MODERN SPLASH SCREEN (MOBILE ONLY)
+           ========================================================================== */
+
+        /* Animation: Shine effect for premium glassmorphic items */
+        @keyframes shine {
+            100% {
+                left: 125%;
+            }
+        }
+        .animate-shine {
+            animation: shine 1.6s ease-in-out infinite;
+        }
+
+        /* Ambient animated pulse glows */
+        @keyframes pulseGlow {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 0.15;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 0.25;
+            }
+        }
+        .animate-pulse-glow {
+            animation: pulseGlow 6s ease-in-out infinite;
+        }
+
+        /* Mobile specific styling wrapper */
+        @media (max-width: 768px) {
+            /* Active tab indicators for bottom nav */
+            .bottom-nav-item.active-tab {
+                color: #2563eb !important;
+            }
+
+            .bottom-nav-item.active-tab i {
+                transform: translateY(-4px) scale(1.15);
+                filter: drop-shadow(0 4px 6px rgba(37, 99, 235, 0.25));
+            }
+            
+            .bottom-nav-item.active-tab::after {
+                content: '';
+                position: absolute;
+                bottom: 6px;
+                width: 4px;
+                height: 4px;
+                border-radius: 50%;
+                background-color: #2563eb;
+                box-shadow: 0 0 8px #2563eb;
+            }
+
+            /* Responsive Bottom Nav dynamic hide/show on scroll */
+            #mobileBottomNav.nav-hidden {
+                transform: translateY(120%) scale(0.95);
+                opacity: 0;
+            }
+
+            /* Smooth Mobile page transitions */
+            .page-content {
+                opacity: 0;
+                transform: translateY(12px);
+                transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .page-content:not(.hidden) {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            /* Modern Mobile glass card adjustments */
+            .card-stat {
+                background: rgba(255, 255, 255, 0.8) !important;
+                backdrop-filter: blur(12px) !important;
+                border: 1px solid rgba(226, 232, 240, 0.8) !important;
+            }
+
+            /* Soft interactive scale for items on press */
+            .interactive-press:active {
+                transform: scale(0.96);
+                transition: transform 0.1s ease;
+            }
+        }
