@@ -52,9 +52,15 @@
             });
         }
     </script>
+    <!-- Detect iOS PWA Standalone Mode before body renders to prevent white flash -->
+    <script>
+        if (window.navigator.standalone === true) {
+            document.documentElement.classList.add('ios-standalone');
+        }
+    </script>
 </head>
 
-<body class="bg-slate-50 text-slate-900">
+<body class="bg-slate-50 text-slate-900 splash-active">
 
     <!-- Splash Screen -->
     <div id="splashScreen" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-gradient-to-tr from-blue-700 via-blue-600 to-indigo-900 transition-all duration-700 ease-in-out">
