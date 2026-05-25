@@ -14,22 +14,11 @@
     // 2. Initial Setup
     if (document.readyState === 'loading') {
         window.addEventListener('DOMContentLoaded', () => {
-            initMobileSplash();
             initMobileBottomNavScroll();
         });
     } else {
         // DOM is already loaded, initialize immediately
-        initMobileSplash();
         initMobileBottomNavScroll();
-    }
-
-    // 3. Splash Screen Logic
-    function initMobileSplash() {
-        const splash = document.getElementById('premiumSplash');
-        if (splash) {
-            splash.classList.add('hidden');
-        }
-        document.body.style.overflow = ''; // Ensure scrolling is unlocked
     }
 
     // 4. Hook into the existing showPage system
