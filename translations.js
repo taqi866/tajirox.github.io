@@ -706,11 +706,9 @@ const translations = {
         support_request_real: "📞 التحدث مع موظف دعم بشري مباشر",
         support_request_real_msg: "⚠️ أرغب في تحويل هذه المحادثة لمستشار بشري مباشر (دعم فني بشري).",
         support_flagged_human: "🚨 مفهوم! تم تحويل محادثتك لمستشار دعم فني بشري وسيتدخل لمساعدتك قريباً. خارج أوقات العمل الرسمية، يمكنك أيضاً مراسلتنا على contact@tajirox.com.",
-        splash_loading_text: "جاري تهيئة النظام الفائق...",
         more_nav_label: "المزيد"
     },
     fr: {
-        splash_loading_text: "Initialisation du système...",
         more_nav_label: "Plus",
         // Dashboard Checks
         goods_word: "Marchandises",
