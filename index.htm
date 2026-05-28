@@ -1836,6 +1836,55 @@
         </div>
     </div>
 
+    <!-- Double Authentification (2FA) -->
+    <div id="doubleAuthModal"
+        class="fixed inset-0 bg-slate-900/60 hidden z-[220] flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-[2.5rem] w-full max-w-xs custom-shadow relative overflow-hidden">
+            <!-- Glassmorphism Background Accent -->
+            <div class="absolute -top-12 -left-12 w-24 h-24 bg-indigo-500/10 rounded-full blur-xl"></div>
+            <div class="absolute -bottom-12 -right-12 w-24 h-24 bg-blue-500/10 rounded-full blur-xl"></div>
+            
+            <div class="relative z-10 space-y-4">
+                <div class="flex flex-col items-center">
+                    <div class="w-12 h-12 bg-indigo-50/80 rounded-2xl flex items-center justify-center text-indigo-600 mb-3 shadow-inner">
+                        <i class="fas fa-shield-alt text-xl"></i>
+                    </div>
+                    <h3 class="text-base font-black text-slate-800 text-center" data-i18n="two_factor_title">🔐 التحقق الثنائي للأمان</h3>
+                    <p class="text-[10px] text-slate-400 font-bold tracking-wider mt-0.5" data-i18n="two_factor_subtitle">تأكيد هوية الجهاز الجديد</p>
+                </div>
+
+                <div class="space-y-4 pt-2">
+                    <p class="text-slate-500 text-[10px] font-bold text-center leading-relaxed" data-i18n="two_factor_email_hint">
+                        لقد أرسلنا رمز التحقق المكون من 6 أرقام إلى بريدك الإلكتروني المجهول أدناه. يرجى إدخاله للمتابعة:
+                    </p>
+                    
+                    <!-- Adresse Email Masquée -->
+                    <div id="doubleAuthEmail" class="text-xs font-black text-indigo-600 bg-indigo-50/50 py-2.5 px-4 rounded-xl text-center select-all border border-indigo-100/50">
+                        te**@domain.com
+                    </div>
+
+                    <input type="hidden" id="doubleAuthUsername">
+                    <input type="hidden" id="doubleAuthDbId">
+
+                    <!-- Champ OTP à grand format -->
+                    <input type="text" id="doubleAuthOtp" onkeydown="if(event.key==='Enter') submitDoubleAuth()"
+                        placeholder="000 000"
+                        class="w-full p-3.5 bg-slate-50/80 rounded-xl border border-slate-100 font-black text-2xl tracking-[8px] text-center outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all text-slate-700"
+                        maxlength="6">
+                    
+                    <div class="grid grid-cols-2 gap-2 pt-2">
+                        <button onclick="closeModal('doubleAuthModal')"
+                            class="py-3 bg-slate-100 hover:bg-slate-200 text-slate-400 font-black rounded-xl text-xs transition-colors"
+                            data-i18n="cancel">إلغاء</button>
+                        <button id="btnVerifyDoubleAuth" onclick="submitDoubleAuth()"
+                            class="py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl text-xs shadow-md shadow-indigo-600/20 active:scale-95 transition-all"
+                            data-i18n="two_factor_btn_verify">تأكيد الدخول</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Changement de mot de passe -->
     <div id="changePassModal"
         class="fixed inset-0 bg-slate-900/60 hidden z-[210] flex items-center justify-center p-4 backdrop-blur-sm">
