@@ -121,30 +121,54 @@
         }
 
         function checkForUpdatesManual() {
-            if ('serviceWorker' in navigator) {
-                const toastFn = typeof showToast === 'function' ? showToast : alert;
-                toastFn(t('checking_updates') || 'Recherche de mises à jour...', 'info');
+            const toastFn = typeof showToast === 'function' ? showToast : alert;
+            toastFn(t('checking_updates') || 'Recherche de mises à jour...', 'info');
 
+            if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.getRegistration().then(reg => {
                     if (reg) {
                         window.updateDetected = false;
-                        reg.update().then(() => {
-                            console.log('🚀 [TAJIROX] Manual update check completed.');
-                            setTimeout(() => {
-                                if (!window.updateDetected) {
-                                    toastFn(t('app_up_to_date') || "L'application est déjà à jour", 'success');
-                                }
-                            }, 1500);
-                        }).catch(err => {
-                            console.error('❌ [TAJIROX] Manual update check failed:', err);
-                            toastFn(t('update_error') || "Erreur lors de la mise à jour", 'error');
-                        });
+                        // Fetch service worker with cache-buster to ensure we bypass HTTP cache
+                        fetch('service-worker.js?cb=' + Date.now())
+                            .then(() => reg.update())
+                            .then(() => {
+                                console.log('🚀 [TAJIROX] Manual update check completed.');
+                                setTimeout(() => {
+                                    // Even if updateDetected is false, we clear the cache and reload to guarantee the fresh modifications are applied!
+                                    caches.keys().then(cacheNames => {
+                                        return Promise.all(
+                                            cacheNames.map(cacheName => {
+                                                console.log("🧹 Clearing cache:", cacheName);
+                                                return caches.delete(cacheName);
+                                            })
+                                        );
+                                    }).then(() => {
+                                        toastFn('🔄 جاري تطبيق التحديثات وإعادة تشغيل التطبيق... / Application des mises à jour...', 'success');
+                                        setTimeout(() => {
+                                            window.location.reload(true);
+                                        }, 1000);
+                                    });
+                                }, 1500);
+                            })
+                            .catch(err => {
+                                console.error('❌ [TAJIROX] Manual update failed:', err);
+                                // Fallback to clear cache and reload anyway
+                                caches.keys().then(cacheNames => {
+                                    return Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)));
+                                }).then(() => {
+                                    window.location.reload(true);
+                                });
+                            });
                     } else {
-                        toastFn(t('update_error') || "Service Worker non trouvé", 'error');
+                        // Register new service worker if none found
+                        navigator.serviceWorker.register('service-worker.js')
+                            .then(() => window.location.reload(true))
+                            .catch(() => window.location.reload(true));
                     }
                 });
             } else {
-                alert("Mises à jour non supportées par ce navigateur.");
+                // If service workers aren't supported, just do a hard reload
+                window.location.reload(true);
             }
         }
     </script>
