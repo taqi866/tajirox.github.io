@@ -3,6 +3,10 @@
             if (loginBtn) setBtnLoading(loginBtn, false);
 
             if (res.success) {
+                if (res.require2FA) {
+                    show2FAModal(res.username, res.email, res.dbId);
+                    return;
+                }
                 currentUser = res.user;
                 currentDbId = res.dbId;
 
@@ -184,6 +188,7 @@
 
             try {
                 const hashedP = await hashPassword(p);
+                const deviceId = localStorage.getItem('tajirox_device_id') || '';
 
                 google.script.run
                     .withSuccessHandler(res => {
@@ -194,7 +199,7 @@
                         setBtnLoading(loginBtn, false);
                         showToast(t('connection_error') + ': ' + (err.message || err), 'error');
                     })
-                    .login(u, hashedP);
+                    .login(u, hashedP, deviceId, currentLang);
             } catch (error) {
                 setLoading(false);
                 setBtnLoading(loginBtn, false);
@@ -209,14 +214,21 @@
                 msg: t('logout_msg'),
                 iconClass: "fas fa-sign-out-alt",
                 colorClass: "bg-rose-600",
-                onConfirm: () => {
-                    if (currentDbId && typeof clearLocalCache === 'function') {
-                        clearLocalCache(currentDbId);
+                onConfirm: async () => {
+                    try {
+                        if (currentDbId && typeof clearLocalCache === 'function') {
+                            await clearLocalCache(currentDbId).catch(err => console.error("Cache error during logout:", err));
+                        }
+                    } catch (e) {
+                        console.error("Logout cache catch error:", e);
                     }
                     
-                    // Détruire le widget de support lors de la déconnexion
-                    if (typeof destroySupportWidget === 'function') {
-                        destroySupportWidget();
+                    try {
+                        if (typeof destroySupportWidget === 'function') {
+                            destroySupportWidget();
+                        }
+                    } catch (e) {
+                        console.error("Logout widget catch error:", e);
                     }
 
                     currentUser = null;
@@ -634,4 +646,85 @@
                     showToast("فشلت عملية التحقق بالبصمة", 'error');
                 }
             }
-        }
+        }
+
+        // ==========================================
+        //         Double Authentification (2FA)
+        // ==========================================
+
+        function show2FAModal(username, email, dbId) {
+            let maskedEmail = email;
+            try {
+                const parts = email.split('@');
+                if (parts.length === 2) {
+                    const name = parts[0];
+                    const domain = parts[1];
+                    if (name.length <= 2) {
+                        maskedEmail = name[0] + "*" + "@" + domain;
+                    } else {
+                        maskedEmail = name.substring(0, 2) + "*".repeat(name.length - 2) + "@" + domain;
+                    }
+                }
+            } catch(e) {}
+
+            const doubleAuthEmail = document.getElementById('doubleAuthEmail');
+            if (doubleAuthEmail) doubleAuthEmail.innerText = maskedEmail;
+            
+            const doubleAuthUsername = document.getElementById('doubleAuthUsername');
+            if (doubleAuthUsername) doubleAuthUsername.value = username;
+            
+            const doubleAuthDbId = document.getElementById('doubleAuthDbId');
+            if (doubleAuthDbId) doubleAuthDbId.value = dbId;
+            
+            const doubleAuthOtp = document.getElementById('doubleAuthOtp');
+            if (doubleAuthOtp) {
+                doubleAuthOtp.value = '';
+                // Rendre le placeholder convivial
+                doubleAuthOtp.placeholder = "000000";
+            }
+            
+            openModal('doubleAuthModal');
+            setTimeout(() => {
+                const otpInput = document.getElementById('doubleAuthOtp');
+                if (otpInput) otpInput.focus();
+            }, 300);
+        }
+
+        async function submitDoubleAuth() {
+            const usernameField = document.getElementById('doubleAuthUsername');
+            const dbIdField = document.getElementById('doubleAuthDbId');
+            const otpField = document.getElementById('doubleAuthOtp');
+            const btn = document.getElementById('btnVerifyDoubleAuth');
+            const deviceId = localStorage.getItem('tajirox_device_id') || '';
+
+            if (!otpField || !otpField.value.trim()) {
+                showToast(t('enter_otp_pass') || 'Veuillez saisir le code OTP', 'error');
+                return;
+            }
+
+            const username = usernameField ? usernameField.value : '';
+            const dbId = dbIdField ? dbIdField.value : '';
+            const otp = otpField.value.trim();
+
+            setLoading(true);
+            setBtnLoading(btn, true, t('verifying') || 'جاري التحقق...');
+
+            google.script.run
+                .withSuccessHandler(res => {
+                    setLoading(false);
+                    setBtnLoading(btn, false);
+                    if (res.success) {
+                        closeModal('doubleAuthModal');
+                        showToast(t('auth_success') || 'تمت العملية بنجاح');
+                        handleLoginSuccess(res, null);
+                    } else {
+                        showToast(t(res.message) || res.message || 'الكود غير صحيح', 'error');
+                    }
+                })
+                .withFailureHandler(err => {
+                    setLoading(false);
+                    setBtnLoading(btn, false);
+                    showToast(t('connection_error') + ': ' + (err.message || err), 'error');
+                })
+                .verify2FALogin(username, otp, deviceId, dbId);
+        }
