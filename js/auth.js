@@ -3,10 +3,13 @@
             if (loginBtn) setBtnLoading(loginBtn, false);
 
             if (res.success) {
+                // 2FA has been disabled to allow fast login/logout
+                /*
                 if (res.require2FA) {
                     show2FAModal(res.username, res.email, res.dbId);
                     return;
                 }
+                */
                 currentUser = res.user;
                 currentDbId = res.dbId;
 
