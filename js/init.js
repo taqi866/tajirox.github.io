@@ -14,6 +14,12 @@
             // 1. Initialisation de base
             // ============================================
 
+            // Générer un Device ID unique s'il n'existe pas
+            if (!localStorage.getItem('tajirox_device_id')) {
+                const uniqueId = 'dev_' + Date.now() + '_' + Math.random().toString(36).substring(2, 15);
+                localStorage.setItem('tajirox_device_id', uniqueId);
+            }
+
             // Initialiser les traductions
             updateUI();
 
@@ -352,4 +358,4 @@
         // تحديث عند تغيير حجم النافذة
         window.addEventListener('resize', function () {
             // لا حاجة لتغيير DOM هنا، CSS سيتكفل بالتحسينات
-        });
+        });
