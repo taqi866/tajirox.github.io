@@ -212,36 +212,28 @@
         }
 
         function promptLogout() {
-            openConfirm({
-                title: t('logout_title'),
-                msg: t('logout_msg'),
-                iconClass: "fas fa-sign-out-alt",
-                colorClass: "bg-rose-600",
-                onConfirm: () => {
-                    try {
-                        if (currentDbId && typeof clearLocalCache === 'function') {
-                            // Clear cache in the background without blocking logout
-                            clearLocalCache(currentDbId).catch(err => console.error("Cache error during logout:", err));
-                        }
-                    } catch (e) {
-                        console.error("Logout cache catch error:", e);
-                    }
-                    
-                    try {
-                        if (typeof destroySupportWidget === 'function') {
-                            destroySupportWidget();
-                        }
-                    } catch (e) {
-                        console.error("Logout widget catch error:", e);
-                    }
-
-                    currentUser = null;
-                    currentDbId = null;
-                    sessionStorage.setItem('show_logout_toast', 'true');
-                    sessionStorage.setItem('prevent_auto_login', 'true');
-                    window.location.reload();
+            try {
+                if (currentDbId && typeof clearLocalCache === 'function') {
+                    // Clear cache in the background without blocking logout
+                    clearLocalCache(currentDbId).catch(err => console.error("Cache error during logout:", err));
                 }
-            });
+            } catch (e) {
+                console.error("Logout cache catch error:", e);
+            }
+            
+            try {
+                if (typeof destroySupportWidget === 'function') {
+                    destroySupportWidget();
+                }
+            } catch (e) {
+                console.error("Logout widget catch error:", e);
+            }
+
+            currentUser = null;
+            currentDbId = null;
+            sessionStorage.setItem('show_logout_toast', 'true');
+            sessionStorage.setItem('prevent_auto_login', 'true');
+            window.location.reload();
         }
 
         function openRegisterModal() {
