@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TAJIROX I Système de gestion des magasins</title>
-    <link rel="icon" type="image/png" href="/logo.png"> 
 
     <!-- PWA & Mobile Optimization -->
     <link rel="manifest" href="/manifest.json">
@@ -519,8 +518,19 @@
 
         <!-- Espace de travail -->
         <main class="flex-1 flex flex-col min-w-0 bg-slate-50">
+            <!-- Impersonation Monitor Banner -->
+            <div id="impersonationBanner" class="hidden bg-gradient-to-r from-amber-500 to-orange-600 text-white px-6 py-2 flex items-center justify-between text-xs font-bold z-45 sticky top-0 border-b border-orange-500/20 shadow-md">
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-eye text-sm animate-pulse"></i>
+                    <span>أنت الآن في وضع مراقبة محل: <strong id="impersonatedShopName">...</strong> (حساب متكامل للمشاهدة والمراقبة)</span>
+                </div>
+                <button onclick="exitImpersonation()" class="bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded-xl transition-all font-black flex items-center gap-1">
+                    <i class="fas fa-arrow-left"></i> <span data-i18n="exit_impersonation">العودة للمشرف العام</span>
+                </button>
+            </div>
+
             <header
-                class="h-14 bg-white border-b border-slate-100 px-6 flex items-center justify-between sticky top-0 z-40">
+                class="h-14 bg-white border-b border-slate-100 px-6 flex items-center justify-between sticky top-0 z-40 transition-all duration-300">
                 <div class="flex items-center gap-3">
                     <button id="mobileMenuBtn"
                         class="md:hidden w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center"><i
@@ -3124,7 +3134,7 @@
             </div>
     </div>
 
-    <script src="translations.js?v=2026_v4"></script>
+    <script src="translations.js?v=2026_v3"></script>
     <script src="js/state.js?v=2026_v3"></script>
     <script src="js/offline.js?v=2026_v3"></script>
     <script src="js/helpers.js?v=2026_v3"></script>
