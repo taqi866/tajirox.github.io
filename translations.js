@@ -686,7 +686,6 @@ const translations = {
         privacy_policy_btn: "سياسة الخصوصية وشروط الاستخدام",
         back_to_top: "العودة للأعلى",
         accept_terms_prefix: "أوافق على ",
-        accept_terms_link: "سياسة الخصوصية وشروط الاستخدام",
         accept_terms_error: "يرجى الموافقة على سياسة الخصوصية وشروط الاستخدام",
         support_title: "الدعم الفني المباشر",
         support_welcome: "مرحباً! كيف يمكننا مساعدتك اليوم؟ اكتب استفسارك وسيجيبك المشرف الفني للنظام خلال أوقات العمل الرسمية.",
@@ -707,7 +706,9 @@ const translations = {
         support_request_real: "📞 التحدث مع موظف دعم بشري مباشر",
         support_request_real_msg: "⚠️ أرغب في تحويل هذه المحادثة لمستشار بشري مباشر (دعم فني بشري).",
         support_flagged_human: "🚨 مفهوم! تم تحويل محادثتك لمستشار دعم فني بشري وسيتدخل لمساعدتك قريباً. خارج أوقات العمل الرسمية، يمكنك أيضاً مراسلتنا على contact@tajirox.com.",
-        more_nav_label: "المزيد"
+        more_nav_label: "المزيد",
+        monitor_shop: "مراقبة المحل",
+        exit_impersonation: "العودة للمشرف العام"
     },
     fr: {
         more_nav_label: "Plus",
@@ -1447,7 +1448,6 @@ const translations = {
         plan_feature_4: "Gestion complète de trésorerie",
         privacy_policy_btn: "Politique de Confidentialité & Conditions d'Utilisation",
         accept_terms_prefix: "J'accepte la ",
-        accept_terms_link: "politique de confidentialité et les conditions d'utilisation",
         accept_terms_error: "Veuillez accepter la politique de confidentialité et les conditions d'utilisation",
         back_to_top: "Retour en haut",
         support_title: "Support en ligne",
@@ -1468,6 +1468,8 @@ const translations = {
         support_offline_sys_msg: "⏰ Note : Envoyé en dehors des heures de travail (Lundi - Samedi, 09h00 - 19h00). Les réponses directes peuvent être différées.",
         support_request_real: "📞 Parler à un conseiller humain",
         support_request_real_msg: "⚠️ Je souhaite parler en direct à un conseiller technique humain.",
-        support_flagged_human: "🚨 Entendu ! Votre discussion a été signalée comme prioritaire. Un conseiller humain va prendre le relais très vite. En dehors des horaires, écrivez-nous à contact@tajirox.com."
+        support_flagged_human: "🚨 Entendu ! Votre discussion a été signalée comme prioritaire. Un conseiller humain va prendre le relais très vite. En dehors des horaires, écrivez-nous à contact@tajirox.com.",
+        monitor_shop: "Surveiller le magasin",
+        exit_impersonation: "Retour au Super Admin"
     }
 };
