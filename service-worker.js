@@ -1,4 +1,4 @@
-const CACHE_NAME = "tajirox-v8";
+const CACHE_NAME = "tajirox-v9";
 
 const urlsToCache = [
   "./",
