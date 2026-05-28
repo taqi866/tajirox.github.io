@@ -10,6 +10,9 @@
 
         // تهيئة عند تحميل الصفحة
         window.onload = function () {
+            // حفظ النسخة الأصلية من القائمة الجانبية للتنقل
+            window.originalNavHtml = document.querySelector('nav') ? document.querySelector('nav').innerHTML : '';
+
             // ============================================
             // 1. Initialisation de base
             // ============================================
@@ -301,4 +304,4 @@
         // تحديث عند تغيير حجم النافذة
         window.addEventListener('resize', function () {
             // لا حاجة لتغيير DOM هنا، CSS سيتكفل بالتحسينات
-        });
+        });
