@@ -215,9 +215,14 @@
                 iconClass: "fas fa-sign-out-alt",
                 colorClass: "bg-rose-600",
                 onConfirm: async () => {
+                    // Nettoyer le cache local en arrière-plan avec une limite stricte de 250ms
+                    // pour s'assurer qu'un verrou IndexedDB ou une lenteur ne gèle jamais la déconnexion
                     try {
                         if (currentDbId && typeof clearLocalCache === 'function') {
-                            await clearLocalCache(currentDbId).catch(err => console.error("Cache error during logout:", err));
+                            await Promise.race([
+                                clearLocalCache(currentDbId),
+                                new Promise(resolve => setTimeout(resolve, 250))
+                            ]).catch(err => console.error("Cache error during logout:", err));
                         }
                     } catch (e) {
                         console.error("Logout cache catch error:", e);
