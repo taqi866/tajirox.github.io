@@ -217,15 +217,11 @@
                 msg: t('logout_msg'),
                 iconClass: "fas fa-sign-out-alt",
                 colorClass: "bg-rose-600",
-                onConfirm: async () => {
-                    // Nettoyer le cache local en arrière-plan avec une limite stricte de 250ms
-                    // pour s'assurer qu'un verrou IndexedDB ou une lenteur ne gèle jamais la déconnexion
+                onConfirm: () => {
                     try {
                         if (currentDbId && typeof clearLocalCache === 'function') {
-                            await Promise.race([
-                                clearLocalCache(currentDbId),
-                                new Promise(resolve => setTimeout(resolve, 250))
-                            ]).catch(err => console.error("Cache error during logout:", err));
+                            // Clear cache in the background without blocking logout
+                            clearLocalCache(currentDbId).catch(err => console.error("Cache error during logout:", err));
                         }
                     } catch (e) {
                         console.error("Logout cache catch error:", e);
