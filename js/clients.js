@@ -582,7 +582,7 @@
             });
         }
 
-        function renderClients() {
+        function renderClients(filteredClients = null, limit = 10) {
             const container = document.getElementById('clientsContainer');
             const noClientsMessage = document.getElementById('noClientsMessage');
 
@@ -590,7 +590,7 @@
 
             container.innerHTML = '';
 
-            const clients = allData.clients.filter(c => c.type === 'customer');
+            const clients = filteredClients || allData.clients.filter(c => c.type === 'customer');
 
             if (clients.length === 0) {
                 container.classList.add('hidden');
@@ -601,7 +601,6 @@
                 if (noClientsMessage) noClientsMessage.classList.add('hidden');
             }
 
-            const limit = 10;
             const itemsToShow = clients.slice(0, limit);
 
             itemsToShow.forEach(client => {
@@ -626,6 +625,7 @@
                         </div>
                     </div>
                     
+                    <div class="card-body">
                         <div class="mb-3">
                             <p class="text-[9px] text-slate-400 font-bold mb-1">${t('email_placeholder')}</p>
                             <p class="text-xs font-bold text-slate-700 truncate">${client.email || t('none')}</p>
@@ -640,7 +640,7 @@
                         
                         <div class="mb-3">
                             <p class="text-[9px] text-slate-400 font-bold mb-1">${t('address_label')}</p>
-                            <p class="text-xs text-slate-600 truncate">${client.address || t('none')}</p>
+                            <p class="text-xs font-bold text-slate-700 truncate">${client.address || t('none')}</p>
                         </div>
                         
                         ${client.notes ? `
@@ -694,7 +694,7 @@
             }
         }
 
-        function renderSuppliers() {
+        function renderSuppliers(filteredSuppliers = null, limit = 10) {
             const container = document.getElementById('suppliersContainer');
             const noSuppliersMessage = document.getElementById('noSuppliersMessage');
 
@@ -702,7 +702,7 @@
 
             container.innerHTML = '';
 
-            const suppliers = allData.clients.filter(c => c.type === 'supplier');
+            const suppliers = filteredSuppliers || allData.clients.filter(c => c.type === 'supplier');
 
             if (suppliers.length === 0) {
                 container.classList.add('hidden');
@@ -713,7 +713,6 @@
                 if (noSuppliersMessage) noSuppliersMessage.classList.add('hidden');
             }
 
-            const limit = 10;
             const itemsToShow = suppliers.slice(0, limit);
 
             itemsToShow.forEach(supplier => {
@@ -738,6 +737,7 @@
                         </div>
                     </div>
                     
+                    <div class="card-body">
                         <div class="mb-3">
                             <p class="text-[9px] text-slate-400 font-bold mb-1">${t('email_placeholder')}</p>
                             <p class="text-xs font-bold text-slate-700 truncate">${supplier.email || t('none')}</p>
@@ -752,7 +752,7 @@
                         
                         <div class="mb-3">
                             <p class="text-[9px] text-slate-400 font-bold mb-1">${t('address_label')}</p>
-                            <p class="text-xs text-slate-600 truncate">${supplier.address || t('none')}</p>
+                            <p class="text-xs font-bold text-slate-700 truncate">${supplier.address || t('none')}</p>
                         </div>
                         
                         ${supplier.notes ? `
@@ -811,8 +811,6 @@
             const clients = allData.clients.filter(c => c.type === 'customer');
             const container = document.getElementById('clientsContainer');
 
-            container.innerHTML = '';
-
             const filteredClients = clients.filter(client =>
                 client.name.toLowerCase().includes(searchTerm) ||
                 (client.phone && client.phone.includes(searchTerm)) ||
@@ -821,7 +819,7 @@
 
             if (filteredClients.length === 0) {
                 container.innerHTML = `
-                    <div class="col-span-3 text-center p-8 bg-white rounded-[2rem] shadow-sm">
+                    <div class="col-span-full text-center p-8 bg-white rounded-[2rem] shadow-sm">
                         <i class="fas fa-search text-3xl text-slate-300 mb-3"></i>
                         <p class="text-slate-400 font-bold">${t('no_results_for', { term: searchTerm })}</p>
                     </div>
@@ -830,86 +828,13 @@
             }
 
             const limit = searchTerm.length > 0 ? 100 : 10;
-            const itemsToShow = filteredClients.slice(0, limit);
-
-            itemsToShow.forEach(client => {
-                const totalDebt = calculateClientDebt(client.id);
-                const hasDebt = totalDebt > 0;
-
-                container.innerHTML += `
-                <div class="customer-supplier-card customer-card">
-                    <div class="card-header">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <h4 class="font-black text-slate-800 text-sm mb-1 truncate">${client.name}</h4>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-[9px] text-slate-400">${client.phone || t('none')}</span>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <span class="debt-badge ${hasDebt ? 'debt-active' : 'debt-settled'}">
-                                    ${hasDebt ? formatCurrency(totalDebt) : t('safe_status')}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <p class="text-[9px] text-slate-400 font-bold mb-1">${t('email_placeholder')}</p>
-                            <p class="text-xs font-bold text-slate-700 truncate">${client.email || t('none')}</p>
-                        </div>
-                        
-                        ${client.notes ? `
-                            <div>
-                                <p class="text-[9px] text-slate-400 font-bold mb-1">${t('notes_label')}</p>
-                                <p class="text-xs text-slate-600 truncate">${client.notes}</p>
-                            </div>
-                        ` : ''}
-                    </div>
-                    
-                    <div class="card-footer">
-                        <div class="flex justify-end gap-2">
-                            <button onclick="showClientPayments('${client.id}', '${client.name}', 'customer')" 
-                                    class="w-8 h-8 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center hover:bg-purple-200 transition-all"
-                                    title="${t('payments_log')}">
-                                <i class="fas fa-history text-xs"></i>
-                            </button>
-                            <button onclick="showClientDebts('${client.id}', '${client.name}', 'customer')" 
-                                    class="w-8 h-8 bg-emerald-100 text-emerald-600 rounded-lg flex items-center justify-center hover:bg-emerald-200 transition-all"
-                                    title="${t('view_debts')}">
-                                <i class="fas fa-file-invoice-dollar text-xs"></i>
-                            </button>
-                            <button onclick="editClient('${client.id}')" 
-                                    class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center hover:bg-blue-200 transition-all"
-                                    title="${t('edit')}">
-                                <i class="fas fa-edit text-xs"></i>
-                            </button>
-                            <button onclick="promptDeleteClient('${client.id}', '${client.name}')" 
-                                    class="w-8 h-8 bg-rose-100 text-rose-600 rounded-lg flex items-center justify-center hover:bg-rose-200 transition-all"
-                                    title="${t('delete')}">
-                                <i class="fas fa-trash text-xs"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>`;
-            });
-
-            if (filteredClients.length > limit) {
-                container.innerHTML += `
-                <div class="col-span-full text-center py-4">
-                    <p class="text-slate-400 text-xs font-bold mb-2">${t('search_results_stats', { filtered: limit, total: filteredClients.length })}</p>
-                    ${searchTerm.length === 0 ? `<p class="text-slate-300 text-[10px]">${t('use_search_hint')}</p>` : ''}
-                </div>`;
-            }
+            renderClients(filteredClients, limit);
         }
 
         function searchSuppliers() {
             const searchTerm = document.getElementById('supplierSearch').value.toLowerCase();
             const suppliers = allData.clients.filter(c => c.type === 'supplier');
             const container = document.getElementById('suppliersContainer');
-
-            container.innerHTML = '';
 
             const filteredSuppliers = suppliers.filter(supplier =>
                 supplier.name.toLowerCase().includes(searchTerm) ||
@@ -919,80 +844,6 @@
 
             if (filteredSuppliers.length === 0) {
                 container.innerHTML = `
-                    <div class="col-span-3 text-center p-8 bg-white rounded-[2rem] shadow-sm">
-                        <i class="fas fa-search text-3xl text-slate-300 mb-3"></i>
-                        <p class="text-slate-400 font-bold">${t('no_results_for', { term: searchTerm })}</p>
-                    </div>
-                `;
-                return;
-            }
-
-            const limit = searchTerm.length > 0 ? 100 : 10;
-            const itemsToShow = filteredSuppliers.slice(0, limit);
-
-            itemsToShow.forEach(supplier => {
-                const totalDebt = calculateSupplierDebt(supplier.id);
-                const hasDebt = totalDebt > 0;
-
-                container.innerHTML += `
-                <div class="customer-supplier-card supplier-card">
-                    <div class="card-header">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <h4 class="font-black text-slate-800 text-sm mb-1 truncate">${supplier.name}</h4>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-[9px] text-slate-400">${supplier.phone || t('none')}</span>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <span class="debt-badge ${hasDebt ? 'debt-active' : 'debt-settled'}">
-                                    ${hasDebt ? formatCurrency(totalDebt) : t('safe_status')}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <p class="text-[9px] text-slate-400 font-bold mb-1">${t('email_placeholder')}</p>
-                            <p class="text-xs font-bold text-slate-700 truncate">${supplier.email || t('none')}</p>
-                        </div>
-                        
-                        ${supplier.notes ? `
-                            <div>
-                                <p class="text-[9px] text-slate-400 font-bold mb-1">${t('notes_label')}</p>
-                                <p class="text-xs text-slate-600 truncate">${supplier.notes}</p>
-                            </div>
-                        ` : ''}
-                    </div>
-                    
-                    <div class="card-footer">
-                        <div class="flex justify-end gap-2">
-                            <button onclick="showClientPayments('${supplier.id}', '${supplier.name}', 'supplier')" 
-                                    class="w-8 h-8 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center hover:bg-purple-200 transition-all"
-                                    title="${t('payments_log')}">
-                                <i class="fas fa-history text-xs"></i>
-                            </button>
-                            <button onclick="showClientDebts('${supplier.id}', '${supplier.name}', 'supplier')" 
-                                    class="w-8 h-8 bg-emerald-100 text-emerald-600 rounded-lg flex items-center justify-center hover:bg-emerald-200 transition-all"
-                                    title="${t('view_debts')}">
-                                <i class="fas fa-file-invoice-dollar text-xs"></i>
-                            </button>
-                            <button onclick="editClient('${supplier.id}')" 
-                                    class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center hover:bg-blue-200 transition-all"
-                                    title="${t('edit')}">
-                                <i class="fas fa-edit text-xs"></i>
-                            </button>
-                            <button onclick="promptDeleteClient('${supplier.id}', '${supplier.name}')" 
-                                    class="w-8 h-8 bg-rose-100 text-rose-600 rounded-lg flex items-center justify-center hover:bg-rose-200 transition-all"
-                                    title="${t('delete')}">
-                                <i class="fas fa-trash text-xs"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>`;
-            });
-
             if (filteredSuppliers.length > limit) {
                 container.innerHTML += `
                 <div class="col-span-full text-center py-4">
@@ -1756,4 +1607,4 @@
                     reference: paymentReference,
                     description: paymentDescription
                 }, checkAction, checkDataToSave, currentDbId);
-        }
+        }
