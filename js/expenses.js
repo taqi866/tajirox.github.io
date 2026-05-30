@@ -372,7 +372,14 @@
                         ${exp.supplier ? `
                             <div class="mb-3">
                                 <p class="text-[9px] text-slate-400 font-bold mb-1">${t('supplier')}</p>
-                                <p class="text-xs font-bold text-slate-700">${exp.supplier === 'مورد غير معروف' || exp.supplier === 'غير معروف' ? t('unknown_supplier') : (exp.supplier || t('unknown'))}</p>
+                                <p class="text-xs font-bold text-slate-700">
+                                    ${(() => {
+                                        const supp = (exp.supplier || '').trim().toLowerCase();
+                                        if (supp === 'fournisseur inconnu' || supp === 'مورد غير معروف') return t('unknown_supplier');
+                                        if (supp === 'inconnu' || supp === 'غير معروف') return t('unknown');
+                                        return exp.supplier || t('unknown');
+                                    })()}
+                                </p>
                             </div>
                         ` : ''}
                         
@@ -780,4 +787,4 @@
             </div>
         </div>
     `;
-        }
+        }
