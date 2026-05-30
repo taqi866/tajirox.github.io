@@ -573,3 +573,42 @@
                 })
                 .updateShopTariff(shopCode, tariff, discount);
         }
+
+        async function forceAppUpdate() {
+            const btn = document.getElementById('btnForceUpdate');
+            if (btn) setBtnLoading(btn, true, "...");
+            
+            showToast(t('app_updating_toast') || "Mise à jour en cours...", 'info');
+            
+            try {
+                // 1. Désenregistrer tous les Service Workers
+                if ('serviceWorker' in navigator) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    for (let registration of registrations) {
+                        await registration.unregister();
+                        console.log("🧹 [PWA] Service Worker désenregistré avec succès");
+                    }
+                }
+                
+                // 2. Vider tous les caches du navigateur
+                if ('caches' in window) {
+                    const cacheNames = await caches.keys();
+                    for (let cacheName of cacheNames) {
+                        await caches.delete(cacheName);
+                        console.log("🧹 [PWA] Cache vidé :", cacheName);
+                    }
+                }
+                
+                showToast(t('app_update_success_toast') || "Mise à jour réussie !", 'success');
+                
+                // 3. Recharger la page avec un paramètre anti-cache
+                setTimeout(() => {
+                    window.location.href = window.location.origin + window.location.pathname + '?v=' + Date.now();
+                }, 1200);
+                
+            } catch (err) {
+                console.error("❌ Erreur lors de la mise à jour PWA :", err);
+                showToast("Échec de la mise à jour : " + err, 'error');
+                if (btn) setBtnLoading(btn, false);
+            }
+        }
