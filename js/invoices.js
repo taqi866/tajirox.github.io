@@ -834,9 +834,16 @@
                 ${shopAddress ? `<div class="shop-details">${shopAddress}</div>` : ''}
                 ${shopPhone ? `<div class="shop-details">${shopPhone}</div>` : ''}
             </div>
-            <div class="invoice-details">
-                <strong>${t('invoice')} #${invoiceData.id}</strong>
-                <span>${invoiceData.date}</span>
+            <div class="invoice-details" style="display: flex !important; flex-direction: column !important; align-items: flex-start !important; justify-content: flex-start !important; border-bottom: 1px solid #000000; padding-bottom: 5px; margin-bottom: 10px;">
+                <div style="display: flex; justify-content: space-between; width: 100%;">
+                    <strong>${t('invoice')} #${invoiceData.id}</strong>
+                    <span>${invoiceData.date}</span>
+                </div>
+                <div style="margin-top: 4px; font-size: 9px; width: 100%; text-align: ${isRtl ? 'right' : 'left'}; line-height: 1.2;">
+                    <strong>${t('customer')}:</strong> ${invoiceData.customer || t('general_customer')}
+                    ${customerIce ? `<br><strong>${t('ice_label') || 'رقم ICE'}:</strong> ${customerIce}` : ''}
+                    ${customerAddress ? `<br><strong>${t('address_label') || 'العنوان'}:</strong> ${customerAddress}` : ''}
+                </div>
             </div>
             <table>
                 <thead>
