@@ -612,3 +612,5 @@
                 if (btn) setBtnLoading(btn, false);
             }
         }
+
+        window.forceAppUpdate = forceAppUpdate;
