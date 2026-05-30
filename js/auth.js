@@ -80,11 +80,21 @@
                     document.getElementById('userRoleDisplay').innerText = t('admin_role');
                     document.getElementById('userRoleDisplay').className = "text-[9px] bg-indigo-100 text-indigo-600 px-3 py-1 rounded-full inline-block mt-1 font-black";
 
-                     document.querySelector('nav').innerHTML = `
-                <button onclick="showPage('admin-dashboard')" class="sidebar-link active w-full flex items-center p-3 rounded-xl transition-all font-bold text-indigo-600" data-i18n="admin_shops_manage">
-                    <i class="fas fa-store-alt ml-3 opacity-80"></i> ${t('admin_shops_manage')}
-                </button>
-            `;
+                    // إخفاء شريط التنقل السفلي للموبايل للمشرف العام
+                    const mobileBottomNav = document.getElementById('mobileBottomNav');
+                    if (mobileBottomNav) mobileBottomNav.classList.add('hidden');
+
+                    const sidebarNav = document.querySelector('#sidebar nav');
+                    if (sidebarNav) {
+                        sidebarNav.innerHTML = `
+                            <button onclick="showPage('admin-dashboard'); switchAdminTab('shops');" class="sidebar-link active w-full flex items-center gap-3 p-3 rounded-xl transition-all font-bold text-indigo-600" data-i18n="admin_shops_manage">
+                                <i class="fas fa-store-alt opacity-80"></i> <span>${t('admin_shops_manage')}</span>
+                            </button>
+                            <button onclick="showPage('admin-dashboard'); switchAdminTab('support');" class="sidebar-link w-full flex items-center gap-3 p-3 rounded-xl transition-all font-bold text-slate-600 hover:text-indigo-600" data-i18n="support_tab_chat">
+                                <i class="fas fa-comments opacity-80"></i> <span>${t('support_tab_chat')}</span>
+                            </button>
+                        `;
+                    }
 
                     loadAdminData();
                     showPage('admin-dashboard');
@@ -191,6 +201,20 @@
                     // Détruire le widget de support lors de la déconnexion
                     if (typeof destroySupportWidget === 'function') {
                         destroySupportWidget();
+                    }
+
+                    // Restaurer le menu de navigation latéral original si sauvegardé
+                    if (window.originalSidebarNavHtml) {
+                        const sidebarNav = document.querySelector('#sidebar nav');
+                        if (sidebarNav) {
+                            sidebarNav.innerHTML = window.originalSidebarNavHtml;
+                        }
+                    }
+
+                    // Réafficher le menu mobile inférieur
+                    const mobileBottomNav = document.getElementById('mobileBottomNav');
+                    if (mobileBottomNav) {
+                        mobileBottomNav.classList.remove('hidden');
                     }
 
                     currentUser = null;
@@ -610,4 +634,4 @@
                     showToast("فشلت عملية التحقق بالبصمة", 'error');
                 }
             }
-        }
+        }
