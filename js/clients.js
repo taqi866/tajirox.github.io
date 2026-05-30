@@ -844,13 +844,16 @@
 
             if (filteredSuppliers.length === 0) {
                 container.innerHTML = `
-            if (filteredSuppliers.length > limit) {
-                container.innerHTML += `
-                <div class="col-span-full text-center py-4">
-                    <p class="text-slate-400 text-xs font-bold mb-2">${t('search_results_stats', { filtered: limit, total: filteredSuppliers.length })}</p>
-                    ${searchTerm.length === 0 ? `<p class="text-slate-300 text-[10px]">${t('use_search_hint')}</p>` : ''}
-                </div>`;
+                    <div class="col-span-full text-center p-8 bg-white rounded-[2rem] shadow-sm">
+                        <i class="fas fa-search text-3xl text-slate-300 mb-3"></i>
+                        <p class="text-slate-400 font-bold">${t('no_results_for', { term: searchTerm })}</p>
+                    </div>
+                `;
+                return;
             }
+
+            const limit = searchTerm.length > 0 ? 100 : 10;
+            renderSuppliers(filteredSuppliers, limit);
         }
 
         function calculateClientDebt(clientId) {
