@@ -1,6 +1,12 @@
         let isFirstLoad = true;
 
         function refreshData() {
+            if (currentUser && currentUser.role === 'super_admin') {
+                if (typeof loadAdminData === 'function') {
+                    loadAdminData();
+                }
+                return;
+            }
             setLoading(true);
 
             // محاولة التحميل الفوري من الكاش لسرعة استجابة فائقة (Instant Boot Cache)
@@ -636,4 +642,4 @@
                     }
                 }
             });
-        }
+        }
