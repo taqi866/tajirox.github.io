@@ -191,13 +191,14 @@
 
             const exps = fExps.reduce((s, i) => s + safeNum(i.amount), 0);
             const customerDebts = fInvs.reduce((s, i) => s + safeNum(i.balance), 0);
-
-            // صافي الربح = (المبيعات بعد الخصم) - المصاريف
-            const netProfit = sales - exps;
+            const supplierDebts = fExps.reduce((s, i) => s + safeNum(i.balance), 0);
 
             document.getElementById('statSales').innerText = formatCurrency(sales);
             document.getElementById('statExpenses').innerText = formatCurrency(exps);
-            document.getElementById('statProfit').innerText = formatCurrency(netProfit);
+            
+            const statSupplierDebtsEl = document.getElementById('statSupplierDebts');
+            if (statSupplierDebtsEl) statSupplierDebtsEl.innerText = formatCurrency(supplierDebts);
+            
             document.getElementById('statDebts').innerText = formatCurrency(customerDebts);
 
             // حساب رصيد الصندوق ورصيد الخزينة
