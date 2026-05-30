@@ -47,16 +47,74 @@
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('service-worker.js')
-                    .then(reg => console.log('🚀 [TAJIROX] Service Worker registered successfully!', reg))
+                    .then(reg => {
+                        console.log('🚀 [TAJIROX] Service Worker registered successfully!', reg);
+                        
+                        // Détecter les mises à jour en cours d'installation
+                        reg.addEventListener('updatefound', () => {
+                            const newWorker = reg.installing;
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    showPwaUpdateBanner();
+                                }
+                            });
+                        });
+
+                        // Si une mise à jour attend déjà d'être activée
+                        if (reg.waiting) {
+                            showPwaUpdateBanner();
+                        }
+                    })
                     .catch(err => console.error('❌ [TAJIROX] Service Worker registration failed:', err));
             });
+        }
+
+        function showPwaUpdateBanner() {
+            const banner = document.getElementById('pwaUpdateBanner');
+            if (banner) {
+                banner.classList.remove('hidden');
+                setTimeout(() => {
+                    banner.classList.remove('translate-y-20', 'opacity-0');
+                    banner.classList.add('translate-y-0', 'opacity-100');
+                }, 100);
+            }
+        }
+
+        function dismissUpdateBanner() {
+            const banner = document.getElementById('pwaUpdateBanner');
+            if (banner) {
+                banner.classList.remove('translate-y-0', 'opacity-100');
+                banner.classList.add('translate-y-20', 'opacity-0');
+                setTimeout(() => {
+                    banner.classList.add('hidden');
+                }, 500);
+            }
         }
     </script>
 </head>
 
 <body class="bg-slate-50 text-slate-900">
 
-
+    <!-- Banner Notification de Mise à Jour PWA -->
+    <div id="pwaUpdateBanner" class="fixed bottom-6 left-6 right-6 md:left-auto md:right-6 md:w-96 bg-slate-950/95 backdrop-blur-md text-white p-4 rounded-2xl shadow-2xl border border-slate-800/80 flex flex-col gap-3 z-[9999] hidden transform translate-y-20 opacity-0 transition-all duration-500">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center animate-bounce shadow-md">
+                <i class="fas fa-sparkles text-sm text-white"></i>
+            </div>
+            <div class="flex-1 text-right rtl:text-right ltr:text-left">
+                <h4 class="text-xs font-black" data-i18n="pwa_update_available_title">تحديث جديد متوفر!</h4>
+                <p class="text-[10px] text-slate-300 font-bold" data-i18n="pwa_update_available_desc">تتوفر ميزات وتحسينات جديدة، انقر للتحديث الفوري.</p>
+            </div>
+        </div>
+        <div class="grid grid-cols-3 gap-2">
+            <button onclick="forceAppUpdate()" class="col-span-2 py-2.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white rounded-xl font-black text-[10px] transition-all flex items-center justify-center gap-1 shadow-md">
+                <i class="fas fa-sync-alt"></i> <span data-i18n="btn_update_now">تحديث التطبيق الآن</span>
+            </button>
+            <button onclick="dismissUpdateBanner()" class="py-2.5 bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-400 rounded-xl font-black text-[10px] transition-all">
+                <span data-i18n="later">لاحقاً</span>
+            </button>
+        </div>
+    </div>
 
     <div id="topLoading" class="fixed top-0 left-0 right-0 h-1 bg-blue-600 z-[110] hidden"></div>
 
