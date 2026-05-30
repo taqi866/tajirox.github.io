@@ -200,6 +200,24 @@
             document.getElementById('statProfit').innerText = formatCurrency(netProfit);
             document.getElementById('statDebts').innerText = formatCurrency(customerDebts);
 
+            // حساب رصيد الصندوق ورصيد الخزينة
+            let cashBalance = 0;
+            let bankBalance = 0;
+            if (typeof calculateCashBalance === 'function' && typeof calculateBankBalance === 'function') {
+                const fPayments = getFilteredData(allData.payments || []);
+                const fChecks = getFilteredData(allData.checks_promissory || []);
+                const fTransfers = getFilteredData(allData.transfers || []);
+                cashBalance = calculateCashBalance(fInvs, fExps, fPayments, fTransfers);
+                bankBalance = calculateBankBalance(fInvs, fExps, fPayments, fChecks, fTransfers);
+            }
+            const totalTreasury = cashBalance + bankBalance;
+
+            const statCashEl = document.getElementById('statCash');
+            if (statCashEl) statCashEl.innerText = formatCurrency(cashBalance);
+
+            const statTreasuryEl = document.getElementById('statTreasury');
+            if (statTreasuryEl) statTreasuryEl.innerText = formatCurrency(totalTreasury);
+
             renderMainChart(fInvs);
         }
 
@@ -207,4 +225,4 @@
             const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             return re.test(email);
         }
-
+
