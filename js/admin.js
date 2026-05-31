@@ -168,6 +168,19 @@
                 footerInput.value = currentUser.invoiceFooter || '';
             }
 
+            // Charger les configurations de l'IA depuis localStorage
+            const shopName = currentUser.shopName || 'DefaultShop';
+            const aiActive = localStorage.getItem(`tajirox_ai_active_${shopName}`) === 'true';
+            const aiKey = localStorage.getItem(`tajirox_ai_key_${shopName}`) || '';
+            
+            const aiActiveCheckbox = document.getElementById('settingAIActive');
+            if (aiActiveCheckbox) aiActiveCheckbox.checked = aiActive;
+            const aiKeyInput = document.getElementById('settingAIKey');
+            if (aiKeyInput) aiKeyInput.value = aiKey;
+            
+            const aiTestStatus = document.getElementById('aiTestStatus');
+            if (aiTestStatus) aiTestStatus.innerText = '';
+
             toggleInvoiceSettings();
             toggleBarcodeSettings();
             addQZTraySettingsToPage();
@@ -195,6 +208,17 @@
 
             // حفظ اللون في localStorage فوراً
             localStorage.setItem('invoiceColor', invoiceColor);
+
+            // Sauvegarder les configurations de l'IA dans localStorage
+            const shopName = currentUser.shopName || 'DefaultShop';
+            const aiActiveCheckbox = document.getElementById('settingAIActive');
+            const aiKeyInput = document.getElementById('settingAIKey');
+            if (aiActiveCheckbox) {
+                localStorage.setItem(`tajirox_ai_active_${shopName}`, aiActiveCheckbox.checked);
+            }
+            if (aiKeyInput) {
+                localStorage.setItem(`tajirox_ai_key_${shopName}`, aiKeyInput.value.trim());
+            }
 
             const btn = document.getElementById('saveShopSettingsBtn');
 
@@ -619,3 +643,76 @@
         }
 
         window.forceAppUpdate = forceAppUpdate;
+
+        function togglePasswordVisibility(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(`eyeIcon-${inputId}`);
+            if (input && icon) {
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    input.type = 'password';
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            }
+        }
+
+        async function testAIConnection() {
+            const testBtn = document.getElementById('testAIBtn');
+            const statusText = document.getElementById('aiTestStatus');
+            const keyInput = document.getElementById('settingAIKey');
+            
+            if (!keyInput || !keyInput.value.trim()) {
+                if (statusText) {
+                    statusText.innerText = currentLang === 'ar' ? '⚠️ يرجى إدخال مفتاح API أولاً' : '⚠️ Veuillez saisir une clé API d\'abord';
+                    statusText.className = 'text-xs font-bold text-amber-600';
+                }
+                return;
+            }
+            
+            const apiKey = keyInput.value.trim();
+            setBtnLoading(testBtn, true, currentLang === 'ar' ? 'جاري الاتصال...' : 'Connexion...');
+            if (statusText) {
+                statusText.innerText = '';
+            }
+            
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            role: 'user',
+                            parts: [{ text: 'Hello, respond with only one word: Success' }]
+                        }]
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                setBtnLoading(testBtn, false);
+                if (statusText) {
+                    statusText.innerText = currentLang === 'ar' ? '✅ تم الاتصال بنجاح بالذكاء الاصطناعي!' : '✅ Connexion réussie à l\'IA !';
+                    statusText.className = 'text-xs font-bold text-emerald-600';
+                }
+            } catch (error) {
+                console.error("Test AI Connection Error:", error);
+                setBtnLoading(testBtn, false);
+                if (statusText) {
+                    statusText.innerText = currentLang === 'ar' ? '❌ فشل الاتصال. يرجى التحقق من المفتاح' : '❌ Connexion échouée. Vérifiez la clé API';
+                    statusText.className = 'text-xs font-bold text-rose-600';
+                }
+            }
+        }
+        
+        window.togglePasswordVisibility = togglePasswordVisibility;
+        window.testAIConnection = testAIConnection;
