@@ -1690,8 +1690,8 @@
 
             for (let i = 1; i < data.length; i++) {
                 if (data[i][0] == id) {
-                    const type = data[i][13]; // Type column (14)
-                    const itemsJson = data[i][6]; // Items column (7)
+                    const type = data[i][14]; // Type column (15)
+                    const itemsJson = data[i][7]; // Items column (8)
                     const paymentMethod = data[i][4]; // payment_method column (5)
                     const paymentRef = data[i][5]; // payment_reference column (6)
 
