@@ -1382,7 +1382,7 @@ const translations = {
         thermal_labels: "Thermique (Étiquettes)",
         thermal_continuous: "Thermique (Ticket de caisse / Continu)",
         barcode_print_settings: "Paramètres Code-barres",
-        show_price_on_barcode_label: "Afficher le prix de vente sur l'étiquette",
+        show_price_on_barcode_label: "Afficher le prix de vente sur l'étiquette du code-barres",
         hero_inventory_desc: "Suivi précis des produits et quantités",
         search_mult_hint: "Vous pouvez rechercher plusieurs produits en les séparant par une virgule (ex: 123, 456)",
         hero_pro_invoices: "Factures Pro",
