@@ -592,11 +592,16 @@
     ${pageSizeCSS}
     body { 
         font-family: 'Cairo', sans-serif; 
-        color: #000;
+        color: #000000 !important;
+        background: #ffffff !important;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
     }
-    * { box-sizing: border-box; }
+    * { 
+        box-sizing: border-box; 
+        color: #000000 !important;
+        border-color: #000000 !important;
+    }
     .ticket-container {
         ${containerCSS}
         background: white;
@@ -604,9 +609,44 @@
     .text-start { text-align: ${align} !important; }
     .text-center { text-align: center !important; }
     
+    /* Ensure all text is strictly black for readability on printed paper */
+    h1, h2, h3, h4, h5, h6, p, span, strong, th, td, div, table, a, small, small * {
+        color: #000000 !important;
+    }
+    table, th, td, tr, div, hr {
+        border-color: #000000 !important;
+    }
+    th {
+        background-color: #f2f2f2 !important;
+    }
+    .sidebar-creative, .header-section, .totals-wrapper, .totals-creative, .bill-to, .invoice-data, .meta-box {
+        background: #ffffff !important;
+        color: #000000 !important;
+        border: 1px solid #000000 !important;
+    }
+    
     @media print {
-        body { margin: 0; }
+        body { margin: 0; color: #000000 !important; }
         .no-print { display: none; }
+        * {
+            color: #000000 !important;
+            border-color: #000000 !important;
+            background-color: transparent !important;
+        }
+        h1, h2, h3, h4, h5, h6, p, span, strong, th, td, div, table, a, small, small * {
+            color: #000000 !important;
+        }
+        table, th, td, tr, div, hr {
+            border-color: #000000 !important;
+        }
+        th {
+            background-color: #f2f2f2 !important;
+        }
+        .sidebar-creative, .header-section, .totals-wrapper, .totals-creative, .bill-to, .invoice-data, .meta-box {
+            background: #ffffff !important;
+            color: #000000 !important;
+            border: 1px solid #000000 !important;
+        }
     }
 </style>
 
@@ -981,7 +1021,7 @@
                         <div class="meta-box">
                             <h4>${t('customer')} / CLIENT</h4>
                             <div><strong>Name:</strong> ${invoiceData.customer || t('general_customer')}</div>
-                            ${customerIce ? `<div><strong>ICE:</strong> ${customerIce}</div>` : ''}
+                            ${customerIce ? `<div><strong>${t('ice_label') || 'رقم ICE'}:</strong> ${customerIce}</div>` : ''}
                             ${customerAddress ? `<div><strong>Address:</strong> ${customerAddress}</div>` : ''}
                             <div><strong>Payment:</strong> ${paymentMethodText}</div>
                         </div>
