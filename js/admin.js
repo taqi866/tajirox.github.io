@@ -229,7 +229,7 @@
                     showToast(t('settings_saved'));
 
                     if (invoiceSize === 'Thermal') {
-                        showToast('🖨️ سيتم طباعة الفواتير تلقائياً بعد الإنشاء', 'success');
+                        showToast(t('auto_print_enabled'), 'success');
                     }
 
                     // إعادة عرض الصفحة الحالية لتحديث اللون
