@@ -374,17 +374,8 @@
             }];
         }
 
-            function center(text) {
-                const padding = Math.max(0, Math.floor((lineWidth - text.length) / 2));
-                return ' '.repeat(padding) + text;
-            }
-
-            function line(char = '-') {
-                return char.repeat(lineWidth);
-            }
-
         function autoPrintThermalInvoice(invoiceId) {
-            // Vérifier les préférences utilisateur
+            // Check user preferences
             if (!currentUser) return;
             if (currentUser.invoiceSize !== 'Thermal') return;
 
@@ -394,26 +385,38 @@
                 return;
             }
 
-            console.log('🖨️ Impression automatique avec QZ Tray pour facture:', invoiceId);
-
             const thermalWidth = currentUser.invoiceWidth || 80;
-            const printerName = currentUser.defaultPrinter || '';
 
-            if (!printerName) {
-                console.log('Aucune imprimante par défaut, recherche...');
-                if (qzConnected) {
+            // If QZ Tray is active and connected, print directly without a window
+            if (typeof qz !== 'undefined' && qzConnected) {
+                console.log('🖨️ Impression directe avec QZ Tray pour facture:', invoiceId);
+                const printerName = currentUser.defaultPrinter || '';
+                if (!printerName) {
+                    console.log('Aucune imprimante par défaut, recherche...');
                     qz.printers.find().then(printers => {
                         selectDefaultThermalPrinter(printers);
                         if (currentUser.defaultPrinter) {
                             printWithQZTray(invoice, currentUser.defaultPrinter, thermalWidth + 'mm');
+                        } else {
+                            // Fallback to standard browser print
+                            setTimeout(() => {
+                                generateAndPrintInvoice(invoiceId, 'Thermal', thermalWidth);
+                            }, 300);
                         }
+                    }).catch(() => {
+                        setTimeout(() => {
+                            generateAndPrintInvoice(invoiceId, 'Thermal', thermalWidth);
+                        }, 300);
                     });
                 } else {
-                    initQZTray();
-                    qzPrintQueue.push({ data: invoice, printerName: '', width: thermalWidth + 'mm' });
+                    printWithQZTray(invoice, printerName, thermalWidth + 'mm');
                 }
             } else {
-                printWithQZTray(invoice, printerName, thermalWidth + 'mm');
+                // Fallback to standard browser print if QZ Tray is not running/connected
+                console.log('⚠️ QZ Tray non connecté, utilisation de la méthode standard pour facture:', invoiceId);
+                setTimeout(() => {
+                    generateAndPrintInvoice(invoiceId, 'Thermal', thermalWidth);
+                }, 300);
             }
         }
 
@@ -519,23 +522,4 @@
             }
         }
 
-        function autoPrintThermalInvoice(invoiceId) {
-            // التحقق من إعدادات المستخدم
-            if (!currentUser) return;
 
-            // التحقق من أن حجم الطباعة المحدد هو Thermal
-            if (currentUser.invoiceSize !== 'Thermal') {
-                console.log('الطباعة التلقائية: غير مفعلة لأن حجم الطباعة ليس Thermal');
-                return;
-            }
-
-            console.log('جاري الطباعة التلقائية للفاتورة الحرارية:', invoiceId);
-
-            // الحصول على عرض الورق من الإعدادات
-            const thermalWidth = currentUser.invoiceWidth || 80;
-
-            // تأخير بسيط للسماح بحفظ البيانات بالكامل
-            setTimeout(() => {
-                generateAndPrintInvoice(invoiceId, 'Thermal', thermalWidth);
-            }, 500);
-        }
