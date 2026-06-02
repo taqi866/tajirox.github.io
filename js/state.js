@@ -37,12 +37,9 @@
         let cachedBankBalance = 0;
 
 
-        function t(key) {
-            return translations[currentLang][key] || key;
-        }
-
         function t(key, params = {}) {
             let text = translations[currentLang][key] || key;
+            text = String(text);
             Object.keys(params).forEach(k => {
                 text = text.replace(`{${k}}`, params[k]);
             });
@@ -51,6 +48,7 @@
 
         function translatePaymentDescription(desc) {
             if (!desc) return '';
+            desc = String(desc);
             if (currentLang === 'fr') {
                 if (desc.startsWith('دفعة أولية - فاتورة ')) {
                     return desc.replace('دفعة أولية - فاتورة ', 'Acompte - Facture ');
@@ -526,4 +524,4 @@
             }
         }
 
-
+
