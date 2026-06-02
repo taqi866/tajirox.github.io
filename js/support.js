@@ -848,8 +848,10 @@ function scrollToBottom(containerId) {
 }
 
 function escapeHTML(str) {
-    if (!str) return '';
-    return str
+    if (str === null || str === undefined) return '';
+    const s = String(str);
+    if (typeof s.replace !== 'function') return '';
+    return s
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
