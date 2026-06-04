@@ -29,7 +29,13 @@ window.google = {
                     return function (...args) {
                         const payload = {
                             func: prop,
-                            args: args
+                            args: args,
+                            session: {
+                                username: (typeof currentUser !== 'undefined' && currentUser && currentUser.username) || null,
+                                dbId: (typeof currentDbId !== 'undefined' && currentDbId) || null,
+                                role: (typeof currentUser !== 'undefined' && currentUser && currentUser.role) || null,
+                                token: (typeof currentUser !== 'undefined' && currentUser && currentUser.sessionToken) || null
+                            }
                         };
 
                         // Afficher un indicateur de chargement global si existant (sauf pour les requêtes silencieuses de support en arrière-plan)
