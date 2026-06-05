@@ -842,7 +842,7 @@
                     <div style="text-align: center; margin-top: auto; border-top: 2px solid #e2e8f0; padding-top: 10px; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 4px;">
                         <div style="font-size: 10.5px; color: #475569; line-height: 1.8; direction: ltr; background-color: #f8fafc; padding: 10px 15px; border-radius: 12px; border: 1px dashed #cbd5e1; display: inline-block; width: 100%; box-sizing: border-box;">
                             <strong style="color: #1e293b;">El houssine TAQI (Entrepreneur individuel)</strong><br>
-                            <span style="color: #64748b;">Email :</span> <a href="mailto:tajiroxapp@gmail.com" style="color: #2563eb; text-decoration: none; font-weight: bold;">tajiroxapp@gmail.com</a>
+                            <span style="color: #64748b;">Email :</span> <a href="mailto:contact@tajirox.com" style="color: #2563eb; text-decoration: none; font-weight: bold;">tajiroxapp@gmail.com</a>
                             &nbsp;&bull;&nbsp;
                             <span style="color: #64748b;">Tél :</span> <span style="color: #1e293b; font-weight: bold;">+2126 89 18 82 41</span>
                         </div>
