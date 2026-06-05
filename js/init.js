@@ -10,6 +10,54 @@
 
         // تهيئة عند تحميل الصفحة
         window.onload = function () {
+            // ترجمة صفحة الدخول فوراً لتفادي بقاء النصوص فارغة أثناء جلب ملف الواجهة
+            if (typeof updateUI === 'function') {
+                updateUI();
+            }
+
+            // تحميل واجهة التطبيق ديناميكياً
+            if (typeof google !== 'undefined' && google.script && google.script.run) {
+                google.script.run
+                    .withSuccessHandler(function (html) {
+                        const appContainer = document.getElementById('appContainer');
+                        if (appContainer) {
+                            appContainer.innerHTML = html;
+                        }
+                        initializeApp();
+                    })
+                    .withFailureHandler(function (err) {
+                        console.error("Failed to load app layout via Apps Script:", err);
+                        fallbackFetch();
+                    })
+                    .getAppLayout();
+            } else {
+                fallbackFetch();
+            }
+
+            function fallbackFetch() {
+                fetch('appLayout.html')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.text();
+                    })
+                    .then(html => {
+                        const appContainer = document.getElementById('appContainer');
+                        if (appContainer) {
+                            appContainer.innerHTML = html;
+                        }
+                        initializeApp();
+                    })
+                    .catch(err => {
+                        console.error("Failed to load app layout via fetch:", err);
+                        if (typeof showToast === 'function') {
+                        }
+                    });
+            }
+        };
+
+        function initializeApp() {
             // حفظ النسخة الأصلية من القائمة الجانبية للتنقل
             window.originalSidebarNavHtml = document.querySelector('#sidebar nav') ? document.querySelector('#sidebar nav').innerHTML : '';
 
@@ -183,9 +231,9 @@
                 });
             }
 
-            const loginUser = document.getElementById('loginUser');
-            if (loginUser) {
-                loginUser.addEventListener('keydown', (e) => {
+            const loginUserField = document.getElementById('loginUser');
+            if (loginUserField) {
+                loginUserField.addEventListener('keydown', (e) => {
                     if (e.key === 'Enter') document.getElementById('loginPass').focus();
                 });
             }
@@ -256,12 +304,14 @@
             consumptionCart = [];
 
             // ============================================
-            // 12. Vérification du mode hors ligne
+            // 12. Gestion du mode hors ligne
             // ============================================
 
             window.addEventListener('online', function () {
                 console.log('📶 Connexion rétablie, synchronisation...');
-                showToast('✅ Connexion rétablie, synchronisation en cours...', 'info');
+                if (typeof showToast === 'function') {
+                    showToast('✅ Connexion rétablie, synchronisation en cours...', 'info');
+                }
                 if (currentUser) {
                     refreshData();
                 }
@@ -269,7 +319,9 @@
 
             window.addEventListener('offline', function () {
                 console.log('📶 Connexion perdue, mode hors ligne');
-                showToast('⚠️ Mode hors ligne - Les données sont sauvegardées localement', 'warning');
+                if (typeof showToast === 'function') {
+                    showToast('⚠️ Mode hors ligne - Les données sont sauvegardées localement', 'warning');
+                }
             });
 
 
@@ -293,15 +345,14 @@
 
             // Sur la page de login, focus sur le champ username
             if (!currentUser) {
-                const loginUserField = document.getElementById('loginUser');
-                if (loginUserField) {
-                    setTimeout(() => loginUserField.focus(), 100);
+                const loginUserFieldEl = document.getElementById('loginUser');
+                if (loginUserFieldEl) {
+                    setTimeout(() => loginUserFieldEl.focus(), 100);
                 }
             }
-
-        };
+        }
 
         // تحديث عند تغيير حجم النافذة
         window.addEventListener('resize', function () {
             // لا حاجة لتغيير DOM هنا، CSS سيتكفل بالتحسينات
-        });
+        });
