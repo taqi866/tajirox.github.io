@@ -1,7 +1,7 @@
 {
   "name": "TAJIROX",
   "short_name": "TAJIROX",
-  "description": "Système de gestion des magasins et de facturation",
+  "description": "TAJIROX est un système de gestion des magasins conçu pour simplifier les opérations commerciales et améliorer la performance des commerces.",
   "start_url": "index.htm",
   "display": "standalone",
   "background_color": "#ffffff",
