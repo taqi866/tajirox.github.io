@@ -2,7 +2,7 @@
 
         body {
             font-family: 'Cairo', sans-serif;
-            background-color: #f8fafc;
+            background-color: #172554;
             overflow-x: hidden;
             font-size: 13px;
         }
@@ -881,4 +881,4 @@
         .low-resource-active .expense-card:hover {
             transform: none !important;
             box-shadow: none !important;
-        }
+        }
