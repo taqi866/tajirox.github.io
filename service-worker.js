@@ -1,16 +1,16 @@
-const CACHE_NAME = "tajirox-v7";
+const CACHE_NAME = "tajirox-v8";
 
 const urlsToCache = [
   "./",
   "./index.htm",
-  "./manifest.json?v=2026_v3",
-  "./favicon.png?v=2026_v3",
-  "./favicon-32x32.png?v=2026_v3",
-  "./favicon-48x48.png?v=2026_v3",
-  "./favicon-96x96.png?v=2026_v3",
-  "./favicon-144x144.png?v=2026_v3",
-  "./icon-192.png?v=2026_v3",
-  "./icon-512.png?v=2026_v3",
+  "./manifest.json?v=2026_v4",
+  "./favicon.png?v=2026_v4",
+  "./favicon-32x32.png?v=2026_v4",
+  "./favicon-48x48.png?v=2026_v4",
+  "./favicon-96x96.png?v=2026_v4",
+  "./favicon-144x144.png?v=2026_v4",
+  "./icon-192.png?v=2026_v4",
+  "./icon-512.png?v=2026_v4",
   "./css/style.css?v=2026_v3",
   "./js/security.js?v=2026_v3",
   "./js/api.js?v=2026_v3",
