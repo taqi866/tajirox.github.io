@@ -7,26 +7,62 @@
     <title>TAJIROX I Système de gestion des magasins</title>
 
     <!-- PWA & Mobile Optimization -->
-    <link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="TAJIROX">
     
     <!-- iOS Apple Touch Icon -->
-    <link rel="apple-touch-icon" sizes="192x192" href="/icon-192.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
     
     <!-- Standard Browser Icons & Favicons -->
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="144x144" href="/favicon-144x144.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png">
-    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="144x144" href="favicon-144x144.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
 
     <!-- External Libraries & Fonts -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        blue: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            200: '#bcdffd',
+                            300: '#7ec4fc',
+                            400: '#3aa2f8',
+                            500: '#1d4ed8',
+                            600: '#1e3a8a', // Bleu foncé (remplace #2563eb)
+                            700: '#172554', // Bleu très foncé (remplace #1d4ed8)
+                            800: '#1e3a8a',
+                            900: '#0f172a',
+                            950: '#020617',
+                        },
+                        indigo: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            200: '#bcdffd',
+                            300: '#7ec4fc',
+                            400: '#3aa2f8',
+                            500: '#1d4ed8',
+                            600: '#1e3a8a',
+                            700: '#172554',
+                            800: '#1e3a8a',
+                            900: '#0f172a',
+                            950: '#020617',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
@@ -1424,6 +1460,15 @@
                                 class="bg-indigo-600 h-4 rounded-full transition-all duration-1000 shadow-lg"
                                 style="width: 0%"></div>
                         </div>
+                    </div>
+
+                    <!-- Certificate Download Button -->
+                    <div class="mb-8">
+                        <button onclick="downloadSubscriptionCertificate(currentUser)" 
+                                class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-black text-sm py-4 px-6 rounded-2xl shadow-lg transition-all duration-300 hover:shadow-emerald-200 hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2">
+                            <i class="fas fa-file-pdf text-lg"></i>
+                            <span>Télécharger le Certificat d'Abonnement</span>
+                        </button>
                     </div>
 
                     <!-- تفاصيل خطة الاشتراك المفعّلة / Tarifs d'abonnement -->
@@ -2982,8 +3027,8 @@
     <div id="invoicePDFTemplate" class="hidden">
         <div style="padding: 20px; font-family: 'Cairo', sans-serif; direction: rtl;">
             <div
-                style="text-align: center; margin-bottom: 20px; border-bottom: 2px solid #2563eb; padding-bottom: 10px;">
-                <h1 style="color: #2563eb; font-size: 24px; margin-bottom: 10px;" data-i18n="invoice_title_pdf">فاتورة
+                style="text-align: center; margin-bottom: 20px; border-bottom: 2px solid #1e3a8a; padding-bottom: 10px;">
+                <h1 style="color: #1e3a8a; font-size: 24px; margin-bottom: 10px;" data-i18n="invoice_title_pdf">فاتورة
                 </h1>
                 <p id="pdfInvId" style="color: #666; font-size: 14px; font-weight: bold;"></p>
             </div>
@@ -3013,10 +3058,10 @@
                 </tbody>
             </table>
 
-            <div style="border-top: 2px solid #2563eb; padding-top: 20px;">
+            <div style="border-top: 2px solid #1e3a8a; padding-top: 20px;">
                 <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
                     <span style="font-weight: bold;" data-i18n="total_label">المجموع:</span>
-                    <span id="pdfInvTotal" style="font-weight: bold; color: #2563eb;"></span>
+                    <span id="pdfInvTotal" style="font-weight: bold; color: #1e3a8a;"></span>
                 </div>
                 <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
                     <span data-i18n="paid_label">المدفوع:</span>
