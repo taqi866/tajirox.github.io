@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TAJIROX I Système de gestion des magasins</title>
+    <meta name="description" content="TAJIROX est un système de gestion des magasins conçu pour simplifier les opérations commerciales et améliorer la performance des commerces.">
 
     <!-- PWA & Mobile Optimization -->
     <link rel="manifest" href="manifest.json">
@@ -129,7 +130,7 @@
     </script>
 </head>
 
-<body class="bg-slate-50 text-slate-900">
+<body class="bg-blue-700 text-slate-900">
 
     <!-- Banner Notification de Mise à Jour PWA -->
     <div id="pwaUpdateBanner" class="fixed bottom-6 left-6 right-6 md:left-auto md:right-6 md:w-96 bg-slate-950/95 backdrop-blur-md text-white p-4 rounded-2xl shadow-2xl border border-slate-800/80 flex flex-col gap-3 z-[9999] hidden transform translate-y-20 opacity-0 transition-all duration-500">
@@ -178,8 +179,8 @@
             <div class="relative z-20 max-w-lg text-center lg:ltr:text-left lg:rtl:text-right w-full">
                 
                 <div
-                    class="w-16 h-16 lg:w-20 lg:h-20 mx-auto lg:mx-0 bg-white/15 backdrop-blur-md rounded-2xl flex items-center justify-center mb-6 lg:mb-8 shadow-2xl border border-white/30 hover:scale-105 transition-transform duration-300">
-                    <i class="fas fa-store-alt text-white text-3xl lg:text-4xl drop-shadow-lg"></i>
+                    class="w-16 h-16 lg:w-20 lg:h-20 mx-auto lg:mx-0 rounded-2xl flex items-center justify-center mb-6 lg:mb-8 shadow-2xl hover:scale-105 transition-transform duration-300 overflow-hidden">
+                    <img src="logo.png" alt="TAJIROX" class="w-full h-full object-cover">
                 </div>
                 <h1 class="text-3xl lg:text-5xl font-black mb-4 lg:mb-6 leading-tight" data-i18n="app_title_hero"></h1>
                 <p class="text-sm lg:text-lg text-blue-100 font-bold leading-relaxed mb-6 lg:mb-6"
@@ -351,7 +352,7 @@
         </div>
         <!-- القسم الأيسر (نموذج تسجيل الدخول) -->
         <div id="loginFormContainer"
-            class="w-full min-h-screen lg:min-h-0 lg:w-1/2 flex flex-col items-center justify-center p-6 bg-slate-50">
+            class="w-full min-h-screen lg:min-h-0 lg:w-1/2 flex flex-col items-center justify-center p-6 bg-blue-700">
             <div class="w-full max-w-md">
                 <div class="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-xl border border-slate-100">
                     <!-- Language Switcher Top -->
@@ -615,7 +616,7 @@
         </aside>
 
         <!-- Espace de travail -->
-        <main class="flex-1 flex flex-col min-w-0 bg-slate-50">
+        <main class="flex-1 flex flex-col min-w-0 bg-blue-700">
             <!-- Impersonation Monitor Banner -->
             <div id="impersonationBanner" class="hidden bg-gradient-to-r from-amber-500 to-orange-600 text-white px-6 py-2 flex items-center justify-between text-xs font-bold z-45 sticky top-0 border-b border-orange-500/20 shadow-md">
                 <div class="flex items-center gap-2">
