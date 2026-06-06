@@ -8,7 +8,7 @@
         }
 
         .sidebar-link.active {
-            background-color: #2563eb;
+            background-color: #1e3a8a;
             color: white;
             transform: scale(1.02);
         }
@@ -188,11 +188,11 @@
         }
 
         .submenu-link:hover {
-            background-color: rgba(37, 99, 235, 0.1);
+            background-color: rgba(30, 58, 138, 0.1);
         }
 
         .filter-btn.active {
-            background-color: #2563eb;
+            background-color: #1e3a8a;
             color: white;
         }
 
@@ -617,8 +617,8 @@
 
         .inventory-search-input:focus {
             outline: none;
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            border-color: #1e3a8a;
+            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
             background-color: white;
         }
 
@@ -807,12 +807,12 @@
         @media (max-width: 768px) {
             /* Active tab indicators for bottom nav */
             .bottom-nav-item.active-tab {
-                color: #2563eb !important;
+                color: #1e3a8a !important;
             }
 
             .bottom-nav-item.active-tab i {
                 transform: translateY(-4px) scale(1.15);
-                filter: drop-shadow(0 4px 6px rgba(37, 99, 235, 0.25));
+                filter: drop-shadow(0 4px 6px rgba(30, 58, 138, 0.25));
             }
             
             .bottom-nav-item.active-tab::after {
@@ -822,8 +822,8 @@
                 width: 4px;
                 height: 4px;
                 border-radius: 50%;
-                background-color: #2563eb;
-                box-shadow: 0 0 8px #2563eb;
+                background-color: #1e3a8a;
+                box-shadow: 0 0 8px #1e3a8a;
             }
 
             /* Responsive Bottom Nav dynamic hide/show on scroll */
@@ -881,4 +881,4 @@
         .low-resource-active .expense-card:hover {
             transform: none !important;
             box-shadow: none !important;
-        }
+        }
