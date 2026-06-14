@@ -1067,7 +1067,7 @@ const translations = {
         sort_by_amount_asc: "Montant: du plus petit au plus grand",
         sort_by_date_desc: "Date: de la plus récente à la plus ancienne",
         sort_by_date_asc: "Date: de la plus ancienne à la plus récente",
-        free_trial_title: "اطلب النسخة المحلية لتثبيتها مباشرة على جهازك واستمتع بنسخة مدى الحياة مرخصة بالكامل (Licence).",
+        free_trial_title: "Demandez la version locale pour l'installer directement sur votre appareil et profitez d'une version à vie entièrement sous licence.",
         special_offer: "",
 
         // Server Messages
