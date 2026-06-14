@@ -438,7 +438,7 @@
             }
 
             // 5. Gestion des paiements
-            if (inv.paid > 0) {
+            if (inv.paid > 0 && inv.balance > 0) {
                 if (allData.payments && allData.payments.length > 0) {
                     allData.payments = allData.payments.filter(p => {
                         const isSame = String(p.debt_id) === String(inv.id) || 
@@ -1992,7 +1992,7 @@
                             return !(isSame && p.debt_type === 'invoice');
                         });
                     }
-                    if (safeNum(serviceData.paid) > 0) {
+                    if (safeNum(serviceData.paid) > 0 && safeNum(serviceData.balance) > 0) {
                         const payRec = {
                             id: 'PAY-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
                             date: serviceData.date,
