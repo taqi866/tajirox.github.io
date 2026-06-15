@@ -428,10 +428,13 @@
             const bHeight = parseInt(currentUser?.barcodeHeight || 30);
             const priceStr = (price && currentUser.showPriceOnBarcode !== false) ? formatCurrency(price) : '';
 
+            const isA4 = currentUser?.barcodeSize === 'A4';
             const isContinuous = currentUser?.barcodeSize === 'ThermalContinuous';
-            const pageSizeCSS = isContinuous 
-                ? `@page { size: ${bWidth}mm auto; margin: 0; } body { width: ${bWidth}mm; height: auto; overflow: visible; }`
-                : `@page { size: ${bWidth}mm ${bHeight}mm; margin: 0mm; } body { width: ${bWidth}mm; height: ${bHeight}mm; overflow: hidden; }`;
+            const pageSizeCSS = isA4
+                ? `@page { size: A4 landscape; margin: 5mm; } body { width: 287mm; height: 200mm; }`
+                : (isContinuous 
+                    ? `@page { size: ${bWidth}mm auto; margin: 0; } body { width: ${bWidth}mm; height: auto; overflow: visible; }`
+                    : `@page { size: ${bWidth}mm ${bHeight}mm; margin: 0mm; } body { width: ${bWidth}mm; height: ${bHeight}mm; overflow: hidden; }`);
 
             const labelStyleCSS = isContinuous
                 ? `width: ${bWidth}mm; height: ${bHeight}mm; max-height: ${bHeight}mm; padding: 1mm 2.5mm; margin: 0 0 4mm 0; box-sizing: border-box; overflow: hidden; page-break-inside: avoid; display: flex; align-items: center; justify-content: center;`
@@ -439,25 +442,53 @@
 
             let labelsHTML = '';
             
-            // توليد الباركودات بشكل منفصل (كل باركود في صفحة منفصلة)
-            for (let i = 0; i < copies; i++) {
-                labelsHTML += `
-                    <div class="thermal-barcode-label" style="${labelStyleCSS}">
-                        <div class="label-content">
-                            <div class="shop-name-logo">
-                                ${shopLogo ? `<img src="${shopLogo}">` : `<div>${shopName}</div>`}
+            if (isA4) {
+                const itemsPerPage = 20;
+                const totalPages = Math.ceil(copies / itemsPerPage);
+                for (let p = 0; p < totalPages; p++) {
+                    labelsHTML += `<div class="page-container">`;
+                    const startIdx = p * itemsPerPage;
+                    const endIdx = Math.min(startIdx + itemsPerPage, copies);
+                    for (let i = startIdx; i < endIdx; i++) {
+                        labelsHTML += `
+                            <div class="barcode-cell">
+                                <div class="shop-name-logo">
+                                    ${shopLogo ? `<img src="${shopLogo}">` : `<div>${shopName}</div>`}
+                                </div>
+                                <div class="product-name">${name}</div>
+                                <div class="barcode-container">
+                                    <svg class="barcode-svg" id="barcode-single-${i}"></svg>
+                                </div>
+                                <div class="label-footer">
+                                    <span>${id}</span>
+                                    ${priceStr ? `<span> - ${priceStr}</span>` : ''}
+                                </div>
                             </div>
-                            <div class="product-name">${name}</div>
-                            <div class="barcode-container">
-                                <svg class="barcode-svg" id="barcode-single-${i}"></svg>
-                            </div>
-                            <div class="label-footer" ${priceStr ? '' : 'style="justify-content: center !important;"'}>
-                                <span>${id}</span>
-                                ${priceStr ? `<span>${priceStr}</span>` : ''}
+                        `;
+                    }
+                    labelsHTML += `</div>`;
+                }
+            } else {
+                // توليد الباركودات بشكل منفصل (كل باركود في صفحة منفصلة)
+                for (let i = 0; i < copies; i++) {
+                    labelsHTML += `
+                        <div class="thermal-barcode-label" style="${labelStyleCSS}">
+                            <div class="label-content">
+                                <div class="shop-name-logo">
+                                    ${shopLogo ? `<img src="${shopLogo}">` : `<div>${shopName}</div>`}
+                                </div>
+                                <div class="product-name">${name}</div>
+                                <div class="barcode-container">
+                                    <svg class="barcode-svg" id="barcode-single-${i}"></svg>
+                                </div>
+                                <div class="label-footer" style="justify-content: center !important; gap: 5px; margin-top: 0px;">
+                                    <span>${id}</span>
+                                    ${priceStr ? `<span> - ${priceStr}</span>` : ''}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                `;
+                    `;
+                }
             }
 
             const printWindow = window.open('', 'PRINT_SINGLE', 'height=600,width=800');
@@ -532,14 +563,96 @@
                         }
                         .label-footer {
                             display: flex;
-                            justify-content: space-between;
+                            justify-content: center;
                             align-items: center;
+                            gap: 5px;
                             width: 100%;
-                            margin-top: 0.2mm;
+                            margin-top: 0px;
                             font-size: 2.8mm;
                             font-weight: 700;
                             color: #000;
                         }
+                        ${isA4 ? `
+                        .page-container {
+                            width: 287mm;
+                            height: 200mm;
+                            page-break-after: always;
+                            display: grid;
+                            grid-template-columns: repeat(5, 1fr);
+                            grid-template-rows: repeat(4, 1fr);
+                            gap: 3mm;
+                            box-sizing: border-box;
+                            padding: 2mm;
+                        }
+                        .page-container:last-child {
+                            page-break-after: avoid;
+                        }
+                        .barcode-cell {
+                            border: 1px dashed #000;
+                            border-radius: 6px;
+                            padding: 2mm 3mm;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            justify-content: space-between;
+                            box-sizing: border-box;
+                            overflow: hidden;
+                            height: 100%;
+                            background: #fff;
+                        }
+                        .barcode-cell .shop-name-logo {
+                            max-height: 20%;
+                            margin-bottom: 1mm;
+                            text-align: center;
+                        }
+                        .barcode-cell .shop-name-logo img {
+                            max-height: 6mm;
+                            max-width: 90%;
+                            object-fit: contain;
+                        }
+                        .barcode-cell .shop-name-logo div {
+                            font-size: 9pt;
+                            font-weight: bold;
+                            white-space: nowrap;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                        }
+                        .barcode-cell .product-name {
+                            font-size: 9pt;
+                            font-weight: 700;
+                            line-height: 1.2;
+                            text-align: center;
+                            white-space: nowrap;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            width: 100%;
+                            margin-bottom: 1mm;
+                        }
+                        .barcode-cell .barcode-container {
+                            width: 100%;
+                            flex-grow: 1;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            min-height: 8mm;
+                        }
+                        .barcode-cell .barcode-svg {
+                            width: 100% !important;
+                            height: auto !important;
+                            max-height: 14mm;
+                        }
+                        .barcode-cell .label-footer {
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            gap: 5px;
+                            width: 100%;
+                            margin-top: 1mm;
+                            font-size: 9pt;
+                            font-weight: 700;
+                            color: #000;
+                        }
+                        ` : ''}
                         @media print {
                             body {
                                 -webkit-print-color-adjust: exact;
@@ -606,10 +719,13 @@
                     const bWidth = parseInt(currentUser?.barcodeWidth || 80);
                     const bHeight = parseInt(currentUser?.barcodeHeight || 30);
 
+                    const isA4 = currentUser?.barcodeSize === 'A4';
                     const isContinuous = currentUser?.barcodeSize === 'ThermalContinuous';
-                    const pageSizeCSS = isContinuous 
-                        ? `@page { size: ${bWidth}mm auto; margin: 0; } body { width: ${bWidth}mm; height: auto; overflow: visible; }`
-                        : `@page { size: ${bWidth}mm ${bHeight}mm; margin: 0mm; } body { width: ${bWidth}mm; height: ${bHeight}mm; overflow: hidden; }`;
+                    const pageSizeCSS = isA4
+                        ? `@page { size: A4 landscape; margin: 5mm; } body { width: 287mm; height: 200mm; }`
+                        : (isContinuous 
+                            ? `@page { size: ${bWidth}mm auto; margin: 0; } body { width: ${bWidth}mm; height: auto; overflow: visible; }`
+                            : `@page { size: ${bWidth}mm ${bHeight}mm; margin: 0mm; } body { width: ${bWidth}mm; height: ${bHeight}mm; overflow: hidden; }`);
 
                     const labelStyleCSS = isContinuous
                         ? `width: ${bWidth}mm; height: ${bHeight}mm; max-height: ${bHeight}mm; padding: 1mm 2.5mm; margin: 0 0 4mm 0; box-sizing: border-box; overflow: hidden; page-break-inside: avoid; display: flex; align-items: center; justify-content: center;`
@@ -618,30 +734,69 @@
                     let labelsHTML = '';
                     let totalLabels = 0;
 
-                    // توليد الباركودات لكل منتج حسب عدد النسخ
+                    // تجميع كافة الملصقات أولاً لتسهيل تقسيمها لصفحات A4
+                    const allLabels = [];
                     items.forEach(item => {
                         for (let c = 0; c < copies; c++) {
-                            const itemPriceStr = (item.sale_price && currentUser.showPriceOnBarcode !== false) ? formatCurrency(item.sale_price) : '';
-                            labelsHTML += `
-                        <div class="thermal-barcode-label" style="${labelStyleCSS}">
-                            <div class="label-content">
-                                <div class="shop-name-logo">
-                                    ${shopLogo ? `<img src="${shopLogo}">` : `<div>${shopName}</div>`}
-                                </div>
-                                <div class="product-name">${item.name}</div>
-                                <div class="barcode-container">
-                                    <svg class="barcode-svg" data-code="${item.id}"></svg>
-                                </div>
-                                <div class="label-footer" ${itemPriceStr ? '' : 'style="justify-content: center !important;"'}>
-                                    <span>${item.id}</span>
-                                    ${itemPriceStr ? `<span>${itemPriceStr}</span>` : ''}
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                            totalLabels++;
+                            allLabels.push(item);
                         }
                     });
+
+                    if (isA4) {
+                        const itemsPerPage = 20;
+                        const totalPages = Math.ceil(allLabels.length / itemsPerPage);
+                        for (let p = 0; p < totalPages; p++) {
+                            labelsHTML += `<div class="page-container">`;
+                            const startIdx = p * itemsPerPage;
+                            const endIdx = Math.min(startIdx + itemsPerPage, allLabels.length);
+                            for (let i = startIdx; i < endIdx; i++) {
+                                const item = allLabels[i];
+                                const itemPriceStr = (item.sale_price && currentUser.showPriceOnBarcode !== false) ? formatCurrency(item.sale_price) : '';
+                                labelsHTML += `
+                                    <div class="barcode-cell">
+                                        <div class="shop-name-logo">
+                                            ${shopLogo ? `<img src="${shopLogo}">` : `<div>${shopName}</div>`}
+                                        </div>
+                                        <div class="product-name">${item.name}</div>
+                                        <div class="barcode-container">
+                                            <svg class="barcode-svg" data-code="${item.id}"></svg>
+                                        </div>
+                                        <div class="label-footer">
+                                            <span>${item.id}</span>
+                                            ${itemPriceStr ? `<span> - ${itemPriceStr}</span>` : ''}
+                                        </div>
+                                    </div>
+                                `;
+                                totalLabels++;
+                            }
+                            labelsHTML += `</div>`;
+                        }
+                    } else {
+                        // توليد الباركودات لكل منتج حسب عدد النسخ
+                        items.forEach(item => {
+                            for (let c = 0; c < copies; c++) {
+                                const itemPriceStr = (item.sale_price && currentUser.showPriceOnBarcode !== false) ? formatCurrency(item.sale_price) : '';
+                                labelsHTML += `
+                            <div class="thermal-barcode-label" style="${labelStyleCSS}">
+                                <div class="label-content">
+                                    <div class="shop-name-logo">
+                                        ${shopLogo ? `<img src="${shopLogo}">` : `<div>${shopName}</div>`}
+                                    </div>
+                                    <div class="product-name">${item.name}</div>
+                                    <div class="barcode-container">
+                                        <svg class="barcode-svg" data-code="${item.id}"></svg>
+                                    </div>
+                                    <div class="label-footer" style="justify-content: center !important; gap: 5px; margin-top: 0px;">
+                                        <span>${item.id}</span>
+                                        ${itemPriceStr ? `<span> - ${itemPriceStr}</span>` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                                totalLabels++;
+                            }
+                        });
+                    }
 
                     const printWindow = window.open('', 'PRINT_ALL', 'height=600,width=800');
 
@@ -715,14 +870,96 @@
                         }
                         .label-footer {
                             display: flex;
-                            justify-content: space-between;
+                            justify-content: center;
                             align-items: center;
+                            gap: 5px;
                             width: 100%;
-                            margin-top: 0.2mm;
+                            margin-top: 0px;
                             font-size: 2.8mm;
                             font-weight: 700;
                             color: #000;
                         }
+                        ${isA4 ? `
+                        .page-container {
+                            width: 287mm;
+                            height: 200mm;
+                            page-break-after: always;
+                            display: grid;
+                            grid-template-columns: repeat(5, 1fr);
+                            grid-template-rows: repeat(4, 1fr);
+                            gap: 3mm;
+                            box-sizing: border-box;
+                            padding: 2mm;
+                        }
+                        .page-container:last-child {
+                            page-break-after: avoid;
+                        }
+                        .barcode-cell {
+                            border: 1px dashed #000;
+                            border-radius: 6px;
+                            padding: 2mm 3mm;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            justify-content: space-between;
+                            box-sizing: border-box;
+                            overflow: hidden;
+                            height: 100%;
+                            background: #fff;
+                        }
+                        .barcode-cell .shop-name-logo {
+                            max-height: 20%;
+                            margin-bottom: 1mm;
+                            text-align: center;
+                        }
+                        .barcode-cell .shop-name-logo img {
+                            max-height: 6mm;
+                            max-width: 90%;
+                            object-fit: contain;
+                        }
+                        .barcode-cell .shop-name-logo div {
+                            font-size: 9pt;
+                            font-weight: bold;
+                            white-space: nowrap;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                        }
+                        .barcode-cell .product-name {
+                            font-size: 9pt;
+                            font-weight: 700;
+                            line-height: 1.2;
+                            text-align: center;
+                            white-space: nowrap;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            width: 100%;
+                            margin-bottom: 1mm;
+                        }
+                        .barcode-cell .barcode-container {
+                            width: 100%;
+                            flex-grow: 1;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            min-height: 8mm;
+                        }
+                        .barcode-cell .barcode-svg {
+                            width: 100% !important;
+                            height: auto !important;
+                            max-height: 14mm;
+                        }
+                        .barcode-cell .label-footer {
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            gap: 5px;
+                            width: 100%;
+                            margin-top: 1mm;
+                            font-size: 9pt;
+                            font-weight: 700;
+                            color: #000;
+                        }
+                        ` : ''}
                         @media print {
                             body {
                                 -webkit-print-color-adjust: exact;
@@ -742,7 +979,7 @@
                         const svgs = document.querySelectorAll(".barcode-svg");
                         svgs.forEach(svg => {
                             try {
-                                JsBarcode(svg, svg.getAttribute("data-code"), {
+                                JsBarcode(svg, svg.getAttribute("data-code") || svg.getAttribute("id").replace("barcode-single-", ""), {
                                     format: "CODE128",
                                     width: 2,
                                     height: 50,
@@ -1552,4 +1789,4 @@
             });
 
             return values;
-        }
+        }
