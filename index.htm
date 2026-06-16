@@ -142,6 +142,14 @@
                     .then(reg => {
                         console.log('🚀 [TAJIROX] Service Worker registered successfully!', reg);
                         
+                        // Force checking for updates immediately on load
+                        reg.update();
+
+                        // Force checking for updates when the user switches back/focuses the app
+                        window.addEventListener('focus', () => {
+                            reg.update();
+                        });
+
                         // Détecter les mises à jour en cours d'installation
                         reg.addEventListener('updatefound', () => {
                             const newWorker = reg.installing;
@@ -3053,6 +3061,10 @@
                 <input type="text" id="login2FACodeInput" placeholder="أدخل الرمز المكون من 6 أرقام"
                     class="w-full p-3 bg-slate-50 rounded-xl border-none font-black outline-none text-center text-sm tracking-[5px]" maxlength="6">
                 
+                <div class="text-center mt-2">
+                    <button id="resend2FACodeBtn" onclick="resend2FA()" class="text-blue-600 hover:text-blue-800 font-black text-[10px] transition-colors" data-i18n="resend_2fa_btn">لم أتوصل بالرمز؟ إعادة الإرسال</button>
+                </div>
+
                 <div class="grid grid-cols-2 gap-2 pt-2">
                     <button onclick="closeModal('login2FAModal')"
                         class="py-3 bg-slate-100 rounded-xl font-black text-slate-400 text-xs"
