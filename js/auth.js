@@ -12,6 +12,12 @@ function handleLoginSuccess(res, loginBtn) {
                     return;
                 }
 
+                // Copy plain password to window.encryptionKey
+                if (window.tempPlainPassword) {
+                    window.encryptionKey = window.tempPlainPassword;
+                    window.tempPlainPassword = null;
+                }
+
                 currentUser = res.user;
                 currentDbId = res.dbId;
 
@@ -250,6 +256,7 @@ function handleLoginSuccess(res, loginBtn) {
             }
 
             try {
+                window.tempPlainPassword = p; // Store plain password temporarily for session key derivation
                 const hashedP = await hashPassword(p);
 
                 google.script.run
@@ -302,6 +309,7 @@ function handleLoginSuccess(res, loginBtn) {
 
                     currentUser = null;
                     currentDbId = null;
+                    window.encryptionKey = null; // Clear encryption key on logout
                     document.getElementById('appSection').classList.add('hidden');
                     document.getElementById('authSection').classList.remove('hidden');
                     document.getElementById('whatsappBtn').classList.add('hidden'); // إظهار زر الواتساب عند الخروج
@@ -446,6 +454,20 @@ function handleLoginSuccess(res, loginBtn) {
                         if (res.success) {
                             showToast(t('pass_updated_success'));
                             closeModal('changePassModal'); // إغلاق النافذة المنبثقة
+                            
+                            // Re-encrypt database with the new password
+                            window.encryptionKey = newPass;
+                            if (localStorage.getItem('biometric_enrolled') === 'true') {
+                                localStorage.setItem('biometric_key', newPass);
+                            }
+                            // Save allData to re-encrypt all tables
+                            google.script.run
+                                .withSuccessHandler(() => {
+                                    showToast("Base de données sécurisée avec le nouveau mot de passe !", "success");
+                                    refreshData();
+                                })
+                                .saveMigratedData(allData, currentDbId);
+                                
                             // تفريغ الحقول بعد الإغلاق
                             document.getElementById('oldPassInput').value = "";
                             document.getElementById('newPassInput').value = "";
@@ -628,6 +650,7 @@ function handleLoginSuccess(res, loginBtn) {
                                         localStorage.setItem('biometric_username', u);
                                         localStorage.setItem('biometric_token', token);
                                         localStorage.setItem('biometric_db_id', dbId);
+                                        localStorage.setItem('biometric_key', rawPass);
 
                                         showToast(t('biometric_enroll_success') || "تم تفعيل الدخول ببصمة الوجه بنجاح!");
                                         
@@ -723,6 +746,7 @@ function handleLoginSuccess(res, loginBtn) {
                     google.script.run
                         .withSuccessHandler(res => {
                             if (faceIdBtn) setBtnLoading(faceIdBtn, false);
+                            window.encryptionKey = localStorage.getItem('biometric_key');
                             handleLoginSuccess(res, faceIdBtn);
                         })
                         .withFailureHandler(err => {
