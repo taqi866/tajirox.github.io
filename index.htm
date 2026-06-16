@@ -3042,6 +3042,29 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal التحقق الثنائي 2FA -->
+    <div id="login2FAModal"
+        class="fixed inset-0 bg-slate-900/60 hidden z-[250] flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white p-6 rounded-[2rem] w-full max-w-xs custom-shadow">
+            <h3 class="text-lg font-black mb-2 text-slate-800 text-center" data-i18n="2fa_verification_title">رمز التحقق الثنائي</h3>
+            <p class="text-[10px] text-slate-400 font-bold text-center mb-6" id="login2FAMsg">تم إرسال رمز التحقق إلى بريدك الإلكتروني.</p>
+            <div class="space-y-4">
+                <input type="text" id="login2FACodeInput" placeholder="أدخل الرمز المكون من 6 أرقام"
+                    class="w-full p-3 bg-slate-50 rounded-xl border-none font-black outline-none text-center text-sm tracking-[5px]" maxlength="6">
+                
+                <div class="grid grid-cols-2 gap-2 pt-2">
+                    <button onclick="closeModal('login2FAModal')"
+                        class="py-3 bg-slate-100 rounded-xl font-black text-slate-400 text-xs"
+                        data-i18n="cancel">إلغاء</button>
+                    <button id="confirm2FABtn" onclick="submit2FACode()"
+                        class="py-3 bg-blue-600 text-white rounded-xl font-black shadow-lg text-xs hover:bg-blue-700"
+                        data-i18n="verify">تحقق</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal تعديل التعريفة والخصم -->
     <div id="editTariffModal"
         class="fixed inset-0 bg-slate-900/60 hidden z-[230] flex items-center justify-center p-4 backdrop-blur-sm">
