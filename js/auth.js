@@ -843,3 +843,29 @@ function handleLoginSuccess(res, loginBtn) {
                 .verifyLogin2FA(window.temp2FASession.username, code, window.temp2FASession, deviceId);
         }
         window.submit2FACode = submit2FACode;
+
+        async function resend2FA() {
+            if (!window.temp2FASession) return;
+            const btn = document.getElementById('resend2FACodeBtn');
+            const originalText = btn.innerText;
+            btn.disabled = true;
+            btn.innerText = currentLang === 'fr' ? "Envoi en cours..." : "جاري الإرسال...";
+            
+            google.script.run
+                .withSuccessHandler(res => {
+                    btn.disabled = false;
+                    btn.innerText = originalText;
+                    if (res.success) {
+                        showToast(currentLang === 'fr' ? "Un nouveau code a été envoyé." : "تم إرسال رمز جديد بنجاح.", "success");
+                    } else {
+                        showToast(res.message, "error");
+                    }
+                })
+                .withFailureHandler(err => {
+                    btn.disabled = false;
+                    btn.innerText = originalText;
+                    showToast("Error: " + err, "error");
+                })
+                .resend2FACode(window.temp2FASession.username, window.temp2FASession.dbId);
+        }
+        window.resend2FA = resend2FA;
