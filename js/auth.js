@@ -3,19 +3,18 @@ function handleLoginSuccess(res, loginBtn) {
             if (loginBtn) setBtnLoading(loginBtn, false);
 
             if (res.success) {
+                if (res.require2FA) {
+                    window.temp2FASession = res.tempSession;
+                    document.getElementById('login2FACodeInput').value = '';
+                    document.getElementById('login2FAMsg').innerText = (currentLang === 'fr' ? "Le code de vérification a été envoyé à : " : "تم إرسال رمز التحقق إلى: ") + res.email;
+                    openModal('login2FAModal');
+                    return;
+                }
+
                 currentUser = res.user;
                 currentDbId = res.dbId;
 
                 if (!currentUser.shopName) currentUser.shopName = res.shopName || "متجر " + currentUser.username;
-
-                // Log successful login visit
-                if (currentUser.role !== 'super_admin') {
-                    const sessionKey = `visit_logged_${currentUser.username}`;
-                    if (!sessionStorage.getItem(sessionKey)) {
-                        trackVisit(currentUser.username, currentUser.shopName);
-                        sessionStorage.setItem(sessionKey, 'true');
-                    }
-                }
 
                 // --- Mettre en cache locale les configurations de l'IA provenant du serveur ---
                 const shopName = currentUser.shopName;
@@ -209,6 +208,10 @@ function handleLoginSuccess(res, loginBtn) {
                 refreshData();
                 showToast(t('welcome_user', { name: currentUser.username }));
 
+                if (currentUser && currentUser.invoiceSize === 'Thermal' && typeof initQZTray === 'function') {
+                    initQZTray();
+                }
+
                 // تحديث واجهة البصمة
                 if (typeof updateBiometricUIState === 'function') {
                     updateBiometricUIState();
@@ -227,6 +230,12 @@ function handleLoginSuccess(res, loginBtn) {
             setLoading(true);
             setBtnLoading(loginBtn, true, t('login_btn'));
 
+            let deviceId = localStorage.getItem('tajirox_device_id');
+            if (!deviceId) {
+                deviceId = 'dev_' + Math.random().toString(36).substring(2, 15) + '_' + Date.now();
+                localStorage.setItem('tajirox_device_id', deviceId);
+            }
+
             try {
                 const hashedP = await hashPassword(p);
 
@@ -239,7 +248,7 @@ function handleLoginSuccess(res, loginBtn) {
                         setBtnLoading(loginBtn, false);
                         showToast(t('connection_error') + ': ' + (err.message || err), 'error');
                     })
-                    .login(u, hashedP);
+                    .login(u, hashedP, deviceId);
             } catch (error) {
                 setLoading(false);
                 setBtnLoading(loginBtn, false);
@@ -787,3 +796,38 @@ function handleLoginSuccess(res, loginBtn) {
                 console.error("Error in trackVisit:", err);
             }
         }
+
+        async function submit2FACode() {
+            const code = document.getElementById('login2FACodeInput').value.trim();
+            const btn = document.getElementById('confirm2FABtn');
+            if (!code || code.length !== 6) {
+                showToast(currentLang === 'fr' ? "Veuillez entrer un code à 6 chiffres" : "الرجاء إدخال رمز مكون من 6 أرقام", "error");
+                return;
+            }
+            if (!window.temp2FASession) return;
+
+            setLoading(true);
+            setBtnLoading(btn, true, t('sending') || 'جاري...');
+            
+            let deviceId = localStorage.getItem('tajirox_device_id');
+
+            google.script.run
+                .withSuccessHandler(res => {
+                    setLoading(false);
+                    setBtnLoading(btn, false);
+                    if (res.success) {
+                        closeModal('login2FAModal');
+                        window.temp2FASession = null;
+                        handleLoginSuccess(res, document.getElementById('loginBtn'));
+                    } else {
+                        showToast(currentLang === 'fr' ? "Code invalide ou expiré" : "رمز غير صحيح أو منتهي الصلاحية", "error");
+                    }
+                })
+                .withFailureHandler(err => {
+                    setLoading(false);
+                    setBtnLoading(btn, false);
+                    showToast("خطأ في التحقق: " + (err.message || err), 'error');
+                })
+                .verifyLogin2FA(window.temp2FASession.username, code, window.temp2FASession, deviceId);
+        }
+        window.submit2FACode = submit2FACode;
