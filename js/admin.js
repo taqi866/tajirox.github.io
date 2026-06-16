@@ -285,6 +285,9 @@
 
                     if (invoiceSize === 'Thermal') {
                         showToast(t('auto_print_enabled'), 'success');
+                        if (typeof initQZTray === 'function') {
+                            initQZTray();
+                        }
                     }
 
                     // إعادة عرض الصفحة الحالية لتحديث اللون
@@ -418,30 +421,8 @@
             container.className = "space-y-6 mb-6";
             container.innerHTML = `
                 <!-- Cards Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <!-- Card 1: Total Visits -->
-                    <div class="bg-gradient-to-br from-indigo-500 to-indigo-600 p-5 rounded-[2rem] shadow-sm text-white flex items-center justify-between hover:scale-[1.02] transition-all">
-                        <div>
-                            <p class="text-[10px] font-bold opacity-80 mb-1">${t('stats_total_visits') || "إجمالي زيارات التطبيق"}</p>
-                            <h3 class="text-3xl font-black">${stats.totalVisits}</h3>
-                        </div>
-                        <div class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center text-xl">
-                            <i class="fas fa-eye"></i>
-                        </div>
-                    </div>
-
-                    <!-- Card 2: Unique Visitors -->
-                    <div class="bg-gradient-to-br from-emerald-500 to-emerald-600 p-5 rounded-[2rem] shadow-sm text-white flex items-center justify-between hover:scale-[1.02] transition-all">
-                        <div>
-                            <p class="text-[10px] font-bold opacity-80 mb-1">${t('stats_unique_visitors') || "الزوار الفريدين (IP)"}</p>
-                            <h3 class="text-3xl font-black">${stats.uniqueVisitors}</h3>
-                        </div>
-                        <div class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center text-xl">
-                            <i class="fas fa-users"></i>
-                        </div>
-                    </div>
-
-                    <!-- Card 3: Registered Shops Count -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Card 1: Registered Shops Count -->
                     <div class="bg-gradient-to-br from-blue-500 to-blue-600 p-5 rounded-[2rem] shadow-sm text-white flex items-center justify-between hover:scale-[1.02] transition-all">
                         <div>
                             <p class="text-[10px] font-bold opacity-80 mb-1">${t('stats_registered_shops') || "المحلات المسجلة"}</p>
@@ -452,7 +433,7 @@
                         </div>
                     </div>
 
-                    <!-- Card 4: Total Revenue -->
+                    <!-- Card 2: Total Revenue -->
                     <div class="bg-gradient-to-br from-violet-500 to-violet-600 p-5 rounded-[2rem] shadow-sm text-white flex items-center justify-between hover:scale-[1.02] transition-all">
                         <div>
                             <p class="text-[10px] font-bold opacity-80 mb-1">${t('stats_total_revenue') || "إجمالي الإيرادات"}</p>
@@ -465,24 +446,14 @@
                 </div>
 
                 <!-- Breakdowns Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Column 3: Registered Shops -->
-                    <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm space-y-4 flex flex-col h-[300px]">
+                <div class="grid grid-cols-1 gap-6">
+                    <!-- Column: Registered Shops -->
+                    <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm space-y-4 flex flex-col h-[350px]">
                         <h4 class="text-xs font-black text-slate-800 flex items-center gap-2 border-b pb-2 flex-shrink-0">
                             <i class="fas fa-store text-blue-600"></i> ${t('stats_registered_shops') || "المحلات المسجلة"}
                         </h4>
                         <div class="space-y-3 overflow-y-auto flex-1 pr-1 modal-scrollable-content">
                             ${renderShopsList(shops)}
-                        </div>
-                    </div>
-
-                    <!-- Column 4: Devices -->
-                    <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm space-y-4 flex flex-col h-[300px]">
-                        <h4 class="text-xs font-black text-slate-800 flex items-center gap-2 border-b pb-2 flex-shrink-0">
-                            <i class="fas fa-laptop text-amber-600"></i> ${t('stats_devices') || "أجهزة الدخول منها"}
-                        </h4>
-                        <div class="space-y-3 overflow-y-auto flex-1 pr-1 modal-scrollable-content">
-                            ${renderProgressBars(topDevices, 'fas fa-tablet-alt')}
                         </div>
                     </div>
                 </div>
