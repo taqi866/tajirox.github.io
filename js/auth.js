@@ -63,11 +63,17 @@ function handleLoginSuccess(res, loginBtn) {
                 if (isStaff) {
                     document.body.classList.add('staff-mode');
 
-                    // ========== إخفاء قسم الشيكات والكمبيالات للموظف ==========
+                    // ========== إخفاء قسم الشيكات والكمبيالات والخزينة للموظف ==========
                     // إخفاء زر الشيكات والكمبيالات في القائمة الجانبية
                     const checksButton = document.querySelector('button[onclick="showPage(\'checks-promissory\')"]');
                     if (checksButton) {
                         checksButton.classList.add('hidden');
+                    }
+
+                    // إخفاء قسم الخزينة بالكامل للموظف
+                    const treasuryChecksMenu = document.getElementById('sidebarTreasuryChecks');
+                    if (treasuryChecksMenu) {
+                        treasuryChecksMenu.classList.add('hidden');
                     }
 
                     // إخفاء زر التنبيه الخاص بالشيكات في الهيدر
@@ -184,6 +190,9 @@ function handleLoginSuccess(res, loginBtn) {
                     const checksButton = document.querySelector('button[onclick="showPage(\'checks-promissory\')"]');
                     if (checksButton) checksButton.classList.remove('hidden');
 
+                    const treasuryChecksMenu = document.getElementById('sidebarTreasuryChecks');
+                    if (treasuryChecksMenu) treasuryChecksMenu.classList.remove('hidden');
+
                     checkSubscriptionStatus();
                 } else {
                     // Employé (staff) : masquer les menus sensibles
@@ -198,6 +207,9 @@ function handleLoginSuccess(res, loginBtn) {
 
                     const checksButton = document.querySelector('button[onclick="showPage(\'checks-promissory\')"]');
                     if (checksButton) checksButton.classList.add('hidden');
+
+                    const treasuryChecksMenu = document.getElementById('sidebarTreasuryChecks');
+                    if (treasuryChecksMenu) treasuryChecksMenu.classList.add('hidden');
 
                     document.body.classList.add('staff-mode');
 
