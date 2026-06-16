@@ -8,6 +8,7 @@ function handleLoginSuccess(res, loginBtn) {
                     document.getElementById('login2FACodeInput').value = '';
                     document.getElementById('login2FAMsg').innerText = (currentLang === 'fr' ? "Le code de vérification a été envoyé à : " : "تم إرسال رمز التحقق إلى: ") + res.email;
                     openModal('login2FAModal');
+                    startResendTimer('resend2FACodeBtn', 60);
                     return;
                 }
 
@@ -382,6 +383,8 @@ function handleLoginSuccess(res, loginBtn) {
                     const step2Msg = document.querySelector('#forgotStep2 p');
                     showToast(t('otp_sent'));
                     if (step2Msg) step2Msg.innerText = t('otp_sent_msg');
+                    
+                    startResendTimer('resendOtpBtn', 60);
                 } else { showToast(res.message, 'error'); }
             }).sendOtp(email, currentLang);
         }
@@ -857,6 +860,7 @@ function handleLoginSuccess(res, loginBtn) {
                     btn.innerText = originalText;
                     if (res.success) {
                         showToast(currentLang === 'fr' ? "Un nouveau code a été envoyé." : "تم إرسال رمز جديد بنجاح.", "success");
+                        startResendTimer('resend2FACodeBtn', 60);
                     } else {
                         showToast(res.message, "error");
                     }
@@ -869,3 +873,63 @@ function handleLoginSuccess(res, loginBtn) {
                 .resend2FACode(window.temp2FASession.username, window.temp2FASession.dbId);
         }
         window.resend2FA = resend2FA;
+
+        let resendTimers = {};
+        function startResendTimer(btnId, seconds = 60) {
+            const btn = document.getElementById(btnId);
+            if (!btn) return;
+            
+            if (resendTimers[btnId]) {
+                clearInterval(resendTimers[btnId]);
+            }
+            
+            btn.disabled = true;
+            btn.classList.add('opacity-50', 'cursor-not-allowed');
+            
+            let timeLeft = seconds;
+            const updateText = () => {
+                const textFr = `Renvoyer (${timeLeft}s)`;
+                const textAr = `إعادة الإرسال (${timeLeft}ث)`;
+                btn.innerText = currentLang === 'fr' ? textFr : textAr;
+            };
+            
+            updateText();
+            resendTimers[btnId] = setInterval(() => {
+                timeLeft--;
+                updateText();
+                if (timeLeft <= 0) {
+                    clearInterval(resendTimers[btnId]);
+                    delete resendTimers[btnId];
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    btn.innerText = currentLang === 'fr' ? "Renvoyer le code" : "إعادة إرسال الرمز";
+                }
+            }, 1000);
+        }
+        window.startResendTimer = startResendTimer;
+
+        async function resendForgotOtp() {
+            const email = document.getElementById('forgotEmailInput').value.trim();
+            if (!email) return;
+            
+            const btn = document.getElementById('resendOtpBtn');
+            const originalText = btn.innerText;
+            btn.disabled = true;
+            btn.innerText = currentLang === 'fr' ? "Envoi..." : "جاري الإرسال...";
+            
+            google.script.run.withSuccessHandler(res => {
+                btn.disabled = false;
+                btn.innerText = originalText;
+                if (res.success) {
+                    showToast(currentLang === 'fr' ? "Code envoyé." : "تم إرسال الرمز.", 'success');
+                    startResendTimer('resendOtpBtn', 60);
+                } else {
+                    showToast(res.message, 'error');
+                }
+            }).withFailureHandler(err => {
+                btn.disabled = false;
+                btn.innerText = originalText;
+                showToast("Error: " + err, 'error');
+            }).sendOtp(email, currentLang);
+        }
+        window.resendForgotOtp = resendForgotOtp;
