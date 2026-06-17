@@ -1,3 +1,13 @@
+function maskEmail(email) {
+    if (!email) return '';
+    const parts = email.split('@');
+    if (parts.length !== 2) return email;
+    const local = parts[0];
+    const domain = parts[1];
+    if (local.length <= 1) return email;
+    return local[0] + '****' + local[local.length - 1] + '@' + domain;
+}
+
 function handleLoginSuccess(res, loginBtn) {
             setLoading(false);
             if (loginBtn) setBtnLoading(loginBtn, false);
@@ -6,7 +16,7 @@ function handleLoginSuccess(res, loginBtn) {
                 if (res.require2FA) {
                     window.temp2FASession = res.tempSession;
                     document.getElementById('login2FACodeInput').value = '';
-                    document.getElementById('login2FAMsg').innerText = (currentLang === 'fr' ? "Le code de vérification a été envoyé à : " : "تم إرسال رمز التحقق إلى: ") + res.email;
+                    document.getElementById('login2FAMsg').innerText = (currentLang === 'fr' ? "Le code de vérification a été envoyé à : " : "تم إرسال رمز التحقق إلى: ") + maskEmail(res.email);
                     openModal('login2FAModal');
                     startResendTimer('resend2FACodeBtn', 60);
                     return;
@@ -153,6 +163,9 @@ function handleLoginSuccess(res, loginBtn) {
 
                     const sidebarNav = document.querySelector('#sidebar nav');
                     if (sidebarNav) {
+                        if (!window.originalSidebarNavHtml) {
+                            window.originalSidebarNavHtml = sidebarNav.innerHTML;
+                        }
                         sidebarNav.innerHTML = `
                             <button onclick="showPage('admin-dashboard'); switchAdminTab('stats');" class="sidebar-link active w-full flex items-center gap-3 p-3 rounded-xl transition-all font-bold text-indigo-600" id="sidebarStatsBtn">
                                 <i class="fas fa-chart-line opacity-80"></i> <span data-i18n="support_tab_dashboard">${t('support_tab_dashboard')}</span>
@@ -865,7 +878,7 @@ function handleLoginSuccess(res, loginBtn) {
                 .withFailureHandler(err => {
                     setLoading(false);
                     setBtnLoading(btn, false);
-                    showToast("خطأ في التحقق: " + (err.message || err), 'error');
+                    showToast((currentLang === 'fr' ? "Erreur de vérification : " : "خطأ في التحقق: ") + (err.message || err), 'error');
                 })
                 .verifyLogin2FA(window.temp2FASession.username, code, window.temp2FASession, deviceId);
         }
@@ -892,7 +905,7 @@ function handleLoginSuccess(res, loginBtn) {
                 .withFailureHandler(err => {
                     btn.disabled = false;
                     btn.innerText = originalText;
-                    showToast("Error: " + err, "error");
+                    showToast((currentLang === 'fr' ? "Erreur : " : "خطأ : ") + err, "error");
                 })
                 .resend2FACode(window.temp2FASession.username, window.temp2FASession.dbId);
         }
