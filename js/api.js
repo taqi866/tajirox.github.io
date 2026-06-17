@@ -15,11 +15,7 @@ const FIELDS_TO_ENCRYPT = {
 
 // Fonctions utilitaires de chiffrement
 function encryptValue(val) {
-    if (!window.encryptionKey) return val;
-    if (val === null || val === undefined) return "";
-    let str = typeof val === 'object' ? JSON.stringify(val) : String(val);
-    if (str.startsWith("U2FsdGVkX1")) return val; // déjà chiffré
-    return CryptoJS.AES.encrypt(str, window.encryptionKey).toString();
+    return val;
 }
 
 function decryptValue(val) {
@@ -85,54 +81,45 @@ function decryptAllData(data) {
     return decrypted;
 }
 
-// Vérifier et migrer les anciennes données en clair vers le format chiffré
+// Vérifier et migrer les données chiffrées existantes vers le format en clair (Reverse Migration)
 function checkAndMigrateOldData(rawData, decryptedData) {
     if (!window.encryptionKey) return;
     
-    let needsMigration = false;
+    let hasEncrypted = false;
     for (let key in FIELDS_TO_ENCRYPT) {
         const list = rawData[key];
         if (list && list.length > 0) {
             const fields = FIELDS_TO_ENCRYPT[key];
-            const hasUnencrypted = list.some(item => {
+            const hasEncryptedInList = list.some(item => {
                 return fields.some(f => {
                     const val = item[f];
-                    return val !== undefined && val !== null && val !== "" && typeof val === 'string' && !val.startsWith("U2FsdGVkX1");
+                    return val !== undefined && val !== null && typeof val === 'string' && val.startsWith("U2FsdGVkX1");
                 });
             });
-            if (hasUnencrypted) {
-                needsMigration = true;
+            if (hasEncryptedInList) {
+                hasEncrypted = true;
                 break;
             }
         }
     }
     
-    if (needsMigration) {
-        console.log("🔄 Données non chiffrées détectées. Chiffrement et migration automatique en cours...");
-        
-        const migratedData = {};
-        for (let key in rawData) {
-            if (Array.isArray(rawData[key])) {
-                migratedData[key] = decryptedData[key].map(item => encryptObject(item, key));
-            } else {
-                migratedData[key] = rawData[key];
-            }
-        }
+    if (hasEncrypted) {
+        console.log("🔄 Données chiffrées détectées. Déchiffrement et migration automatique vers le format CLAIR...");
         
         google.script.run
             .withSuccessHandler(res => {
                 if (res.success) {
                     if (typeof showToast === 'function') {
-                        showToast("Toutes vos anciennes données ont été chiffrées avec succès !", "success");
+                        showToast("Base de données convertie en clair avec succès !", "success");
                     }
                 } else {
-                    console.error("Migration error:", res.error);
+                    console.error("Migration to plain text error:", res.error);
                 }
             })
             .withFailureHandler(err => {
-                console.error("Migration failed:", err);
+                console.error("Migration to plain text failed:", err);
             })
-            .saveMigratedData(migratedData, currentDbId);
+            .saveMigratedData(decryptedData, currentDbId);
     }
 }
 
@@ -159,37 +146,11 @@ window.google = {
                         };
                     }
 
-                    // Exécution de la fonction distante
+                    // Exécution de la fonction distante (Sans chiffrement sortant)
                     return function (...args) {
-                        // Chiffrement automatique des arguments sortants si la clé existe
-                        if (window.encryptionKey) {
-                            if (prop === 'saveInventoryItem') {
-                                args[0] = encryptObject(args[0], 'inventory');
-                            } else if (prop === 'saveInventoryBatch') {
-                                args[0] = args[0].map(x => encryptObject(x, 'inventory'));
-                            } else if (prop === 'saveInvoice') {
-                                args[0] = encryptObject(args[0], 'invoices');
-                            } else if (prop === 'saveExpense') {
-                                args[0] = encryptObject(args[0], 'expenses');
-                            } else if (prop === 'saveClient') {
-                                args[0] = encryptObject(args[0], 'clients');
-                            } else if (prop === 'savePaymentRecord') {
-                                args[0] = encryptObject(args[0], 'payments');
-                            } else if (prop === 'updatePaymentAndCheck') {
-                                args[1] = encryptObject(args[1], 'payments');
-                                if (args[3]) args[3] = encryptObject(args[3], 'checks_promissory');
-                            } else if (prop === 'saveCheckPromissory') {
-                                args[0] = encryptObject(args[0], 'checks_promissory');
-                            } else if (prop === 'saveTransfer') {
-                                args[0] = encryptObject(args[0], 'transfers');
-                            } else if (prop === 'saveConsumption') {
-                                args[0] = encryptObject(args[0], 'consumptions');
-                            } else if (prop === 'settleMultipleInvoices') {
-                                args[0] = args[0].map(x => encryptObject(x, 'invoices'));
-                                args[1] = args[1].map(x => encryptObject(x, 'payments'));
-                                args[2] = args[2].map(x => encryptObject(x, 'checks_promissory'));
-                            }
-                        }
+                        // Chiffrement désactivé pour retour aux données en clair dans Google Sheets
+                        // Fin du chiffrement sortant
+
 
                         const payload = {
                             func: prop,
