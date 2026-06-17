@@ -502,6 +502,12 @@
                                         <i class="fas fa-calendar-plus text-xs"></i>
                                     </button>
                                 ` : ''}
+                                <button onclick="impersonateShop('${shop.username}')" class="w-7 h-7 bg-indigo-100 text-indigo-600 rounded-lg flex items-center justify-center hover:scale-110 transition-all" title="Accéder aux données">
+                                    <i class="fas fa-sign-in-alt text-xs"></i>
+                                </button>
+                                <button onclick="promptDecryptShop('${shop.username}')" class="w-7 h-7 bg-emerald-100 text-emerald-600 rounded-lg flex items-center justify-center hover:scale-110 transition-all" title="Déchiffrer la base de données">
+                                    <i class="fas fa-unlock text-xs"></i>
+                                </button>
                                 <button onclick="openEditTariffModal('${shop.username}')" class="w-7 h-7 bg-amber-100 text-amber-600 rounded-lg flex items-center justify-center hover:scale-110 transition-all" title="${t('edit_tariff_title')}">
                                     <i class="fas fa-coins text-xs"></i>
                                 </button>
@@ -961,6 +967,39 @@
                 .updateShopTariff(shopCode, tariff, discount);
         }
 
+        function runShopsMigration() {
+            const btn = document.getElementById('btnMigrateShops');
+            
+            openConfirm({
+                title: "Migration des anciens magasins",
+                msg: "Voulez-vous renommer et déplacer tous les anciens fichiers Google Sheets des magasins vers le dossier sécurisé et anonyme ?",
+                iconClass: "fas fa-sync-alt",
+                colorClass: "bg-amber-600",
+                onConfirm: () => {
+                    setLoading(true);
+                    setBtnLoading(btn, true, "...");
+                    google.script.run
+                        .withSuccessHandler(res => {
+                            setLoading(false);
+                            setBtnLoading(btn, false);
+                            if (res.success) {
+                                showToast("Migration terminée avec succès ! Nombre de magasins migrés : " + res.migratedCount, "success");
+                            } else {
+                                showToast("Erreur lors de la migration : " + res.error, "error");
+                            }
+                        })
+                        .withFailureHandler(err => {
+                            setLoading(false);
+                            setBtnLoading(btn, false);
+                            showToast("Erreur de connexion : " + err, "error");
+                        })
+                        .migrateExistingShops();
+                }
+            });
+        }
+
+        window.runShopsMigration = runShopsMigration;
+
         async function forceAppUpdate() {
             const btn = document.getElementById('btnForceUpdate');
             if (btn) setBtnLoading(btn, true, "...");
@@ -1132,5 +1171,206 @@
             }
         }
         
+        async function triggerDatabaseBackup() {
+            const btn = document.getElementById('btnBackupDatabase');
+            if (!btn) return;
+            
+            openConfirm({
+                title: t('db_backup_title') || "نسخة احتياطية للبيانات",
+                msg: t('db_backup_desc') || "أنشئ نسخة احتياطية من قاعدة بيانات متجرك لحمايتها من الضياع.",
+                iconClass: "fas fa-copy",
+                colorClass: "bg-emerald-600",
+                onConfirm: () => {
+                    setBtnLoading(btn, true, t('sending') || 'جاري...');
+                    google.script.run
+                        .withSuccessHandler(res => {
+                            setBtnLoading(btn, false);
+                            if (res.success) {
+                                showToast(t('backup_success', { name: res.backupName }) || "تم إنشاء النسخة الاحتياطية بنجاح !", "success");
+                            } else {
+                                showToast((t('backup_failed') || "فشل إنشاء النسخة الاحتياطية: ") + (t(res.message) || res.message), "error");
+                            }
+                        })
+                        .withFailureHandler(err => {
+                            setBtnLoading(btn, false);
+                            showToast((t('backup_failed') || "فشل إنشاء النسخة الاحتياطية") + ": " + err, "error");
+                        })
+                        .backupShopDatabase(currentUser.dbId);
+                }
+            });
+        }
+        window.triggerDatabaseBackup = triggerDatabaseBackup;
+
         window.togglePasswordVisibility = togglePasswordVisibility;
         window.testAIConnection = testAIConnection;
+
+        function impersonateShop(shopCode) {
+            setLoading(true);
+            google.script.run
+                .withSuccessHandler(res => {
+                    setLoading(false);
+                    if (res.success) {
+                        window.adminSession = {
+                            user: currentUser,
+                            dbId: currentDbId
+                        };
+                        
+                        currentUser = res.user;
+                        currentDbId = res.dbId;
+                        window.encryptionKey = null; // No encryption key, data is plaintext
+                        
+                        document.getElementById('userNameDisplay').innerText = currentUser.username;
+                        document.getElementById('userRoleDisplay').innerText = t('admin_role');
+                        
+                        const sidebarNav = document.querySelector('#sidebar nav');
+                        if (sidebarNav && window.originalSidebarNavHtml) {
+                            sidebarNav.innerHTML = window.originalSidebarNavHtml;
+                        }
+                        
+                        if (sidebarNav) {
+                            const returnBtn = document.createElement('button');
+                            returnBtn.className = "sidebar-link w-full flex items-center gap-3 p-3 rounded-xl transition-all font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 mb-2";
+                            returnBtn.onclick = () => {
+                                currentUser = window.adminSession.user;
+                                currentDbId = window.adminSession.dbId;
+                                window.adminSession = null;
+                                
+                                document.getElementById('userNameDisplay').innerText = t('system_admin');
+                                document.getElementById('userRoleDisplay').innerText = t('admin_role');
+                                document.getElementById('userRoleDisplay').className = "text-[9px] bg-indigo-100 text-indigo-600 px-3 py-1 rounded-full inline-block mt-1 font-black";
+                                
+                                const sidebarIcon = document.getElementById('sidebarUserIcon');
+                                if (sidebarIcon) {
+                                    sidebarIcon.innerHTML = `<img src="logo.png" class="w-full h-full object-cover rounded-2xl" alt="Logo">`;
+                                }
+                                
+                                if (sidebarNav) {
+                                    sidebarNav.innerHTML = `
+                                        <button onclick="showPage('admin-dashboard'); switchAdminTab('stats');" class="sidebar-link active w-full flex items-center gap-3 p-3 rounded-xl transition-all font-bold text-indigo-600" id="sidebarStatsBtn">
+                                            <i class="fas fa-chart-line opacity-80"></i> <span data-i18n="support_tab_dashboard">${t('support_tab_dashboard')}</span>
+                                        </button>
+                                        <button onclick="showPage('admin-dashboard'); switchAdminTab('shops');" class="sidebar-link w-full flex items-center gap-3 p-3 rounded-xl transition-all font-bold text-slate-600 hover:text-indigo-600" id="sidebarShopsBtn">
+                                            <i class="fas fa-store-alt opacity-80"></i> <span data-i18n="support_tab_shops">${t('support_tab_shops')}</span>
+                                        </button>
+                                        <button onclick="showPage('admin-dashboard'); switchAdminTab('support');" class="sidebar-link w-full flex items-center gap-3 p-3 rounded-xl transition-all font-bold text-slate-600 hover:text-indigo-600" id="sidebarSupportBtn">
+                                            <i class="fas fa-comments opacity-80"></i> <span data-i18n="support_tab_chat">${t('support_tab_chat')}</span>
+                                        </button>
+                                    `;
+                                }
+                                
+                                loadAdminData();
+                                showPage('admin-dashboard');
+                                if (typeof switchAdminTab === 'function') {
+                                    switchAdminTab('shops');
+                                }
+                            };
+                            returnBtn.innerHTML = `<i class="fas fa-user-shield"></i> <span>Quitter l'accès</span>`;
+                            sidebarNav.insertBefore(returnBtn, sidebarNav.firstChild);
+                        }
+
+                        showPage('dashboard');
+                        initFilterOptions();
+                        refreshData();
+                        showToast("Accès au magasin réussi !", "success");
+        function impersonateShop(shopCode) {
+            setLoading(true);
+            google.script.run
+                .withSuccessHandler(res => {
+                    setLoading(false);
+                    if (res.success) {
+                        window.adminSession = {
+                            user: currentUser,
+                            dbId: currentDbId
+                        };
+                        
+                        currentUser = res.user;
+                        currentDbId = res.dbId;
+                        window.encryptionKey = null; // No encryption key, data is plaintext
+                        
+                        document.getElementById('userNameDisplay').innerText = currentUser.username;
+                        document.getElementById('userRoleDisplay').innerText = t('admin_role');
+                        
+                        const sidebarNav = document.querySelector('#sidebar nav');
+                        if (sidebarNav && window.originalSidebarNavHtml) {
+                            sidebarNav.innerHTML = window.originalSidebarNavHtml;
+                        }
+                        
+                        if (sidebarNav) {
+                            const returnBtn = document.createElement('button');
+                            returnBtn.className = "sidebar-link w-full flex items-center gap-3 p-3 rounded-xl transition-all font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 mb-2";
+                            returnBtn.onclick = () => {
+                                currentUser = window.adminSession.user;
+                                currentDbId = window.adminSession.dbId;
+                                window.adminSession = null;
+                                
+                                document.getElementById('userNameDisplay').innerText = t('system_admin');
+                                document.getElementById('userRoleDisplay').innerText = t('admin_role');
+                                document.getElementById('userRoleDisplay').className = "text-[9px] bg-indigo-100 text-indigo-600 px-3 py-1 rounded-full inline-block mt-1 font-black";
+                                
+                                const sidebarIcon = document.getElementById('sidebarUserIcon');
+                                if (sidebarIcon) {
+                                    sidebarIcon.innerHTML = `<img src="logo.png" class="w-full h-full object-cover rounded-2xl" alt="Logo">`;
+                                }
+                                
+                                if (sidebarNav) {
+                                    sidebarNav.innerHTML = `
+                                        <button onclick="showPage('admin-dashboard'); switchAdminTab('stats');" class="sidebar-link active w-full flex items-center gap-3 p-3 rounded-xl transition-all font-bold text-indigo-600" id="sidebarStatsBtn">
+                                            <i class="fas fa-chart-line opacity-80"></i> <span data-i18n="support_tab_dashboard">${t('support_tab_dashboard')}</span>
+                                        </button>
+                                        <button onclick="showPage('admin-dashboard'); switchAdminTab('shops');" class="sidebar-link w-full flex items-center gap-3 p-3 rounded-xl transition-all font-bold text-slate-600 hover:text-indigo-600" id="sidebarShopsBtn">
+                                            <i class="fas fa-store-alt opacity-80"></i> <span data-i18n="support_tab_shops">${t('support_tab_shops')}</span>
+                                        </button>
+                                        <button onclick="showPage('admin-dashboard'); switchAdminTab('support');" class="sidebar-link w-full flex items-center gap-3 p-3 rounded-xl transition-all font-bold text-slate-600 hover:text-indigo-600" id="sidebarSupportBtn">
+                                            <i class="fas fa-comments opacity-80"></i> <span data-i18n="support_tab_chat">${t('support_tab_chat')}</span>
+                                        </button>
+                                    `;
+                                }
+                                
+                                loadAdminData();
+                                showPage('admin-dashboard');
+                                if (typeof switchAdminTab === 'function') {
+                                    switchAdminTab('shops');
+                                }
+                            };
+                            returnBtn.innerHTML = `<i class="fas fa-user-shield"></i> <span>Quitter l'accès</span>`;
+                            sidebarNav.insertBefore(returnBtn, sidebarNav.firstChild);
+                        }
+
+                        showPage('dashboard');
+                        initFilterOptions();
+                        refreshData();
+                        showToast("Accès au magasin réussi !", "success");
+                    } else {
+                        showToast("Erreur d'accès : " + res.message, 'error');
+                    }
+                })
+                .withFailureHandler(err => {
+                    setLoading(false);
+                    showToast("Erreur de connexion : " + err, 'error');
+                })
+                .getShopImpersonationInfo(shopCode);
+        }
+        window.impersonateShop = impersonateShop;
+
+        function promptDecryptShop(shopCode) {
+            const key = prompt("Veuillez saisir la clé de déchiffrement (le mot de passe propriétaire du magasin) :");
+            if (!key) return;
+            
+            setLoading(true);
+            google.script.run
+                .withSuccessHandler(res => {
+                    setLoading(false);
+                    if (res.success) {
+                        showToast(`Déchiffrement terminé ! ${res.decryptedCount} champs ont été convertis en clair sur Google Sheets.`, 'success');
+                        loadAdminData();
+                    } else {
+                        showToast("Erreur lors du déchiffrement : " + res.error, 'error');
+                    }
+                })
+                .withFailureHandler(err => {
+                    setLoading(false);
+                    showToast("Erreur de connexion : " + err, 'error');
+                })
+                .decryptSingleShopOnServer(shopCode, key);
+        }
+        window.promptDecryptShop = promptDecryptShop;
