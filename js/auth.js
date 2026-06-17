@@ -8,6 +8,64 @@ function maskEmail(email) {
     return local[0] + '****' + local[local.length - 1] + '@' + domain;
 }
 
+function validatePasswordRequirements(password) {
+    if (!password) return { isValid: false, message: '' };
+    const hasLength = password.length >= 8;
+    const hasUpper = /[A-Z]/.test(password);
+    const hasLower = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSymbol = /[^A-Za-z0-9]/.test(password);
+
+    const missing = [];
+    if (!hasLength) missing.push(currentLang === 'fr' ? "au moins 8 caractères" : "8 أحرف على الأقل");
+    if (!hasUpper) missing.push(currentLang === 'fr' ? "une majuscule" : "حرف كبير");
+    if (!hasLower) missing.push(currentLang === 'fr' ? "une minuscule" : "حرف صغير");
+    if (!hasNumber) missing.push(currentLang === 'fr' ? "un chiffre" : "رقم");
+    if (!hasSymbol) missing.push(currentLang === 'fr' ? "un symbole" : "رمز خاص");
+
+    if (missing.length > 0) {
+        const prefix = currentLang === 'fr' ? "Le mot de passe doit contenir : " : "يجب أن تحتوي كلمة المرور على: ";
+        return { isValid: false, message: prefix + missing.join(', ') };
+    }
+    return { isValid: true, message: '' };
+}
+
+function setupPasswordListener(inputId, errorId) {
+    const input = document.getElementById(inputId);
+    const errorEl = document.getElementById(errorId);
+    if (!input || !errorEl) return;
+
+    input.addEventListener('input', () => {
+        const password = input.value.trim();
+        if (!password) {
+            errorEl.classList.add('hidden');
+            errorEl.innerText = '';
+            return;
+        }
+        const check = validatePasswordRequirements(password);
+        if (check.isValid) {
+            errorEl.classList.add('hidden');
+            errorEl.innerText = '';
+        } else {
+            errorEl.innerText = check.message;
+            errorEl.classList.remove('hidden');
+        }
+    });
+}
+
+function initPasswordValidation() {
+    setupPasswordListener('regPass', 'regPassError');
+    setupPasswordListener('resetNewPassInput', 'resetNewPassError');
+    setupPasswordListener('newPassInput', 'newPassError');
+}
+
+// Initialize validation listeners
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPasswordValidation);
+} else {
+    initPasswordValidation();
+}
+
 function handleLoginSuccess(res, loginBtn) {
             setLoading(false);
             if (loginBtn) setBtnLoading(loginBtn, false);
@@ -345,6 +403,13 @@ function handleLoginSuccess(res, loginBtn) {
 
         async function handleRegister() {
             const rawPass = document.getElementById('regPass').value.trim();
+            
+            const check = validatePasswordRequirements(rawPass);
+            if (!check.isValid) {
+                showToast(check.message, 'error');
+                return;
+            }
+            
             const hashedPass = rawPass ? await hashPassword(rawPass) : '';
             const data = {
                 shopName: document.getElementById('regShopName').value.trim(),
@@ -417,6 +482,12 @@ function handleLoginSuccess(res, loginBtn) {
             const btn = document.getElementById('btnResetConfirm');
             if (!otp || !newPass) return showToast(t('enter_otp_pass'), 'error');
 
+            const check = validatePasswordRequirements(newPass);
+            if (!check.isValid) {
+                showToast(check.message, 'error');
+                return;
+            }
+
             setLoading(true);
             setBtnLoading(btn, true, t('changing_pass'));
             const newHash = await hashPassword(newPass);
@@ -446,9 +517,15 @@ function handleLoginSuccess(res, loginBtn) {
                 return;
             }
 
+            const check = validatePasswordRequirements(newPass);
+            if (!check.isValid) {
+                showToast(check.message, 'error');
+                return;
+            }
+
             // التحقق من أن كلمة المرور الجديدة مختلفة
             if (oldPass === newPass) {
-                showToast('كلمة المرور الجديدة يجب أن تكون مختلفة عن القديمة', 'error');
+                showToast(currentLang === 'fr' ? "Ce mot de passe a déjà été utilisé" : "هذه كلمة المرور سبق إستعمالها", 'error');
                 return;
             }
 
