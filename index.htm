@@ -5,32 +5,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    <title>TAJIROX I Système de gestion des magasins</title>
+    <title>TAJIROX I Système de gestion des magasins au Maroc - برنامج تسيير المحلات التجارية</title>
 
     <meta name="description"
-        content="TAJIROX est un système de gestion des magasins conçu pour simplifier les opérations commerciales et améliorer la performance des commerces.">
+        content="TAJIROX est le meilleur système de gestion de stock et de caisse au Maroc, conçu pour simplifier les opérations commerciales et améliorer la performance des commerces et magasins marocains. برنامج تسيير المحلات التجارية والمخازن في المغرب.">
+    <meta name="keywords" content="logiciel de gestion de stock maroc, système de caisse maroc, gestion magasin maroc, tajirox maroc, logiciel de caisse maroc, برنامج تسيير المحلات التجارية المغرب, برنامج تسيير المخزون المغرب, برنامج تدبير المحلات, نظام نقطة البيع المغرب, POS maroc, gestion commerce maroc">
 
     <meta name="robots" content="index,follow">
     <meta name="googlebot" content="index,follow">
     <link rel="canonical" href="https://tajirox.github.io/">
 
+    <!-- Geolocalisation Maroc -->
+    <meta name="geo.region" content="MA" />
+    <meta name="geo.placename" content="Morocco" />
+    <meta name="geo.position" content="31.791702;-7.09262" />
+    <meta name="ICBM" content="31.791702, -7.09262" />
+
+    <!-- Hreflang alternates for Arabic and French search in Morocco -->
+    <link rel="alternate" hreflang="ar-ma" href="https://tajirox.github.io/">
+    <link rel="alternate" hreflang="fr-ma" href="https://tajirox.github.io/">
+    <link rel="alternate" hreflang="ar" href="https://tajirox.github.io/">
+    <link rel="alternate" hreflang="fr" href="https://tajirox.github.io/">
+    <link rel="alternate" hreflang="x-default" href="https://tajirox.github.io/">
+
     <!-- SEO / Search Engine Metadata -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://tajirox.github.io/">
-    <meta property="og:title" content="TAJIROX I Système de gestion des magasins">
+    <meta property="og:title" content="TAJIROX I Système de gestion des magasins au Maroc">
     <meta property="og:description"
-        content="TAJIROX est un système de gestion des magasins conçu pour simplifier les opérations commerciales et améliorer la performance des commerces.">
+        content="TAJIROX est le meilleur système de gestion de stock et de caisse au Maroc, conçu pour simplifier les opérations commerciales et améliorer la performance des commerces et magasins marocains.">
     <meta property="og:image" content="https://tajirox.github.io/logo.png">
     <meta property="og:image:width" content="512">
     <meta property="og:image:height" content="512">
-    <meta property="og:site_name" content="TAJIROX">
+    <meta property="og:site_name" content="TAJIROX Maroc">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="https://tajirox.github.io/">
-    <meta name="twitter:title" content="TAJIROX I Système de gestion des magasins">
+    <meta name="twitter:title" content="TAJIROX I Système de gestion des magasins au Maroc">
     <meta name="twitter:description"
-        content="TAJIROX est un système de gestion des magasins conçu pour simplifier les opérations commerciales et améliorer la performance des commerces.">
+        content="TAJIROX est le meilleur système de gestion de stock et de caisse au Maroc, conçu pour simplifier les opérations commerciales et améliorer la performance des commerces et magasins marocains.">
     <meta name="twitter:image" content="https://tajirox.github.io/logo.png">
 
     <!-- Schema.org Organization -->
@@ -42,7 +56,15 @@
       "url":"https://tajirox.github.io/",
       "logo":"https://tajirox.github.io/logo.png",
       "image":"https://tajirox.github.io/logo.png",
-      "description":"TAJIROX est un système de gestion des magasins conçu pour simplifier les opérations commerciales et améliorer la performance des commerces."
+      "description":"TAJIROX est un système de gestion des magasins conçu pour simplifier les opérations commerciales et améliorer la performance des commerces au Maroc.",
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "MA"
+      },
+      "areaServed": {
+        "@type": "Country",
+        "name": "Morocco"
+      }
     }
     </script>
 
@@ -56,7 +78,8 @@
       "operatingSystem":"Web",
       "url":"https://tajirox.github.io/",
       "image":"https://tajirox.github.io/logo.png",
-      "description":"TAJIROX est un système de gestion des magasins conçu pour simplifier les opérations commerciales et améliorer la performance des commerces."
+      "description":"TAJIROX est un système de gestion des magasins conçu pour simplifier les opérations commerciales et améliorer la performance des commerces au Maroc.",
+      "countriesSupported": "MA"
     }
     </script>
 
@@ -1812,7 +1835,11 @@
                             <button onclick="openCustomEmailModal()"
                                 class="bg-blue-600 text-white px-5 py-3 rounded-xl font-black text-xs shadow-lg hover:scale-105 active:scale-95 transition-all"
                                 data-i18n="send_custom_email">إرسال بريد مخصص</button>
+                            <button onclick="openGlobalTariffsModal()"
+                                class="bg-amber-600 text-white px-5 py-3 rounded-xl font-black text-xs shadow-lg hover:scale-105 active:scale-95 transition-all"
+                                data-i18n="edit_global_tariffs">تعديل التسعيرة العامة</button>
                         </div>
+
                         <div class="flex flex-1 md:justify-end items-center gap-3 flex-wrap">
                             <!-- Quick Search Input -->
                             <div class="relative w-full md:max-w-xs">
@@ -3123,6 +3150,41 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal تعديل التسعيرة العامة للنظام -->
+    <div id="globalTariffsModal"
+        class="fixed inset-0 bg-slate-900/60 hidden z-[230] flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white p-6 rounded-[2rem] w-full max-w-sm custom-shadow">
+            <h3 class="text-lg font-black mb-6 text-slate-800 text-center" data-i18n="global_tariffs_title">تعديل تسعيرة النظام العامة</h3>
+            <div class="space-y-4">
+                <label class="text-[10px] font-black text-slate-400 px-1 uppercase block" data-i18n="sub_tariff_year_label">تسعيرة الاشتراك (درهم/سنة)</label>
+                <input type="number" id="globalSubYear" min="0" value="1200"
+                    class="w-full p-3 bg-slate-50 rounded-xl border-none font-black outline-none text-left" placeholder="1200">
+                
+                <label class="text-[10px] font-black text-slate-400 px-1 uppercase block mt-2" data-i18n="sub_tariff_month_label">تسعيرة الاشتراك (درهم/شهر)</label>
+                <input type="number" id="globalSubMonth" min="0" value="120"
+                    class="w-full p-3 bg-slate-50 rounded-xl border-none font-black outline-none text-left" placeholder="120">
+                
+                <label class="text-[10px] font-black text-slate-400 px-1 uppercase block mt-2" data-i18n="desktop_sale_price_label">ثمن نسخة Desktop المخفض (درهم)</label>
+                <input type="number" id="globalDesktopSale" min="0" value="1790"
+                    class="w-full p-3 bg-slate-50 rounded-xl border-none font-black outline-none text-left" placeholder="1790">
+                
+                <label class="text-[10px] font-black text-slate-400 px-1 uppercase block mt-2" data-i18n="desktop_original_price_label">ثمن نسخة Desktop الأصلي (درهم)</label>
+                <input type="number" id="globalDesktopOriginal" min="0" value="1990"
+                    class="w-full p-3 bg-slate-50 rounded-xl border-none font-black outline-none text-left" placeholder="1990">
+                
+                <div class="grid grid-cols-2 gap-2 pt-2">
+                    <button onclick="closeModal('globalTariffsModal')"
+                        class="py-3 bg-slate-100 rounded-xl font-black text-slate-400 text-xs"
+                        data-i18n="cancel">إلغاء</button>
+                    <button id="confirmGlobalTariffsBtn" onclick="saveGlobalTariffsChanges()"
+                        class="py-3 bg-amber-600 text-white rounded-xl font-black shadow-lg text-xs hover:bg-amber-700"
+                        data-i18n="save_btn">حفظ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <!-- نموذج PDF مخفي -->
     <div id="invoicePDFTemplate" class="hidden">
