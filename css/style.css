@@ -879,6 +879,21 @@
                 transform: scale(0.96);
                 transition: transform 0.1s ease;
             }
+
+            /* Custom Bottom Nav styles supporting Safe Areas & full integration */
+            #mobileBottomNav {
+                padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+                height: calc(4.25rem + env(safe-area-inset-bottom, 0px)) !important;
+            }
+
+            #mobileFAB {
+                bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px)) !important;
+            }
+
+            .whatsapp-float {
+                bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px)) !important;
+                right: 16px !important;
+            }
         }
 
         /* ==========================================
@@ -955,4 +970,4 @@
         #forgotPassModal input::placeholder {
             color: #4b5563 !important; /* text-slate-600 */
             opacity: 1 !important;
-        }
+        }
