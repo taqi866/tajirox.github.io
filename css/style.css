@@ -882,6 +882,9 @@
 
             /* Custom Bottom Nav styles supporting Safe Areas & full integration */
             #mobileBottomNav {
+                left: 0 !important;
+                right: 0 !important;
+                width: 100% !important;
                 padding-bottom: env(safe-area-inset-bottom, 0px) !important;
                 height: calc(4.25rem + env(safe-area-inset-bottom, 0px)) !important;
             }
