@@ -717,7 +717,7 @@ const translations = {
         subscription_plan_btn: "خطة الاشتراك",
         plan_title: "خطة الاشتراك النشطة",
         plan_price_label: "سعر خطة الاشتراك :",
-        plan_price_value: "120 درهم / شهر",
+        plan_price_value: "120 درهم / للشهر",
         plan_old_price_value: "",
         active_plan_details: "خطة الاشتراك",
         plan_features_label: "يتضمن 2 مستخدمين كحد أقصى (المدير + موظف واحد) مع الاحتفاظ بكافة مميزات النظام.",
