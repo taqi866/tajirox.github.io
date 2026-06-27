@@ -800,7 +800,7 @@ const translations = {
         app_desc_mobile: "Un système complet et intelligent pour gérer votre boutique, suivre vos ventes, stocks, dépenses et dettes en toute simplicité et sécurité.",
         subscription_details: "Détails de l'abonnement mensuel",
         plan_features_short: "Comprend 2 utilisateurs max (Admin + 1 employé) avec toutes les fonctionnalités activées et support technique direct.",
-        system_features_title: "Principales fonctionnalités",
+        system_features_title: "Fonctionnalités",
         hero_dashboard_desc_short: "Suivi des ventes et bénéfices",
         hero_inventory_desc_short: "Suivi des produits et quantités",
         hero_pro_invoices_desc_short: "Factures de vente & de services",
