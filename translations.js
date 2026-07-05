@@ -1,5 +1,13 @@
 const translations = {
     ar: {
+        scan_barcode_title: "قارئ الباركود (الكاميرا)",
+        camera_flash: "الفلاش",
+        camera_error: "تعذر تشغيل الكاميرا. يرجى التحقق من إعطاء صلاحية الكاميرا للمتصفح.",
+        connect_phone_scanner: "ربط قارئ الهاتف اللاسلكي",
+        scan_qr_to_connect: "امسح رمز QR بكاميرا الهاتف لربطه بالحاسوب",
+        phone_connected: "الهاتف متصل وجاهز للمسح",
+        phone_disconnected: "بانتظار ربط الهاتف...",
+        scanned_code: "تم مسح الرمز",
 
         other_category: "أخرى",
         month_word: "شهر",
@@ -789,6 +797,15 @@ const translations = {
         trial: "تجريبي"
     },
     fr: {
+        scan_barcode_title: "Scanner Code-barres (Caméra)",
+        camera_flash: "Flash",
+        camera_error: "Impossible de démarrer la caméra. Veuillez autoriser l'accès à la caméra.",
+        connect_phone_scanner: "Scanner sans fil (Téléphone)",
+        scan_qr_to_connect: "Scannez le QR Code pour connecter votre téléphone",
+        phone_connected: "Téléphone connecté et prêt",
+        phone_disconnected: "En attente de connexion...",
+        scanned_code: "Code scanné",
+
         home_title: "Accueil",
         more_nav_label: "Plus",
         // Dashboard Checks
