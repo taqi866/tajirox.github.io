@@ -148,6 +148,8 @@
     <script src="https://cdn.jsdelivr.net/npm/__qz__@2.2.3/dist/qz-tray-client.min.js"></script>
     <!-- مكتبة توليد الباركود -->
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <!-- مكتبة الاتصال اللاسلكي السحابية -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
     <!-- مكتبة توليد PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <!-- مكتبة إدارة قاعدة البيانات المحلية IndexedDB -->
@@ -1069,11 +1071,16 @@
                     <div class="relative">
                         <input type="text" id="inventorySearch" onkeyup="searchInventory()"
                             onkeydown="handlePhysicalScan(event, 'inventory_search')"
-                            placeholder="ابحث بالاسم أو الكود..." class="inventory-search-input pl-10 pr-10"
+                            placeholder="ابحث بالاسم أو الكود..." class="inventory-search-input pl-16 pr-10"
                             data-i18n-placeholder="search_product_hint">
-                        <button onclick="clearInventorySearch()" id="clearSearchBtn" class="clear-search-btn hidden">
-                            <i class="fas fa-times"></i>
-                        </button>
+                        <div class="absolute left-3 top-1/2 transform -translate-y-1/2 flex items-center gap-2">
+                            <button onclick="clearInventorySearch()" id="clearSearchBtn" class="text-slate-400 hover:text-rose-500 hidden transition-all">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <button onclick="triggerScanner('inventorySearch', 'inventory_search')" class="text-indigo-600 hover:text-indigo-800 transition-all" title="مسح الباركود">
+                                <i class="fas fa-camera"></i>
+                            </button>
+                        </div>
                         <i class="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 rtl:right-4 rtl:left-auto ltr:left-4 ltr:right-auto"
                             style="pointer-events: none;"></i>
                     </div>
@@ -1900,6 +1907,20 @@
                                     <span data-i18n="btn_backup_now">أنشئ نسخة احتياطية الآن</span>
                                 </button>
                             </div>
+
+                            <!-- ربط قارئ الهاتف اللاسلكي -->
+                            <div class="mt-6 pt-6 border-t border-slate-100">
+                                <div class="flex justify-between items-center mb-2">
+                                    <h4 class="text-xs font-black text-slate-700" data-i18n="connect_phone_scanner">ربط قارئ الهاتف اللاسلكي</h4>
+                                    <span id="remoteScannerSettingsIndicator" class="w-2.5 h-2.5 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(239,68,68,0.4)]"></span>
+                                </div>
+                                <p class="text-[10px] text-slate-400 font-bold mb-4 leading-relaxed">استخدم كاميرا الهاتف كقارئ باركود لاسلكي وسريع لإدخال الأكواد مباشرة في حاسوبك.</p>
+                                <button type="button" onclick="openRemoteScannerModal()"
+                                    class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white rounded-xl font-black text-xs shadow-md transition-all flex items-center justify-center gap-2">
+                                    <i class="fas fa-mobile-screen-button"></i>
+                                    <span data-i18n="connect_phone_scanner">ربط قارئ الهاتف</span>
+                                </button>
+                            </div>
                         </div>
 
                         <!-- القسم الثاني: إعدادات النظام والطباعة -->
@@ -2360,8 +2381,11 @@
                         data-i18n="product_code_label">كود المنتج</label>
                     <div class="relative">
                         <input type="text" id="invCode" placeholder="أدخل الكود أو امسحه"
-                            class="w-full p-3 bg-slate-50 border-none rounded-xl outline-none font-bold text-center"
+                            class="w-full p-3 bg-slate-50 border-none rounded-xl outline-none font-bold text-center pl-12 pr-12"
                             dir="ltr" data-i18n-placeholder="scan_code_placeholder">
+                        <button onclick="triggerScanner('invCode')" class="absolute left-3 top-3 text-indigo-600 hover:text-indigo-800 transition-colors focus:outline-none" title="مسح الباركود">
+                            <i class="fas fa-camera text-base"></i>
+                        </button>
                     </div>
                 </div>
                 <input type="text" id="invName" placeholder="اسم المنتج"
@@ -2480,8 +2504,11 @@
                         <input type="text" id="iItemSearch" onkeyup="searchProductForInvoice()"
                             onkeydown="handlePhysicalScan(event, 'invoice_add')"
                             placeholder="اكتب اسم المنتج أو الكود للبحث..."
-                            class="w-full p-3 bg-white border-none rounded-xl font-bold text-xs shadow-sm outline-none focus:ring-2 focus:ring-blue-500 pl-10 pr-10"
+                            class="w-full p-3 bg-white border-none rounded-xl font-bold text-xs shadow-sm outline-none focus:ring-2 focus:ring-blue-500 pl-12 pr-10"
                             data-i18n-placeholder="search_product_placeholder">
+                        <button onclick="triggerScanner('iItemSearch', 'invoice_add')" class="absolute left-3 top-3.5 text-indigo-600 hover:text-indigo-800 transition-colors focus:outline-none" title="مسح الباركود">
+                            <i class="fas fa-camera text-base"></i>
+                        </button>
                     </div>
                 </div>
 
@@ -3511,8 +3538,11 @@
                         <input type="text" id="cItemSearch" onkeyup="searchProductForConsumption()"
                             onkeydown="handlePhysicalScan(event, 'consumption_add')"
                             placeholder="اكتب اسم المنتج أو الكود للبحث..."
-                            class="w-full p-3 bg-white border-none rounded-xl font-bold text-xs shadow-sm outline-none focus:ring-2 focus:ring-amber-500 pl-10 pr-10"
+                            class="w-full p-3 bg-white border-none rounded-xl font-bold text-xs shadow-sm outline-none focus:ring-2 focus:ring-amber-500 pl-12 pr-10"
                             data-i18n-placeholder="search_product_placeholder">
+                        <button onclick="triggerScanner('cItemSearch', 'consumption_add')" class="absolute left-3 top-3.5 text-indigo-600 hover:text-indigo-800 transition-colors focus:outline-none" title="مسح الباركود">
+                            <i class="fas fa-camera text-base"></i>
+                        </button>
                     </div>
                 </div>
 
@@ -3552,6 +3582,84 @@
     </div>
 
 
+
+    <!-- Modal ربط الهاتف كقارئ باركود -->
+    <div id="remoteScannerModal"
+        class="fixed inset-0 bg-slate-900/60 hidden z-[250] flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white p-6 rounded-[2.5rem] w-full max-w-sm custom-shadow flex flex-col items-center">
+            <div class="flex justify-between items-center w-full mb-4">
+                <h3 class="text-base font-black text-slate-800" data-i18n="connect_phone_scanner">ربط قارئ الهاتف</h3>
+                <button onclick="closeRemoteScannerModal()"
+                    class="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center text-slate-500 hover:bg-rose-100 hover:text-rose-500 transition-all">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <!-- تعليمات وتوضيحات -->
+            <p class="text-[10px] text-slate-400 font-bold text-center mb-4 leading-normal" data-i18n="scan_qr_to_connect">
+                امسح رمز QR بكاميرا الهاتف لربطه بالحاسوب واستخدامه كقارئ باركود لاسلكي.
+            </p>
+
+            <!-- رمز الـ QR -->
+            <div class="bg-slate-50 p-4 rounded-3xl border border-slate-100/50 shadow-inner flex items-center justify-center mb-4">
+                <img id="remoteScannerQR" src="" alt="QR Code" class="w-48 h-48 rounded-xl object-contain">
+            </div>
+
+            <!-- معرف الجلسة وحالة الاتصال -->
+            <div class="w-full bg-slate-50 p-3 rounded-2xl border border-slate-100 flex flex-col gap-2 mb-5">
+                <div class="flex justify-between items-center text-[10px] font-bold text-slate-400">
+                    <span>كود الجلسة (Session ID):</span>
+                    <span id="remoteScannerSessionCode" class="font-black text-slate-700 tracking-wider">------</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-[10px] font-bold text-slate-400">الحالة:</span>
+                    <div class="flex items-center gap-1.5">
+                        <span id="remoteScannerIndicator" class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+                        <span id="remoteScannerStatusText" class="text-[10px] font-black text-rose-500" data-i18n="phone_disconnected">بانتظار ربط الهاتف...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- أزرار التحكم -->
+            <div class="grid grid-cols-2 gap-2 w-full">
+                <button onclick="disconnectRemoteScanner()"
+                    class="py-3.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl font-black text-xs transition-all active:scale-95">
+                    قطع الاتصال
+                </button>
+                <button onclick="closeRemoteScannerModal()"
+                    class="py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-500 rounded-xl font-black text-xs transition-all active:scale-95"
+                    data-i18n="cancel">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal قارئ الباركود بالكاميرا المحلية -->
+    <div id="cameraScannerModal"
+        class="fixed inset-0 bg-slate-900/60 hidden z-[250] flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white p-6 rounded-[2rem] w-full max-w-sm custom-shadow flex flex-col items-center">
+            <div class="flex justify-between items-center w-full mb-4">
+                <h3 class="text-base font-black text-slate-800" data-i18n="scan_barcode_title">قارئ الكاميرا</h3>
+                <button onclick="stopCameraScanner()"
+                    class="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center text-slate-500 hover:bg-rose-100 hover:text-rose-500 transition-all">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <!-- منطقة عرض الكاميرا -->
+            <div id="cameraScannerReader" class="w-full aspect-video overflow-hidden rounded-2xl bg-slate-950 border border-slate-200 shadow-inner flex items-center justify-center" style="min-height: 200px;"></div>
+            
+            <!-- أزرار التحكم -->
+            <div class="grid grid-cols-2 gap-2 w-full mt-4">
+                <button id="cameraScannerFlashBtn" onclick="toggleLocalCameraFlash()"
+                    class="py-3.5 bg-amber-50 hover:bg-amber-100 text-amber-600 rounded-xl font-black text-xs transition-all flex items-center justify-center gap-2">
+                    <i class="fas fa-lightbulb"></i> <span data-i18n="camera_flash">الفلاش</span>
+                </button>
+                <button onclick="stopCameraScanner()"
+                    class="py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-500 rounded-xl font-black text-xs transition-all"
+                    data-i18n="cancel">إلغاء</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Modal Politique de Confidentialité -->
     <div id="privacyModal"
@@ -3738,6 +3846,8 @@
     <script src="js/admin.js?v=2026_v4"></script>
     <script src="js/support.js?v=2026_v3"></script>
     <script src="js/mobile.js?v=2026_v3"></script>
+    <script src="js/barcode-scanner.js?v=2026_v3"></script>
+    <script src="js/remote-scanner.js?v=2026_v3"></script>
     <script src="js/init.js?v=2026_v3"></script>
 </body>
 
