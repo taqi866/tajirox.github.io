@@ -227,10 +227,10 @@
             document.getElementById('cameraLoader').classList.remove('hidden');
             document.getElementById('scannerTarget').classList.add('hidden');
 
-            // تشغيل الكاميرا باستخدام مكتبة معززة بـ BarcodeDetector لتسريع القراءة
+            // تشغيل الكاميرا باستخدام مكتبة ZXing المستقرة لتجنب تعارض التنسيقات وتوقف الكاميرا
             scanner = new Html5Qrcode("cameraReader", {
                 experimentalFeatures: {
-                    useBarCodeDetectorIfSupported: true
+                    useBarCodeDetectorIfSupported: false
                 }
             });
 
@@ -260,9 +260,9 @@
             scanner.start(
                 { 
                     facingMode: "environment",
-                    // طلب دقة عالية (HD/Full HD) لتمكين الكاميرا من التركيز وقراءة الباركودات الصغيرة جداً بوضوح
-                    width: { min: 640, ideal: 1920, max: 3840 },
-                    height: { min: 480, ideal: 1080, max: 2160 }
+                    // استخدام قيم مثالية (Soft Constraints) بدون حد أدنى أو أقصى لتفادي خطأ OverconstrainedError في الهواتف القديمة
+                    width: { ideal: 1920 },
+                    height: { ideal: 1080 }
                 },
                 config,
                 onScanSuccess,
