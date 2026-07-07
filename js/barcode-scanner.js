@@ -33,11 +33,30 @@ function startCameraScanner(targetInputId, mode = null) {
             const size = Math.min(width, height);
             return { width: size * 0.85, height: size * 0.55 }; // Wider box for easy scanning
         },
-        aspectRatio: 1.0
+        aspectRatio: 1.0,
+        formatsToSupport: [
+            Html5QrcodeSupportedFormats.QR_CODE,
+            Html5QrcodeSupportedFormats.EAN_13,
+            Html5QrcodeSupportedFormats.EAN_8,
+            Html5QrcodeSupportedFormats.CODE_128,
+            Html5QrcodeSupportedFormats.CODE_39,
+            Html5QrcodeSupportedFormats.CODE_93,
+            Html5QrcodeSupportedFormats.UPC_A,
+            Html5QrcodeSupportedFormats.UPC_E,
+            Html5QrcodeSupportedFormats.CODABAR,
+            Html5QrcodeSupportedFormats.ITF,
+            Html5QrcodeSupportedFormats.DATA_MATRIX,
+            Html5QrcodeSupportedFormats.PDF_417
+        ]
     };
 
     html5QrcodeScanner.start(
-        { facingMode: "environment" }, // Back camera
+        { 
+            facingMode: "environment",
+            // Request high resolution (HD/Full HD) so small barcodes are sharp and readable
+            width: { min: 640, ideal: 1920, max: 3840 },
+            height: { min: 480, ideal: 1080, max: 2160 }
+        },
         config,
         onLocalScanSuccess,
         onLocalScanFailure
