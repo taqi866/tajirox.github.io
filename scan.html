@@ -227,13 +227,18 @@
             document.getElementById('cameraLoader').classList.remove('hidden');
             document.getElementById('scannerTarget').classList.add('hidden');
 
-            scanner = new Html5Qrcode("cameraReader");
+            // تشغيل الكاميرا باستخدام مكتبة معززة بـ BarcodeDetector لتسريع القراءة
+            scanner = new Html5Qrcode("cameraReader", {
+                experimentalFeatures: {
+                    useBarCodeDetectorIfSupported: true
+                }
+            });
 
             const config = {
-                fps: 15,
+                fps: 25, // تسريع فحص الفريمات (من 15 إلى 25 فريم في الثانية)
                 qrbox: function (width, height) {
-                    const size = Math.min(width, height) * 0.75;
-                    return { width: size, height: size * 0.45 }; // مستطيل مناسب للباركود
+                    const size = Math.min(width, height);
+                    return { width: size * 0.85, height: size * 0.55 }; // مستطيل أوسع وأسهل لالتقاط الباركود
                 },
                 aspectRatio: 1.0
             };
