@@ -50,22 +50,86 @@ function startCameraScanner(targetInputId, mode = null) {
         ]
     };
 
-    html5QrcodeScanner.start(
-        { 
-            facingMode: "environment",
-            // Use ideal soft constraints without min/max to avoid OverconstrainedError on some phones
-            width: { ideal: 1920 },
-            height: { ideal: 1080 }
-        },
-        config,
-        onLocalScanSuccess,
-        onLocalScanFailure
-    ).catch(err => {
-        console.error("Camera start error", err);
+    const startWithFacingMode = (constraints) => {
+        return html5QrcodeScanner.start(
+            constraints,
+            config,
+            onLocalScanSuccess,
+            onLocalScanFailure
+        );
+    };
+
+    const startWithDeviceId = (deviceId) => {
+        return html5QrcodeScanner.start(
+            deviceId,
+            config,
+            onLocalScanSuccess,
+            onLocalScanFailure
+        );
+    };
+
+    const handleFailure = (finalErr) => {
+        console.error("Camera start error", finalErr);
         if (typeof showToast === 'function') {
             showToast(t('camera_error') || "تعذر تشغيل الكاميرا. تأكد من تفعيل الصلاحيات.", "error");
         }
         stopCameraScanner();
+    };
+
+    // First attempt: environment camera with ideal constraints
+    startWithFacingMode({ 
+        facingMode: "environment",
+        width: { ideal: 1920 },
+        height: { ideal: 1080 }
+    }).catch(err => {
+        console.warn("First camera start attempt failed, trying fallback...", err);
+        
+        // Second attempt: get camera list and try to run the back camera or first camera
+        Html5Qrcode.getCameras().then(devices => {
+            if (devices && devices.length > 0) {
+                let backCamera = devices.find(device => {
+                    const label = (device.label || "").toLowerCase();
+                    return label.includes('back') || label.includes('env') || label.includes('rear') || label.includes('خلف');
+                });
+                let selectedDeviceId = backCamera ? backCamera.id : devices[0].id;
+                
+                startWithDeviceId(selectedDeviceId)
+                .catch(err2 => {
+                    console.warn("Attempting with simple user facingMode...", err2);
+                    // Third attempt: simple facingMode user
+                    startWithFacingMode({ facingMode: "user" })
+                    .catch(err3 => {
+                        // Fourth attempt: simple default constraints
+                        startWithFacingMode({})
+                        .catch(err4 => {
+                            handleFailure(err4);
+                        });
+                    });
+                });
+            } else {
+                // Third attempt if no devices/labels listed (maybe permission issue or browser restriction): try user
+                startWithFacingMode({ facingMode: "user" })
+                .catch(err2 => {
+                    // Fourth attempt: default empty constraints
+                    startWithFacingMode({})
+                    .catch(err3 => {
+                        handleFailure(err3);
+                    });
+                });
+            }
+        }).catch(err2 => {
+            console.warn("Error getting cameras, trying simple constraints fallback...", err2);
+            startWithFacingMode({ facingMode: "environment" })
+            .catch(err3 => {
+                startWithFacingMode({ facingMode: "user" })
+                .catch(err4 => {
+                    startWithFacingMode({})
+                    .catch(err5 => {
+                        handleFailure(err5);
+                    });
+                });
+            });
+        });
     });
 }
 
