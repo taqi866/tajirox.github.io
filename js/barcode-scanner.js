@@ -20,13 +20,18 @@ function startCameraScanner(targetInputId, mode = null) {
         html5QrcodeScanner.clear().catch(err => console.error("Error clearing scanner", err));
     }
 
-    html5QrcodeScanner = new Html5Qrcode("cameraScannerReader");
+    // Initialize Html5Qrcode with hardware-acceleration support (BarcodeDetector)
+    html5QrcodeScanner = new Html5Qrcode("cameraScannerReader", {
+        experimentalFeatures: {
+            useBarCodeDetectorIfSupported: true
+        }
+    });
 
     const config = { 
-        fps: 15, 
+        fps: 25, // Increase scan frequency to 25 FPS
         qrbox: function(width, height) {
-            const size = Math.min(width, height) * 0.75;
-            return { width: size, height: size * 0.45 }; // Wide for barcodes
+            const size = Math.min(width, height);
+            return { width: size * 0.85, height: size * 0.55 }; // Wider box for easy scanning
         },
         aspectRatio: 1.0
     };
