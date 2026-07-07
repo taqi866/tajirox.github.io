@@ -15,6 +15,31 @@ function startCameraScanner(targetInputId, mode = null) {
     const modal = document.getElementById('cameraScannerModal');
     if (modal) modal.classList.remove('hidden');
 
+    const handleFailure = (finalErr) => {
+        console.error("Camera start error", finalErr);
+        let errorMsg = "تعذر تشغيل الكاميرا. تأكد من تفعيل الصلاحيات.";
+        
+        if (window.location.protocol === 'http:' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+            errorMsg = "خطأ أمني: يمنع المتصفح تشغيل الكاميرا على الاتصال غير الآمن (HTTP). يرجى تفعيل اتصال آمن (HTTPS) أو تشغيل النظام محلياً على localhost.";
+        } else if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            errorMsg = "المتصفح لا يدعم الوصول إلى الكاميرا في هذه البيئة. يرجى تفعيل الاتصال الآمن (HTTPS).";
+        } else if (finalErr && (finalErr.name === 'NotAllowedError' || finalErr.name === 'PermissionDeniedError' || (finalErr.message && finalErr.message.includes('Permission')))) {
+            errorMsg = "تم رفض إذن الوصول للكاميرا. يرجى السماح للموقع باستخدام الكاميرا من إعدادات المتصفح.";
+        }
+
+        if (typeof showToast === 'function') {
+            showToast(errorMsg, "error");
+        } else {
+            alert(errorMsg);
+        }
+        stopCameraScanner();
+    };
+
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        handleFailure(new Error("MediaDevices or getUserMedia not supported (likely due to insecure HTTP context)"));
+        return;
+    }
+
     // Initialize Html5Qrcode
     if (html5QrcodeScanner) {
         html5QrcodeScanner.clear().catch(err => console.error("Error clearing scanner", err));
@@ -51,29 +76,29 @@ function startCameraScanner(targetInputId, mode = null) {
     };
 
     const startWithFacingMode = (constraints) => {
-        return html5QrcodeScanner.start(
-            constraints,
-            config,
-            onLocalScanSuccess,
-            onLocalScanFailure
-        );
+        try {
+            return html5QrcodeScanner.start(
+                constraints,
+                config,
+                onLocalScanSuccess,
+                onLocalScanFailure
+            );
+        } catch (e) {
+            return Promise.reject(e);
+        }
     };
 
     const startWithDeviceId = (deviceId) => {
-        return html5QrcodeScanner.start(
-            deviceId,
-            config,
-            onLocalScanSuccess,
-            onLocalScanFailure
-        );
-    };
-
-    const handleFailure = (finalErr) => {
-        console.error("Camera start error", finalErr);
-        if (typeof showToast === 'function') {
-            showToast(t('camera_error') || "تعذر تشغيل الكاميرا. تأكد من تفعيل الصلاحيات.", "error");
+        try {
+            return html5QrcodeScanner.start(
+                deviceId,
+                config,
+                onLocalScanSuccess,
+                onLocalScanFailure
+            );
+        } catch (e) {
+            return Promise.reject(e);
         }
-        stopCameraScanner();
     };
 
     // First attempt: environment camera with ideal constraints
@@ -84,8 +109,14 @@ function startCameraScanner(targetInputId, mode = null) {
     }).catch(err => {
         console.warn("First camera start attempt failed, trying fallback...", err);
         
-        // Second attempt: get camera list and try to run the back camera or first camera
-        Html5Qrcode.getCameras().then(devices => {
+        let getCamerasPromise;
+        try {
+            getCamerasPromise = Html5Qrcode.getCameras();
+        } catch (e) {
+            getCamerasPromise = Promise.reject(e);
+        }
+
+        getCamerasPromise.then(devices => {
             if (devices && devices.length > 0) {
                 let backCamera = devices.find(device => {
                     const label = (device.label || "").toLowerCase();
