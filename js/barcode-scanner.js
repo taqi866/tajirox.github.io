@@ -20,10 +20,10 @@ function startCameraScanner(targetInputId, mode = null) {
         html5QrcodeScanner.clear().catch(err => console.error("Error clearing scanner", err));
     }
 
-    // Initialize Html5Qrcode with hardware-acceleration support (BarcodeDetector)
+    // Initialize Html5Qrcode with stable ZXing engine to avoid format incompatibilities and launch crashes
     html5QrcodeScanner = new Html5Qrcode("cameraScannerReader", {
         experimentalFeatures: {
-            useBarCodeDetectorIfSupported: true
+            useBarCodeDetectorIfSupported: false
         }
     });
 
@@ -53,9 +53,9 @@ function startCameraScanner(targetInputId, mode = null) {
     html5QrcodeScanner.start(
         { 
             facingMode: "environment",
-            // Request high resolution (HD/Full HD) so small barcodes are sharp and readable
-            width: { min: 640, ideal: 1920, max: 3840 },
-            height: { min: 480, ideal: 1080, max: 2160 }
+            // Use ideal soft constraints without min/max to avoid OverconstrainedError on some phones
+            width: { ideal: 1920 },
+            height: { ideal: 1080 }
         },
         config,
         onLocalScanSuccess,
