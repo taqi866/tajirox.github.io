@@ -227,11 +227,6 @@
         if (location.protocol === 'file:' || location.hostname === '') {
             // Local file fallback to hosted scan page on Github Pages
             scanPageUrl = `https://tajirox.github.io/scan.html?session=${session}`;
-        } else {
-            // Dynamic path for subfolders (e.g. GitHub Pages project pages)
-            let path = window.location.pathname;
-            let dir = path.substring(0, path.lastIndexOf('/'));
-            scanPageUrl = `${location.origin}${dir}/scan.html?session=${session}`;
         }
         
         // Update QR code source using public server API
