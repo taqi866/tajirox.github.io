@@ -235,16 +235,35 @@
             });
 
             const config = {
-                fps: 25, // تسريع فحص الفريمات (من 15 إلى 25 فريم في الثانية)
+                fps: 25, // فحص 25 إطار في الثانية
                 qrbox: function (width, height) {
                     const size = Math.min(width, height);
-                    return { width: size * 0.85, height: size * 0.55 }; // مستطيل أوسع وأسهل لالتقاط الباركود
+                    return { width: size * 0.85, height: size * 0.55 }; // منطقة مسح عريضة ومناسبة
                 },
-                aspectRatio: 1.0
+                aspectRatio: 1.0,
+                formatsToSupport: [
+                    Html5QrcodeSupportedFormats.QR_CODE,
+                    Html5QrcodeSupportedFormats.EAN_13,
+                    Html5QrcodeSupportedFormats.EAN_8,
+                    Html5QrcodeSupportedFormats.CODE_128,
+                    Html5QrcodeSupportedFormats.CODE_39,
+                    Html5QrcodeSupportedFormats.CODE_93,
+                    Html5QrcodeSupportedFormats.UPC_A,
+                    Html5QrcodeSupportedFormats.UPC_E,
+                    Html5QrcodeSupportedFormats.CODABAR,
+                    Html5QrcodeSupportedFormats.ITF,
+                    Html5QrcodeSupportedFormats.DATA_MATRIX,
+                    Html5QrcodeSupportedFormats.PDF_417
+                ]
             };
 
             scanner.start(
-                { facingMode: "environment" }, // الكاميرا الخلفية
+                { 
+                    facingMode: "environment",
+                    // طلب دقة عالية (HD/Full HD) لتمكين الكاميرا من التركيز وقراءة الباركودات الصغيرة جداً بوضوح
+                    width: { min: 640, ideal: 1920, max: 3840 },
+                    height: { min: 480, ideal: 1080, max: 2160 }
+                },
                 config,
                 onScanSuccess,
                 onScanFailure
