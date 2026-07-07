@@ -15,40 +15,15 @@ function startCameraScanner(targetInputId, mode = null) {
     const modal = document.getElementById('cameraScannerModal');
     if (modal) modal.classList.remove('hidden');
 
-    const handleFailure = (finalErr) => {
-        console.error("Camera start error", finalErr);
-        let errorMsg = "تعذر تشغيل الكاميرا. تأكد من تفعيل الصلاحيات.";
-        
-        if (window.location.protocol === 'http:' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-            errorMsg = "خطأ أمني: يمنع المتصفح تشغيل الكاميرا على الاتصال غير الآمن (HTTP). يرجى تفعيل اتصال آمن (HTTPS) أو تشغيل النظام محلياً على localhost.";
-        } else if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-            errorMsg = "المتصفح لا يدعم الوصول إلى الكاميرا في هذه البيئة. يرجى تفعيل الاتصال الآمن (HTTPS).";
-        } else if (finalErr && (finalErr.name === 'NotAllowedError' || finalErr.name === 'PermissionDeniedError' || (finalErr.message && finalErr.message.includes('Permission')))) {
-            errorMsg = "تم رفض إذن الوصول للكاميرا. يرجى السماح للموقع باستخدام الكاميرا من إعدادات المتصفح.";
-        }
-
-        if (typeof showToast === 'function') {
-            showToast(errorMsg, "error");
-        } else {
-            alert(errorMsg);
-        }
-        stopCameraScanner();
-    };
-
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        handleFailure(new Error("MediaDevices or getUserMedia not supported (likely due to insecure HTTP context)"));
-        return;
-    }
-
     // Initialize Html5Qrcode
     if (html5QrcodeScanner) {
         html5QrcodeScanner.clear().catch(err => console.error("Error clearing scanner", err));
     }
 
-    // Initialize Html5Qrcode with stable ZXing engine to avoid format incompatibilities and launch crashes
+    // Initialize Html5Qrcode with hardware-acceleration support (BarcodeDetector)
     html5QrcodeScanner = new Html5Qrcode("cameraScannerReader", {
         experimentalFeatures: {
-            useBarCodeDetectorIfSupported: false
+            useBarCodeDetectorIfSupported: true
         }
     });
 
@@ -58,109 +33,20 @@ function startCameraScanner(targetInputId, mode = null) {
             const size = Math.min(width, height);
             return { width: size * 0.85, height: size * 0.55 }; // Wider box for easy scanning
         },
-        aspectRatio: 1.0,
-        formatsToSupport: [
-            Html5QrcodeSupportedFormats.QR_CODE,
-            Html5QrcodeSupportedFormats.EAN_13,
-            Html5QrcodeSupportedFormats.EAN_8,
-            Html5QrcodeSupportedFormats.CODE_128,
-            Html5QrcodeSupportedFormats.CODE_39,
-            Html5QrcodeSupportedFormats.CODE_93,
-            Html5QrcodeSupportedFormats.UPC_A,
-            Html5QrcodeSupportedFormats.UPC_E,
-            Html5QrcodeSupportedFormats.CODABAR,
-            Html5QrcodeSupportedFormats.ITF,
-            Html5QrcodeSupportedFormats.DATA_MATRIX,
-            Html5QrcodeSupportedFormats.PDF_417
-        ]
+        aspectRatio: 1.0
     };
 
-    const startWithFacingMode = (constraints) => {
-        try {
-            return html5QrcodeScanner.start(
-                constraints,
-                config,
-                onLocalScanSuccess,
-                onLocalScanFailure
-            );
-        } catch (e) {
-            return Promise.reject(e);
+    html5QrcodeScanner.start(
+        { facingMode: "environment" }, // Back camera
+        config,
+        onLocalScanSuccess,
+        onLocalScanFailure
+    ).catch(err => {
+        console.error("Camera start error", err);
+        if (typeof showToast === 'function') {
+            showToast(t('camera_error') || "تعذر تشغيل الكاميرا. تأكد من تفعيل الصلاحيات.", "error");
         }
-    };
-
-    const startWithDeviceId = (deviceId) => {
-        try {
-            return html5QrcodeScanner.start(
-                deviceId,
-                config,
-                onLocalScanSuccess,
-                onLocalScanFailure
-            );
-        } catch (e) {
-            return Promise.reject(e);
-        }
-    };
-
-    // First attempt: environment camera with ideal constraints
-    startWithFacingMode({ 
-        facingMode: "environment",
-        width: { ideal: 1920 },
-        height: { ideal: 1080 }
-    }).catch(err => {
-        console.warn("First camera start attempt failed, trying fallback...", err);
-        
-        let getCamerasPromise;
-        try {
-            getCamerasPromise = Html5Qrcode.getCameras();
-        } catch (e) {
-            getCamerasPromise = Promise.reject(e);
-        }
-
-        getCamerasPromise.then(devices => {
-            if (devices && devices.length > 0) {
-                let backCamera = devices.find(device => {
-                    const label = (device.label || "").toLowerCase();
-                    return label.includes('back') || label.includes('env') || label.includes('rear') || label.includes('خلف');
-                });
-                let selectedDeviceId = backCamera ? backCamera.id : devices[0].id;
-                
-                startWithDeviceId(selectedDeviceId)
-                .catch(err2 => {
-                    console.warn("Attempting with simple user facingMode...", err2);
-                    // Third attempt: simple facingMode user
-                    startWithFacingMode({ facingMode: "user" })
-                    .catch(err3 => {
-                        // Fourth attempt: simple default constraints
-                        startWithFacingMode({})
-                        .catch(err4 => {
-                            handleFailure(err4);
-                        });
-                    });
-                });
-            } else {
-                // Third attempt if no devices/labels listed (maybe permission issue or browser restriction): try user
-                startWithFacingMode({ facingMode: "user" })
-                .catch(err2 => {
-                    // Fourth attempt: default empty constraints
-                    startWithFacingMode({})
-                    .catch(err3 => {
-                        handleFailure(err3);
-                    });
-                });
-            }
-        }).catch(err2 => {
-            console.warn("Error getting cameras, trying simple constraints fallback...", err2);
-            startWithFacingMode({ facingMode: "environment" })
-            .catch(err3 => {
-                startWithFacingMode({ facingMode: "user" })
-                .catch(err4 => {
-                    startWithFacingMode({})
-                    .catch(err5 => {
-                        handleFailure(err5);
-                    });
-                });
-            });
-        });
+        stopCameraScanner();
     });
 }
 
