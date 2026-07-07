@@ -257,24 +257,91 @@
                 ]
             };
 
-            scanner.start(
-                { 
-                    facingMode: "environment",
-                    // استخدام قيم مثالية (Soft Constraints) بدون حد أدنى أو أقصى لتفادي خطأ OverconstrainedError في الهواتف القديمة
-                    width: { ideal: 1920 },
-                    height: { ideal: 1080 }
-                },
-                config,
-                onScanSuccess,
-                onScanFailure
-            ).then(() => {
+            const startWithFacingMode = (constraints) => {
+                return scanner.start(
+                    constraints,
+                    config,
+                    onScanSuccess,
+                    onScanFailure
+                );
+            };
+
+            const startWithDeviceId = (deviceId) => {
+                return scanner.start(
+                    deviceId,
+                    config,
+                    onScanSuccess,
+                    onScanFailure
+                );
+            };
+
+            const handleSuccess = () => {
                 document.getElementById('cameraLoader').classList.add('hidden');
                 document.getElementById('scannerTarget').classList.remove('hidden');
-            }).catch(err => {
-                console.error("Camera start error:", err);
+            };
+
+            const handleFailure = (finalErr) => {
+                console.error("Camera start failed completely:", finalErr);
                 alert("تعذر تشغيل الكاميرا. يرجى تفعيل إذن الوصول للكاميرا وإعادة تحميل الصفحة.");
                 document.getElementById('cameraLoader').innerHTML = `<i class="fas fa-exclamation-circle text-rose-500 text-2xl"></i>
                     <p class="text-xs font-bold text-rose-400 mt-2">تعذر تفعيل الكاميرا</p>`;
+            };
+
+            // First attempt: environment camera with ideal constraints
+            startWithFacingMode({ 
+                facingMode: "environment",
+                width: { ideal: 1920 },
+                height: { ideal: 1080 }
+            }).then(handleSuccess)
+            .catch(err => {
+                console.warn("First camera start attempt failed, trying fallback...", err);
+                
+                // Second attempt: get camera list and try to run the back camera or first camera
+                Html5Qrcode.getCameras().then(devices => {
+                    if (devices && devices.length > 0) {
+                        let backCamera = devices.find(device => {
+                            const label = (device.label || "").toLowerCase();
+                            return label.includes('back') || label.includes('env') || label.includes('rear') || label.includes('خلف');
+                        });
+                        let selectedDeviceId = backCamera ? backCamera.id : devices[0].id;
+                        
+                        startWithDeviceId(selectedDeviceId).then(handleSuccess)
+                        .catch(err2 => {
+                            console.warn("Attempting with simple user facingMode...", err2);
+                            // Third attempt: simple facingMode user
+                            startWithFacingMode({ facingMode: "user" }).then(handleSuccess)
+                            .catch(err3 => {
+                                // Fourth attempt: simple default constraints
+                                startWithFacingMode({}).then(handleSuccess)
+                                .catch(err4 => {
+                                    handleFailure(err4);
+                                });
+                            });
+                        });
+                    } else {
+                        // Third attempt if no devices/labels listed (maybe permission issue or browser restriction): try user
+                        startWithFacingMode({ facingMode: "user" }).then(handleSuccess)
+                        .catch(err2 => {
+                            // Fourth attempt: default empty constraints
+                            startWithFacingMode({}).then(handleSuccess)
+                            .catch(err3 => {
+                                handleFailure(err3);
+                            });
+                        });
+                    }
+                }).catch(err2 => {
+                    console.warn("Error getting cameras, trying simple constraints fallback...", err2);
+                    startWithFacingMode({ facingMode: "environment" }).then(handleSuccess)
+                    .catch(err3 => {
+                        startWithFacingMode({ facingMode: "user" }).then(handleSuccess)
+                        .catch(err4 => {
+                            startWithFacingMode({}).then(handleSuccess)
+                            .catch(err5 => {
+                                handleFailure(err5);
+                            });
+                        });
+                    });
+                });
             });
         }
 
