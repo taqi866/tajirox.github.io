@@ -1,162 +1,389 @@
-/**
- * Tajirox Local Camera Barcode Scanner
- * Used when the system is opened directly on a mobile device to scan using the local camera.
- */
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
 
-let html5QrcodeScanner = null;
-let currentScanTargetInputId = null;
-let currentScanMode = null;
-
-function startCameraScanner(targetInputId, mode = null) {
-    currentScanTargetInputId = targetInputId;
-    currentScanMode = mode;
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TAJIROX - قارئ الباركود اللاسلكي</title>
     
-    // Show modal
-    const modal = document.getElementById('cameraScannerModal');
-    if (modal) modal.classList.remove('hidden');
+    <!-- TailWind CSS & FontAwesome -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
 
-    // Initialize Html5Qrcode
-    if (html5QrcodeScanner) {
-        html5QrcodeScanner.clear().catch(err => console.error("Error clearing scanner", err));
-    }
+    <!-- html5-qrcode & Paho MQTT Libraries -->
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
 
-    // Initialize Html5Qrcode with hardware-acceleration support (BarcodeDetector)
-    html5QrcodeScanner = new Html5Qrcode("cameraScannerReader", {
-        experimentalFeatures: {
-            useBarCodeDetectorIfSupported: true
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #0f172a; /* Slate 900 */
+            color: #f8fafc;
+            user-select: none;
+            -webkit-user-select: none;
+            overflow: hidden;
         }
-    });
-
-    const config = { 
-        fps: 25, // Increase scan frequency to 25 FPS
-        qrbox: function(width, height) {
-            const size = Math.min(width, height);
-            return { width: size * 0.85, height: size * 0.55 }; // Wider box for easy scanning
-        },
-        aspectRatio: 1.0,
-        formatsToSupport: [
-            Html5QrcodeSupportedFormats.QR_CODE,
-            Html5QrcodeSupportedFormats.EAN_13,
-            Html5QrcodeSupportedFormats.EAN_8,
-            Html5QrcodeSupportedFormats.CODE_128,
-            Html5QrcodeSupportedFormats.CODE_39,
-            Html5QrcodeSupportedFormats.CODE_93,
-            Html5QrcodeSupportedFormats.UPC_A,
-            Html5QrcodeSupportedFormats.UPC_E,
-            Html5QrcodeSupportedFormats.CODABAR,
-            Html5QrcodeSupportedFormats.ITF,
-            Html5QrcodeSupportedFormats.DATA_MATRIX,
-            Html5QrcodeSupportedFormats.PDF_417
-        ]
-    };
-
-    html5QrcodeScanner.start(
-        { 
-            facingMode: "environment",
-            // Request high resolution (HD/Full HD) so small barcodes are sharp and readable
-            width: { min: 640, ideal: 1920, max: 3840 },
-            height: { min: 480, ideal: 1080, max: 2160 }
-        },
-        config,
-        onLocalScanSuccess,
-        onLocalScanFailure
-    ).catch(err => {
-        console.error("Camera start error", err);
-        if (typeof showToast === 'function') {
-            showToast(t('camera_error') || "تعذر تشغيل الكاميرا. تأكد من تفعيل الصلاحيات.", "error");
+        
+        /* Glassmorphism Styles */
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
-        stopCameraScanner();
-    });
-}
 
-function onLocalScanSuccess(decodedText) {
-    // Fill the input
-    const input = document.getElementById(currentScanTargetInputId);
-    if (input) {
-        input.value = decodedText;
+        .scanning-line {
+            position: absolute;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(to right, transparent, #3b82f6, #60a5fa, #3b82f6, transparent);
+            animation: scan 2s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { top: 0%; }
+            50% { top: 100%; }
+            100% { top: 0%; }
+        }
+    </style>
+</head>
+
+<body class="h-screen w-screen flex flex-col justify-between p-4 pb-8">
+
+    <!-- الهيدر وحالة الاتصال -->
+    <header class="glass-panel w-full p-4 rounded-3xl flex justify-between items-center shadow-lg">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-md shadow-blue-500/20">
+                <i class="fas fa-barcode text-lg"></i>
+            </div>
+            <div>
+                <h1 class="text-sm font-black tracking-wide">TAJIROX SCAN</h1>
+                <p class="text-[10px] text-slate-400 font-bold">قارئ الباركود اللاسلكي</p>
+            </div>
+        </div>
         
-        // Trigger event
-        input.dispatchEvent(new Event('input', { bubbles: true }));
-        input.dispatchEvent(new Event('change', { bubbles: true }));
-        
-        // Trigger simulate enter / search
-        if (currentScanMode) {
-            if (typeof handlePhysicalScan === 'function') {
-                const event = {
-                    key: 'Enter',
-                    target: input,
-                    preventDefault: () => {}
-                };
-                handlePhysicalScan(event, currentScanMode);
-            } else if (currentScanMode === 'inventory_search' && typeof searchInventory === 'function') {
-                searchInventory();
+        <!-- حالة الاتصال بالحاسوب -->
+        <div id="statusBadge" class="flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-full text-amber-400 text-[10px] font-black transition-all">
+            <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+            <span id="statusText">جاري الاتصال...</span>
+        </div>
+    </header>
+
+    <!-- منطقة الكاميرا والمسح الضوئي -->
+    <main class="flex-1 w-full flex items-center justify-center my-6 relative">
+        <div class="w-full max-w-sm aspect-square relative rounded-[2.5rem] overflow-hidden border border-slate-700/50 bg-slate-950 shadow-2xl flex items-center justify-center">
+            
+            <!-- قارئ الكاميرا -->
+            <div id="cameraReader" class="w-full h-full object-cover"></div>
+            
+            <!-- خط المسح التوضيحي -->
+            <div id="scannerTarget" class="absolute inset-0 border-[3px] border-dashed border-blue-500/30 rounded-[2.5rem] pointer-events-none flex items-center justify-center hidden">
+                <!-- خط الليزر -->
+                <div class="scanning-line"></div>
+                <!-- مربع التركيز -->
+                <div class="w-48 h-24 border-2 border-blue-500 rounded-xl relative shadow-[0_0_15px_rgba(59,130,246,0.3)]">
+                    <div class="absolute -top-1.5 -left-1.5 w-4 h-4 border-t-4 border-l-4 border-blue-400"></div>
+                    <div class="absolute -top-1.5 -right-1.5 w-4 h-4 border-t-4 border-r-4 border-blue-400"></div>
+                    <div class="absolute -bottom-1.5 -left-1.5 w-4 h-4 border-b-4 border-l-4 border-blue-400"></div>
+                    <div class="absolute -bottom-1.5 -right-1.5 w-4 h-4 border-b-4 border-r-4 border-blue-400"></div>
+                </div>
+            </div>
+
+            <!-- مؤشر انتظار الكاميرا -->
+            <div id="cameraLoader" class="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-slate-950/80 z-10">
+                <i class="fas fa-circle-notch fa-spin text-3xl text-blue-500"></i>
+                <p class="text-xs font-bold text-slate-400">جاري تشغيل الكاميرا...</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- الفوتر والأزرار المساعدة -->
+    <footer class="w-full flex flex-col gap-4 max-w-sm mx-auto">
+        <!-- آخر رمز ممسوح -->
+        <div class="glass-panel w-full p-4 rounded-3xl flex justify-between items-center min-h-[64px]">
+            <div class="text-right">
+                <span class="text-[9px] text-slate-400 font-bold block mb-0.5">آخر كود تم مسحه</span>
+                <span id="lastScannedCode" class="text-sm font-black text-slate-200 tracking-wider">لا يوجد</span>
+            </div>
+            <div id="scanIndicator" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-500 transition-all">
+                <i class="fas fa-check text-xs"></i>
+            </div>
+        </div>
+
+        <!-- أزرار التحكم -->
+        <div class="grid grid-cols-2 gap-3">
+            <button onclick="toggleTorch()" id="torchBtn" class="py-4 bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-300 rounded-2xl font-black text-xs transition-all flex items-center justify-center gap-2 border border-slate-700/30">
+                <i class="fas fa-lightbulb"></i>
+                <span>تشغيل الفلاش</span>
+            </button>
+            <button onclick="restartCamera()" class="py-4 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white rounded-2xl font-black text-xs transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-500/10">
+                <i class="fas fa-sync-alt"></i>
+                <span>إعادة تشغيل</span>
+            </button>
+        </div>
+    </footer>
+
+    <!-- منطق جافاسكربت -->
+    <script>
+        // استخراج بارامترات الجلسة من الرابط
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get('session');
+
+        if (!sessionId) {
+            alert('خطأ: لم يتم تحديد معرف الجلسة. يرجى مسح رمز QR الصحيح من شاشة الحاسوب.');
+            document.body.innerHTML = `<div class="h-screen w-screen flex flex-col items-center justify-center p-6 text-center">
+                <i class="fas fa-exclamation-triangle text-rose-500 text-5xl mb-4"></i>
+                <h1 class="text-lg font-black mb-2">رابط غير صالح</h1>
+                <p class="text-sm text-slate-400 font-bold">يرجى فتح النظام على الحاسوب ومسح الـ QR المخصص للربط.</p>
+            </div>`;
+        }
+
+        // إعدادات MQTT والوسيط اللاسلكي مع الاتصال الاحتياطي
+        const brokers = [
+            { host: "broker.hivemq.com", port: 8884, path: "/mqtt" },
+            { host: "broker.emqx.io", port: 8084, path: "/mqtt" }
+        ];
+        let currentBrokerIndex = 0;
+        let mqttClient = null;
+        const pubTopic = `tajirox/remote_scan/${sessionId}`;
+
+        let isConnected = false;
+        let scanner = null;
+        let isFlashOn = false;
+
+        // الاتصال بـ MQTT
+        function connectMqtt() {
+            updateStatus('connecting', 'جاري الاتصال...');
+            
+            const broker = brokers[currentBrokerIndex];
+            const clientId = "client_" + Math.random().toString(36).substring(2, 9);
+            
+            mqttClient = new Paho.MQTT.Client(broker.host, Number(broker.port), broker.path, clientId);
+
+            mqttClient.onConnectionLost = (responseObject) => {
+                console.warn("MQTT Connection lost:", responseObject.errorMessage);
+                isConnected = false;
+                updateStatus('error', 'انقطع الاتصال');
+                setTimeout(connectMqtt, 2000);
+            };
+
+            mqttClient.connect({
+                useSSL: true,
+                onSuccess: () => {
+                    console.log("MQTT Connection successful!");
+                    isConnected = true;
+                    updateStatus('connected', 'الهاتف متصل');
+                    
+                    // إرسال رسالة ترحيبية للحاسوب لتأكيد الاتصال
+                    sendPayload({ action: 'device_connected' });
+                },
+                onFailure: (err) => {
+                    console.error("MQTT Connection failed:", err);
+                    updateStatus('error', 'فشل الاتصال');
+                    
+                    // التبديل للوسيط الاحتياطي
+                    currentBrokerIndex = (currentBrokerIndex + 1) % brokers.length;
+                    setTimeout(connectMqtt, 3000); // محاولة الاتصال بالوسيط الآخر
+                },
+                keepAliveInterval: 30
+            });
+        }
+
+        // إرسال البيانات عبر المترجم
+        function sendPayload(data) {
+            if (!isConnected) return;
+            try {
+                const message = new Paho.MQTT.Message(JSON.stringify(data));
+                message.destinationName = pubTopic;
+                message.qos = 1;
+                mqttClient.send(message);
+            } catch (e) {
+                console.error("Failed to send MQTT message:", e);
             }
         }
-    }
 
-    // Play sound and stop
-    playBeepSoundFeedback();
-    stopCameraScanner();
-}
+        // تحديث شارة الحالة في الواجهة
+        function updateStatus(status, text) {
+            const badge = document.getElementById('statusBadge');
+            const statusText = document.getElementById('statusText');
+            
+            badge.className = "flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-black transition-all";
+            
+            if (status === 'connecting') {
+                badge.classList.add('bg-amber-500/10', 'border', 'border-amber-500/20', 'text-amber-400');
+                badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span><span>${text}</span>`;
+            } else if (status === 'connected') {
+                badge.classList.add('bg-emerald-500/10', 'border', 'border-emerald-500/20', 'text-emerald-400');
+                badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span><span>${text}</span>`;
+            } else {
+                badge.classList.add('bg-rose-500/10', 'border', 'border-rose-500/20', 'text-rose-400');
+                badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-rose-400"></span><span>${text}</span>`;
+            }
+        }
 
-function onLocalScanFailure(error) {
-    // Failure is normal when searching frames
-}
+        // تشغيل الكاميرا
+        function startCamera() {
+            document.getElementById('cameraLoader').classList.remove('hidden');
+            document.getElementById('scannerTarget').classList.add('hidden');
 
-function stopCameraScanner() {
-    const modal = document.getElementById('cameraScannerModal');
-    if (modal) modal.classList.add('hidden');
-
-    if (html5QrcodeScanner) {
-        html5QrcodeScanner.stop().then(() => {
-            html5QrcodeScanner.clear();
-            html5QrcodeScanner = null;
-        }).catch(err => {
-            console.error("Failed to stop local scanner", err);
-            html5QrcodeScanner = null;
-        });
-    }
-}
-
-// Flash/Torch support
-let localFlashOn = false;
-function toggleLocalCameraFlash() {
-    if (html5QrcodeScanner && html5QrcodeScanner.isScanning) {
-        localFlashOn = !localFlashOn;
-        html5QrcodeScanner.applyVideoConstrains({
-            advanced: [{ torch: localFlashOn }]
-        }).then(() => {
-            const btn = document.getElementById('cameraScannerFlashBtn');
-            if (btn) {
-                if (localFlashOn) {
-                    btn.className = "flex-1 py-3 bg-amber-500 text-white rounded-xl font-black text-xs transition-all flex items-center justify-center gap-2";
-                } else {
-                    btn.className = "flex-1 py-3 bg-amber-50 hover:bg-amber-100 text-amber-600 rounded-xl font-black text-xs transition-all flex items-center justify-center gap-2";
+            // تشغيل الكاميرا باستخدام مكتبة معززة بـ BarcodeDetector لتسريع القراءة
+            scanner = new Html5Qrcode("cameraReader", {
+                experimentalFeatures: {
+                    useBarCodeDetectorIfSupported: true
                 }
+            });
+
+            const config = {
+                fps: 25, // فحص 25 إطار في الثانية
+                qrbox: function (width, height) {
+                    const size = Math.min(width, height);
+                    return { width: size * 0.85, height: size * 0.55 }; // منطقة مسح عريضة ومناسبة
+                },
+                aspectRatio: 1.0,
+                formatsToSupport: [
+                    Html5QrcodeSupportedFormats.QR_CODE,
+                    Html5QrcodeSupportedFormats.EAN_13,
+                    Html5QrcodeSupportedFormats.EAN_8,
+                    Html5QrcodeSupportedFormats.CODE_128,
+                    Html5QrcodeSupportedFormats.CODE_39,
+                    Html5QrcodeSupportedFormats.CODE_93,
+                    Html5QrcodeSupportedFormats.UPC_A,
+                    Html5QrcodeSupportedFormats.UPC_E,
+                    Html5QrcodeSupportedFormats.CODABAR,
+                    Html5QrcodeSupportedFormats.ITF,
+                    Html5QrcodeSupportedFormats.DATA_MATRIX,
+                    Html5QrcodeSupportedFormats.PDF_417
+                ]
+            };
+
+            scanner.start(
+                { 
+                    facingMode: "environment",
+                    // طلب دقة عالية (HD/Full HD) لتمكين الكاميرا من التركيز وقراءة الباركودات الصغيرة جداً بوضوح
+                    width: { min: 640, ideal: 1920, max: 3840 },
+                    height: { min: 480, ideal: 1080, max: 2160 }
+                },
+                config,
+                onScanSuccess,
+                onScanFailure
+            ).then(() => {
+                document.getElementById('cameraLoader').classList.add('hidden');
+                document.getElementById('scannerTarget').classList.remove('hidden');
+            }).catch(err => {
+                console.error("Camera start error:", err);
+                alert("تعذر تشغيل الكاميرا. يرجى تفعيل إذن الوصول للكاميرا وإعادة تحميل الصفحة.");
+                document.getElementById('cameraLoader').innerHTML = `<i class="fas fa-exclamation-circle text-rose-500 text-2xl"></i>
+                    <p class="text-xs font-bold text-rose-400 mt-2">تعذر تفعيل الكاميرا</p>`;
+            });
+        }
+
+        // إعادة تشغيل الكاميرا
+        function restartCamera() {
+            if (scanner) {
+                scanner.stop().then(() => {
+                    startCamera();
+                }).catch(() => {
+                    startCamera();
+                });
+            } else {
+                startCamera();
             }
-        }).catch(err => {
-            console.warn("Torch not supported", err);
-            if (typeof showToast === 'function') {
-                showToast("الفلاش غير مدعوم على هذا الجهاز", "warning");
+        }
+
+        // نجاح مسح الباركود
+        let lastScannedText = "";
+        let throttleTimeout = null;
+
+        function onScanSuccess(decodedText) {
+            // منع المسح المتكرر لنفس الرمز خلال ثانية واحدة
+            if (decodedText === lastScannedText && throttleTimeout) return;
+
+            lastScannedText = decodedText;
+            clearTimeout(throttleTimeout);
+            throttleTimeout = setTimeout(() => { lastScannedText = ""; }, 1200);
+
+            // تحديث الواجهة الأمامية بالرمز الممسوح
+            document.getElementById('lastScannedCode').innerText = decodedText;
+
+            // إرسال الكود فوراً للحاسوب
+            sendPayload({ action: 'scan_result', code: decodedText });
+
+            // تقديم فيدباك للمستخدم (تنبيه صوتي واهتزاز)
+            playBeepSound();
+            vibrateDevice();
+
+            // فلاش أنيميشن أخضر على لوحة المعلومات
+            const indicator = document.getElementById('scanIndicator');
+            indicator.className = "w-8 h-8 rounded-full bg-emerald-500 text-white flex items-center justify-center animate-bounce shadow-md shadow-emerald-500/20";
+            setTimeout(() => {
+                indicator.className = "w-8 h-8 rounded-full bg-slate-800 text-slate-500 flex items-center justify-center transition-all";
+            }, 800);
+        }
+
+        function onScanFailure(err) {
+            // تجاهل أخطاء عدم العثور على باركود في الفريمات السريعة
+        }
+
+        // تشغيل وإطفاء الفلاش
+        function toggleTorch() {
+            if (scanner && scanner.isScanning) {
+                isFlashOn = !isFlashOn;
+                scanner.applyVideoConstrains({
+                    advanced: [{ torch: isFlashOn }]
+                }).then(() => {
+                    const btn = document.getElementById('torchBtn');
+                    if (isFlashOn) {
+                        btn.className = "py-4 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white rounded-2xl font-black text-xs transition-all flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20";
+                        btn.innerHTML = `<i class="fas fa-lightbulb-on"></i><span>إطفاء الفلاش</span>`;
+                    } else {
+                        btn.className = "py-4 bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-300 rounded-2xl font-black text-xs transition-all flex items-center justify-center gap-2 border border-slate-700/30";
+                        btn.innerHTML = `<i class="fas fa-lightbulb"></i><span>تشغيل الفلاش</span>`;
+                    }
+                }).catch(err => {
+                    console.warn("Flash (Torch) not supported on this device:", err);
+                    isFlashOn = !isFlashOn;
+                    alert("الفلاش غير مدعوم على الكاميرا المحددة أو هذا الجهاز.");
+                });
+            }
+        }
+
+        // صوت البوق خفيف
+        function playBeepSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(900, audioCtx.currentTime); // 900Hz beep
+                gainNode.gain.setValueAtTime(0.12, audioCtx.currentTime);
+
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + 0.08); // 80ms beep
+            } catch (e) {
+                console.warn("Could not play beep audio:", e);
+            }
+        }
+
+        // اهتزاز الجهاز
+        function vibrateDevice() {
+            if (navigator.vibrate) {
+                navigator.vibrate(60); // اهتزاز خفيف لمدة 60 ميلي ثانية
+            }
+        }
+
+        // البدء عند تحميل الصفحة
+        window.addEventListener('DOMContentLoaded', () => {
+            if (sessionId) {
+                connectMqtt();
+                startCamera();
             }
         });
-    }
-}
+    </script>
+</body>
 
-function playBeepSoundFeedback() {
-    try {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = audioCtx.createOscillator();
-        const gainNode = audioCtx.createGain();
-
-        oscillator.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-
-        oscillator.type = 'sine';
-        oscillator.frequency.setValueAtTime(1000, audioCtx.currentTime); // 1000Hz
-        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-
-        oscillator.start();
-        oscillator.stop(audioCtx.currentTime + 0.08);
-    } catch (e) {}
-}
+</html>
