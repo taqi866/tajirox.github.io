@@ -14,7 +14,9 @@ let supportSyncInterval = null;
 
 // --- Vérification des heures d'ouverture (Toujours ouvert 24h/24 et 7j/7) ---
 function isSupportWorkingHours() {
-    return true;
+    const now = new Date();
+    const currentHour = now.getHours();
+    return currentHour >= WORKING_HOURS_START && currentHour < WORKING_HOURS_END;
 }
 
 // --- Initialiser le widget de support ---
@@ -1328,4 +1330,3 @@ function getSmartFallbackAnswer(query) {
         ? "عذراً، لم أستطع فهم سؤالك بالكامل. لقد تم إرسال رسالتك إلى الدعم الفني وسيقوم أحد عملائنا بالإجابة عليك قريباً جداً! 📞"
         : "Désolé, je n'ai pas pu comprendre votre question. Votre message a été transmis à notre équipe de support et un conseiller vous répondra très bientôt ! 📞";
 }
-
