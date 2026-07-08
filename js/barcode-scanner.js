@@ -25,6 +25,8 @@ function startCameraScanner(targetInputId, mode = null) {
             errorMsg = "المتصفح لا يدعم الوصول إلى الكاميرا في هذه البيئة. يرجى تفعيل الاتصال الآمن (HTTPS).";
         } else if (finalErr) {
             if (finalErr.name === 'NotAllowedError' || finalErr.name === 'PermissionDeniedError' || (finalErr.message && finalErr.message.includes('Permission'))) {
+                    errorMsg = "تم رفض إذن الوصول للكاميرا. يرجى السماح للموقع باستخدام الكاميرا من إعدادات المتصفح.";
+                } else if (finalErr.name === 'OverconstrainedError') {
                 errorMsg = "تم رفض إذن الوصول للكاميرا. يرجى السماح للموقع باستخدام الكاميرا من إعدادات المتصفح.";
             } else if (finalErr.name === 'NotReadableError' || finalErr.name === 'TrackStartError') {
                 errorMsg = "الكاميرا قيد الاستخدام بالفعل من قبل تطبيق آخر أو علامة تبويب أخرى. يرجى إغلاق التطبيقات الأخرى التي تستخدم الكاميرا والمحاولة مرة أخرى.";
@@ -41,7 +43,7 @@ function startCameraScanner(targetInputId, mode = null) {
         } else {
             alert(errorMsg);
         }
-        stopCameraScanner(); // Ensure scanner is stopped on failure
+        stopCameraScanner();
     };
 
     // Pre-check for MediaDevices support
@@ -51,16 +53,16 @@ function startCameraScanner(targetInputId, mode = null) {
     }
 
     // Initialize Html5Qrcode
-    if (html5QrcodeScanner) {
+    if (html5QrcodeScanner && html5QrcodeScanner.isScanning) {
         html5QrcodeScanner.clear().catch(err => console.error("Error clearing scanner", err));
     }
     html5QrcodeScanner = new Html5Qrcode("cameraScannerReader", {
         experimentalFeatures: {
-            useBarCodeDetectorIfSupported: false // Use ZXing for better compatibility
+            useBarCodeDetectorIfSupported: false
         }
     });
 
-    const config = {
+    const config = { 
         fps: 15, // Adjusted FPS for better performance on some devices
         qrbox: function(width, height) {
             const size = Math.min(width, height);
@@ -83,42 +85,28 @@ function startCameraScanner(targetInputId, mode = null) {
         ]
     };
 
-    // Function to attempt starting the camera with given constraints
-    const tryStartCamera = async (constraints) => {
+    const tryStartCamera = async (constraints, deviceId = null) => {
         try {
-            await html5QrcodeScanner.start(
-                constraints,
-                config,
-                onLocalScanSuccess,
-                onLocalScanFailure
-            );
+            if (deviceId) {
+                await html5QrcodeScanner.start(deviceId, config, onLocalScanSuccess, onLocalScanFailure);
+            } else {
+                await html5QrcodeScanner.start(constraints, config, onLocalScanSuccess, onLocalScanFailure);
+            }
             return true; // Camera started successfully
         } catch (e) {
             console.warn("Camera start failed with constraints:", constraints, e);
             return false; // Camera failed to start with these constraints
         }
     };
-
-    // Main camera startup logic with multiple fallbacks
+    
     (async () => {
-        // Attempt 1: Environment camera with ideal resolution
-        if (await tryStartCamera({
-            facingMode: "environment",
-            width: { ideal: 1920 },
-            height: { ideal: 1080 }
-        })) return;
-
-        // Attempt 2: Environment camera with simpler resolution
-        if (await tryStartCamera({
-            facingMode: "environment",
-            width: { ideal: 1280 },
-            height: { ideal: 720 }
-        })) return;
-
-        // Attempt 3: Environment camera with no specific resolution
+        // Attempt 1: Simplest environment camera
         if (await tryStartCamera({ facingMode: "environment" })) return;
 
-        // Attempt 4: Try to find a specific back camera by deviceId
+        // Attempt 2: Simplest user-facing camera
+        if (await tryStartCamera({ facingMode: "user" })) return;
+
+        // Attempt 3: Enumerate devices and try specific back camera
         try {
             const devices = await Html5Qrcode.getCameras();
             if (devices && devices.length > 0) {
@@ -126,18 +114,24 @@ function startCameraScanner(targetInputId, mode = null) {
                     const label = (device.label || "").toLowerCase();
                     return label.includes('back') || label.includes('env') || label.includes('rear') || label.includes('خلف');
                 });
-                let selectedDeviceId = backCamera ? backCamera.id : devices[0].id;
                 
-                if (await tryStartCamera(selectedDeviceId)) return;
+                if (backCamera && await tryStartCamera(null, backCamera.id)) return;
+
+                // Attempt 4: Enumerate devices and try specific front camera
+                let frontCamera = devices.find(device => {
+                    const label = (device.label || "").toLowerCase();
+                    return label.includes('front') || label.includes('user');
+                });
+                if (frontCamera && await tryStartCamera(null, frontCamera.id)) return;
+
+                // Attempt 5: Try the first available device if others fail
+                if (await tryStartCamera(null, devices[0].id)) return;
             }
         } catch (e) {
-            console.warn("Error getting camera devices:", e);
+            console.warn("Error getting camera devices, proceeding with generic fallback:", e);
         }
-
-        // Attempt 5: User-facing camera
-        if (await tryStartCamera({ facingMode: "user" })) return;
-
-        // Attempt 6: Default constraints (let browser decide)
+        
+        // Attempt 6: Default constraints (let browser decide, no specific facingMode)
         if (await tryStartCamera({})) return;
 
         // If all attempts fail
@@ -220,11 +214,6 @@ function toggleLocalCameraFlash() {
             console.warn("Torch not supported", err);
             if (typeof showToast === 'function') {
                 showToast("الفلاش غير مدعوم على هذا الجهاز", "warning");
-            }
-            localFlashOn = false; // Reset state if not supported
-            const btn = document.getElementById('cameraScannerFlashBtn');
-            if (btn) {
-                btn.className = "flex-1 py-3 bg-amber-50 hover:bg-amber-100 text-amber-600 rounded-xl font-black text-xs transition-all flex items-center justify-center gap-2";
             }
         });
     }
