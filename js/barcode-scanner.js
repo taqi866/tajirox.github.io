@@ -41,9 +41,10 @@ function startCameraScanner(targetInputId, mode = null) {
         } else {
             alert(errorMsg);
         }
-        stopCameraScanner();
+        stopCameraScanner(); // Ensure scanner is stopped on failure
     };
 
+    // Pre-check for MediaDevices support
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         handleFailure(new Error("MediaDevices or getUserMedia not supported (likely due to insecure HTTP context)"));
         return;
@@ -53,79 +54,73 @@ function startCameraScanner(targetInputId, mode = null) {
     if (html5QrcodeScanner) {
         html5QrcodeScanner.clear().catch(err => console.error("Error clearing scanner", err));
     }
-
-    // Initialize Html5Qrcode with stable ZXing engine to avoid format incompatibilities and launch crashes
     html5QrcodeScanner = new Html5Qrcode("cameraScannerReader", {
         experimentalFeatures: {
-            useBarCodeDetectorIfSupported: false
+            useBarCodeDetectorIfSupported: false // Use ZXing for better compatibility
         }
     });
 
-    const config = { 
-        fps: 25, // Increase scan frequency to 25 FPS
+    const config = {
+        fps: 15, // Adjusted FPS for better performance on some devices
         qrbox: function(width, height) {
             const size = Math.min(width, height);
-            return { width: size * 0.85, height: size * 0.55 }; // Wider box for easy scanning
+            return { width: size * 0.8, height: size * 0.5 }; // Wider box for easier barcode scanning
         },
-        aspectRatio: 1.0,
+        aspectRatio: 1.777778, // 16:9 aspect ratio
         formatsToSupport: [
             Html5QrcodeSupportedFormats.QR_CODE,
             Html5QrcodeSupportedFormats.EAN_13,
             Html5QrcodeSupportedFormats.EAN_8,
             Html5QrcodeSupportedFormats.CODE_128,
             Html5QrcodeSupportedFormats.CODE_39,
-            Html5QrcodeSupportedFormats.CODE_93,
-            Html5QrcodeSupportedFormats.UPC_A,
-            Html5QrcodeSupportedFormats.UPC_E,
-            Html5QrcodeSupportedFormats.CODABAR,
-            Html5QrcodeSupportedFormats.ITF,
-            Html5QrcodeSupportedFormats.DATA_MATRIX,
-            Html5QrcodeSupportedFormats.PDF_417
+            Html5QrcodeSupportedFormats.CODE_93, // Added for more barcode types
+            Html5QrcodeSupportedFormats.UPC_A, // Added for more barcode types
+            Html5QrcodeSupportedFormats.UPC_E, // Added for more barcode types
+            Html5QrcodeSupportedFormats.CODABAR, // Added for more barcode types
+            Html5QrcodeSupportedFormats.ITF, // Added for more barcode types
+            Html5QrcodeSupportedFormats.DATA_MATRIX, // Added for more barcode types
+            Html5QrcodeSupportedFormats.PDF_417 // Added for more barcode types
         ]
     };
 
-    const startWithFacingMode = (constraints) => {
+    // Function to attempt starting the camera with given constraints
+    const tryStartCamera = async (constraints) => {
         try {
-            return html5QrcodeScanner.start(
+            await html5QrcodeScanner.start(
                 constraints,
                 config,
                 onLocalScanSuccess,
                 onLocalScanFailure
             );
+            return true; // Camera started successfully
         } catch (e) {
-            return Promise.reject(e);
+            console.warn("Camera start failed with constraints:", constraints, e);
+            return false; // Camera failed to start with these constraints
         }
     };
 
-    const startWithDeviceId = (deviceId) => {
-        try {
-            return html5QrcodeScanner.start(
-                deviceId,
-                config,
-                onLocalScanSuccess,
-                onLocalScanFailure
-            );
-        } catch (e) {
-            return Promise.reject(e);
-        }
-    };
+    // Main camera startup logic with multiple fallbacks
+    (async () => {
+        // Attempt 1: Environment camera with ideal resolution
+        if (await tryStartCamera({
+            facingMode: "environment",
+            width: { ideal: 1920 },
+            height: { ideal: 1080 }
+        })) return;
 
-    // First attempt: environment camera with ideal constraints
-    startWithFacingMode({ 
-        facingMode: "environment",
-        width: { ideal: 1920 },
-        height: { ideal: 1080 }
-    }).catch(err => {
-        console.warn("First camera start attempt failed, trying fallback...", err);
-        
-        let getCamerasPromise;
-        try {
-            getCamerasPromise = Html5Qrcode.getCameras();
-        } catch (e) {
-            getCamerasPromise = Promise.reject(e);
-        }
+        // Attempt 2: Environment camera with simpler resolution
+        if (await tryStartCamera({
+            facingMode: "environment",
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+        })) return;
 
-        getCamerasPromise.then(devices => {
+        // Attempt 3: Environment camera with no specific resolution
+        if (await tryStartCamera({ facingMode: "environment" })) return;
+
+        // Attempt 4: Try to find a specific back camera by deviceId
+        try {
+            const devices = await Html5Qrcode.getCameras();
             if (devices && devices.length > 0) {
                 let backCamera = devices.find(device => {
                     const label = (device.label || "").toLowerCase();
@@ -133,44 +128,21 @@ function startCameraScanner(targetInputId, mode = null) {
                 });
                 let selectedDeviceId = backCamera ? backCamera.id : devices[0].id;
                 
-                startWithDeviceId(selectedDeviceId)
-                .catch(err2 => {
-                    console.warn("Attempting with simple user facingMode...", err2);
-                    // Third attempt: simple facingMode user
-                    startWithFacingMode({ facingMode: "user" })
-                    .catch(err3 => {
-                        // Fourth attempt: simple default constraints
-                        startWithFacingMode({})
-                        .catch(err4 => {
-                            handleFailure(err4);
-                        });
-                    });
-                });
-            } else {
-                // Third attempt if no devices/labels listed (maybe permission issue or browser restriction): try user
-                startWithFacingMode({ facingMode: "user" })
-                .catch(err2 => {
-                    // Fourth attempt: default empty constraints
-                    startWithFacingMode({})
-                    .catch(err3 => {
-                        handleFailure(err3);
-                    });
-                });
+                if (await tryStartCamera(selectedDeviceId)) return;
             }
-        }).catch(err2 => {
-            console.warn("Error getting cameras, trying simple constraints fallback...", err2);
-            startWithFacingMode({ facingMode: "environment" })
-            .catch(err3 => {
-                startWithFacingMode({ facingMode: "user" })
-                .catch(err4 => {
-                    startWithFacingMode({})
-                    .catch(err5 => {
-                        handleFailure(err5);
-                    });
-                });
-            });
-        });
-    });
+        } catch (e) {
+            console.warn("Error getting camera devices:", e);
+        }
+
+        // Attempt 5: User-facing camera
+        if (await tryStartCamera({ facingMode: "user" })) return;
+
+        // Attempt 6: Default constraints (let browser decide)
+        if (await tryStartCamera({})) return;
+
+        // If all attempts fail
+        handleFailure(new Error("All camera startup attempts failed."));
+    })();
 }
 
 function onLocalScanSuccess(decodedText) {
@@ -215,6 +187,12 @@ function stopCameraScanner() {
         html5QrcodeScanner.stop().then(() => {
             html5QrcodeScanner.clear();
             html5QrcodeScanner = null;
+            localFlashOn = false; // Reset flash state
+            // Reset flash button UI
+            const btn = document.getElementById('cameraScannerFlashBtn');
+            if (btn) {
+                btn.className = "flex-1 py-3 bg-amber-50 hover:bg-amber-100 text-amber-600 rounded-xl font-black text-xs transition-all flex items-center justify-center gap-2";
+            }
         }).catch(err => {
             console.error("Failed to stop local scanner", err);
             html5QrcodeScanner = null;
@@ -242,6 +220,11 @@ function toggleLocalCameraFlash() {
             console.warn("Torch not supported", err);
             if (typeof showToast === 'function') {
                 showToast("الفلاش غير مدعوم على هذا الجهاز", "warning");
+            }
+            localFlashOn = false; // Reset state if not supported
+            const btn = document.getElementById('cameraScannerFlashBtn');
+            if (btn) {
+                btn.className = "flex-1 py-3 bg-amber-50 hover:bg-amber-100 text-amber-600 rounded-xl font-black text-xs transition-all flex items-center justify-center gap-2";
             }
         });
     }
