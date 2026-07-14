@@ -502,12 +502,7 @@
                                         <i class="fas fa-calendar-plus text-xs"></i>
                                     </button>
                                 ` : ''}
-                                <button onclick="impersonateShop('${shop.username}')" class="w-7 h-7 bg-indigo-100 text-indigo-600 rounded-lg flex items-center justify-center hover:scale-110 transition-all" title="Accéder aux données">
-                                    <i class="fas fa-sign-in-alt text-xs"></i>
-                                </button>
-                                <button onclick="promptDecryptShop('${shop.username}')" class="w-7 h-7 bg-emerald-100 text-emerald-600 rounded-lg flex items-center justify-center hover:scale-110 transition-all" title="Déchiffrer la base de données">
-                                    <i class="fas fa-unlock text-xs"></i>
-                                </button>
+
                                 <button onclick="openEditTariffModal('${shop.username}')" class="w-7 h-7 bg-amber-100 text-amber-600 rounded-lg flex items-center justify-center hover:scale-110 transition-all" title="${t('edit_tariff_title')}">
                                     <i class="fas fa-coins text-xs"></i>
                                 </button>
