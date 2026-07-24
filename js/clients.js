@@ -582,26 +582,48 @@
             });
         }
 
-        function renderClients(filteredClients = null, limit = 10) {
+        function renderClients(filteredClients = null) {
             const container = document.getElementById('clientsContainer');
             const noClientsMessage = document.getElementById('noClientsMessage');
 
             if (!container) return;
 
+            if (filteredClients === null) {
+                searchClients();
+                return;
+            }
+
             container.innerHTML = '';
 
-            const clients = filteredClients || allData.clients.filter(c => c.type === 'customer');
+            const searchTerm = (document.getElementById('clientSearch')?.value || '').trim();
+            const statusFilter = document.getElementById('clientStatusFilter')?.value || '';
 
-            if (clients.length === 0) {
-                container.classList.add('hidden');
-                if (noClientsMessage) noClientsMessage.classList.remove('hidden');
+            if (filteredClients.length === 0) {
+                container.classList.remove('hidden');
+                if (noClientsMessage) noClientsMessage.classList.add('hidden');
+
+                if (searchTerm || statusFilter) {
+                    container.innerHTML = `
+                        <div class="col-span-full text-center p-8 bg-white rounded-[2rem] shadow-sm">
+                            <i class="fas fa-search text-3xl text-slate-300 mb-3"></i>
+                            <p class="text-slate-400 font-bold">${t('no_results_found')}</p>
+                        </div>
+                    `;
+                } else {
+                    container.classList.add('hidden');
+                    if (noClientsMessage) noClientsMessage.classList.remove('hidden');
+                }
                 return;
             } else {
                 container.classList.remove('hidden');
                 if (noClientsMessage) noClientsMessage.classList.add('hidden');
             }
 
-            const itemsToShow = clients.slice(0, limit);
+            if (typeof window.clientsLimit === 'undefined') {
+                window.clientsLimit = (typeof lowResourceMode !== 'undefined' && lowResourceMode) ? 10 : 30;
+            }
+            const limit = window.clientsLimit;
+            const itemsToShow = filteredClients.slice(0, limit);
 
             itemsToShow.forEach(client => {
                 const totalDebt = calculateClientDebt(client.id);
@@ -685,35 +707,64 @@
                 </div>`;
             });
 
-            if (clients.length > limit) {
+            if (filteredClients.length > limit) {
                 container.innerHTML += `
-                <div class="col-span-full text-center py-4">
-                    <p class="text-slate-400 text-xs font-bold mb-2">${t('search_results_stats', { filtered: limit, total: clients.length })}</p>
-                    <p class="text-slate-300 text-[10px]">${t('use_search_hint')}</p>
+                <div class="text-center py-4 bg-white rounded-3xl shadow-sm mt-2 flex flex-col items-center justify-center gap-2 col-span-full">
+                    <p class="text-slate-400 text-xs font-bold">${t('search_results_stats', { filtered: limit, total: filteredClients.length })}</p>
+                    <button onclick="increaseClientsLimit()" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-xs shadow-md transition-all active:scale-95">
+                        ${t('show_more_clients')}
+                    </button>
                 </div>`;
             }
         }
 
-        function renderSuppliers(filteredSuppliers = null, limit = 10) {
+        window.increaseClientsLimit = function() {
+            window.clientsLimit = (window.clientsLimit || 30) + ((typeof lowResourceMode !== 'undefined' && lowResourceMode) ? 10 : 30);
+            searchClients();
+        };
+
+        function renderSuppliers(filteredSuppliers = null) {
             const container = document.getElementById('suppliersContainer');
             const noSuppliersMessage = document.getElementById('noSuppliersMessage');
 
             if (!container) return;
 
+            if (filteredSuppliers === null) {
+                searchSuppliers();
+                return;
+            }
+
             container.innerHTML = '';
 
-            const suppliers = filteredSuppliers || allData.clients.filter(c => c.type === 'supplier');
+            const searchTerm = (document.getElementById('supplierSearch')?.value || '').trim();
+            const statusFilter = document.getElementById('supplierStatusFilter')?.value || '';
 
-            if (suppliers.length === 0) {
-                container.classList.add('hidden');
-                if (noSuppliersMessage) noSuppliersMessage.classList.remove('hidden');
+            if (filteredSuppliers.length === 0) {
+                container.classList.remove('hidden');
+                if (noSuppliersMessage) noSuppliersMessage.classList.add('hidden');
+
+                if (searchTerm || statusFilter) {
+                    container.innerHTML = `
+                        <div class="col-span-full text-center p-8 bg-white rounded-[2rem] shadow-sm">
+                            <i class="fas fa-search text-3xl text-slate-300 mb-3"></i>
+                            <p class="text-slate-400 font-bold">${t('no_results_found')}</p>
+                        </div>
+                    `;
+                } else {
+                    container.classList.add('hidden');
+                    if (noSuppliersMessage) noSuppliersMessage.classList.remove('hidden');
+                }
                 return;
             } else {
                 container.classList.remove('hidden');
                 if (noSuppliersMessage) noSuppliersMessage.classList.add('hidden');
             }
 
-            const itemsToShow = suppliers.slice(0, limit);
+            if (typeof window.suppliersLimit === 'undefined') {
+                window.suppliersLimit = (typeof lowResourceMode !== 'undefined' && lowResourceMode) ? 10 : 30;
+            }
+            const limit = window.suppliersLimit;
+            const itemsToShow = filteredSuppliers.slice(0, limit);
 
             itemsToShow.forEach(supplier => {
                 const totalDebt = calculateSupplierDebt(supplier.id);
@@ -797,64 +848,98 @@
                 </div>`;
             });
 
-            if (suppliers.length > limit) {
+            if (filteredSuppliers.length > limit) {
                 container.innerHTML += `
-                <div class="col-span-full text-center py-4">
-                    <p class="text-slate-400 text-xs font-bold mb-2">${t('search_results_stats', { filtered: limit, total: suppliers.length })}</p>
-                    <p class="text-slate-300 text-[10px]">${t('use_search_hint')}</p>
+                <div class="text-center py-4 bg-white rounded-3xl shadow-sm mt-2 flex flex-col items-center justify-center gap-2 col-span-full">
+                    <p class="text-slate-400 text-xs font-bold">${t('search_results_stats', { filtered: limit, total: filteredSuppliers.length })}</p>
+                    <button onclick="increaseSuppliersLimit()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs shadow-md transition-all active:scale-95">
+                        ${t('show_more_suppliers')}
+                    </button>
                 </div>`;
             }
         }
 
+        window.increaseSuppliersLimit = function() {
+            window.suppliersLimit = (window.suppliersLimit || 30) + ((typeof lowResourceMode !== 'undefined' && lowResourceMode) ? 10 : 30);
+            searchSuppliers();
+        };
+
         function searchClients() {
-            const searchTerm = document.getElementById('clientSearch').value.toLowerCase();
+            const searchTerm = (document.getElementById('clientSearch')?.value || '').trim().toLowerCase();
+            const statusFilter = document.getElementById('clientStatusFilter')?.value || '';
             const clients = allData.clients.filter(c => c.type === 'customer');
-            const container = document.getElementById('clientsContainer');
 
-            const filteredClients = clients.filter(client =>
-                client.name.toLowerCase().includes(searchTerm) ||
-                (client.phone && client.phone.includes(searchTerm)) ||
-                (client.email && client.email.toLowerCase().includes(searchTerm))
-            );
+            const filteredClients = clients.filter(client => {
+                const name = String(client.name || '').toLowerCase();
+                const phone = String(client.phone || '').toLowerCase();
+                const email = String(client.email || '').toLowerCase();
+                const ice = String(client.ice || '').toLowerCase();
+                const address = String(client.address || '').toLowerCase();
+                const notes = String(client.notes || '').toLowerCase();
 
-            if (filteredClients.length === 0) {
-                container.innerHTML = `
-                    <div class="col-span-full text-center p-8 bg-white rounded-[2rem] shadow-sm">
-                        <i class="fas fa-search text-3xl text-slate-300 mb-3"></i>
-                        <p class="text-slate-400 font-bold">${t('no_results_for', { term: searchTerm })}</p>
-                    </div>
-                `;
-                return;
-            }
+                const matchesText = !searchTerm || (
+                    name.includes(searchTerm) ||
+                    phone.includes(searchTerm) ||
+                    email.includes(searchTerm) ||
+                    ice.includes(searchTerm) ||
+                    address.includes(searchTerm) ||
+                    notes.includes(searchTerm)
+                );
 
-            const limit = searchTerm.length > 0 ? 100 : 10;
-            renderClients(filteredClients, limit);
+                if (!matchesText) return false;
+
+                if (statusFilter) {
+                    const totalDebt = calculateClientDebt(client.id);
+                    if (statusFilter === 'sound' && totalDebt > 0) return false;
+                    if (statusFilter === 'unhealthy' && totalDebt <= 0) return false;
+                }
+
+                return true;
+            });
+
+            renderClients(filteredClients);
         }
 
         function searchSuppliers() {
-            const searchTerm = document.getElementById('supplierSearch').value.toLowerCase();
+            const searchTerm = (document.getElementById('supplierSearch')?.value || '').trim().toLowerCase();
+            const statusFilter = document.getElementById('supplierStatusFilter')?.value || '';
             const suppliers = allData.clients.filter(c => c.type === 'supplier');
-            const container = document.getElementById('suppliersContainer');
 
-            const filteredSuppliers = suppliers.filter(supplier =>
-                supplier.name.toLowerCase().includes(searchTerm) ||
-                (supplier.phone && supplier.phone.includes(searchTerm)) ||
-                (supplier.email && supplier.email.toLowerCase().includes(searchTerm))
-            );
+            const filteredSuppliers = suppliers.filter(supplier => {
+                const name = String(supplier.name || '').toLowerCase();
+                const phone = String(supplier.phone || '').toLowerCase();
+                const email = String(supplier.email || '').toLowerCase();
+                const ice = String(supplier.ice || '').toLowerCase();
+                const address = String(supplier.address || '').toLowerCase();
+                const notes = String(supplier.notes || '').toLowerCase();
 
-            if (filteredSuppliers.length === 0) {
-                container.innerHTML = `
-                    <div class="col-span-full text-center p-8 bg-white rounded-[2rem] shadow-sm">
-                        <i class="fas fa-search text-3xl text-slate-300 mb-3"></i>
-                        <p class="text-slate-400 font-bold">${t('no_results_for', { term: searchTerm })}</p>
-                    </div>
-                `;
-                return;
-            }
+                const matchesText = !searchTerm || (
+                    name.includes(searchTerm) ||
+                    phone.includes(searchTerm) ||
+                    email.includes(searchTerm) ||
+                    ice.includes(searchTerm) ||
+                    address.includes(searchTerm) ||
+                    notes.includes(searchTerm)
+                );
 
-            const limit = searchTerm.length > 0 ? 100 : 10;
-            renderSuppliers(filteredSuppliers, limit);
+                if (!matchesText) return false;
+
+                if (statusFilter) {
+                    const totalDebt = calculateSupplierDebt(supplier.id);
+                    if (statusFilter === 'sound' && totalDebt > 0) return false;
+                    if (statusFilter === 'unhealthy' && totalDebt <= 0) return false;
+                }
+
+                return true;
+            });
+
+            renderSuppliers(filteredSuppliers);
         }
+
+        window.renderClients = renderClients;
+        window.renderSuppliers = renderSuppliers;
+        window.searchClients = searchClients;
+        window.searchSuppliers = searchSuppliers;
 
         function calculateClientDebt(clientId) {
             let totalDebt = 0;
@@ -1610,4 +1695,4 @@
                     reference: paymentReference,
                     description: paymentDescription
                 }, checkAction, checkDataToSave, currentDbId);
-        }
+        }
