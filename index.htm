@@ -1171,6 +1171,17 @@
                         data-i18n="new_expense">+ مصروف</button>
                 </div>
 
+                <div class="bg-white p-4 rounded-[1.5rem] shadow-sm border border-slate-50 mb-4">
+                    <div class="relative">
+                        <input type="text" id="expenseSearch" onkeyup="searchExpenses()" oninput="searchExpenses()"
+                            placeholder="ابحث عن مصروف بالوصف، الفئة، المورد، رقم الفاتورة..."
+                            class="w-full p-3 bg-slate-50 rounded-xl border-none outline-none font-bold px-10"
+                            data-i18n-placeholder="search_expense_hint">
+                        <i
+                            class="fas fa-search absolute right-3 top-3 text-slate-400 rtl:right-3 rtl:left-auto ltr:left-3 ltr:right-auto"></i>
+                    </div>
+                </div>
+
                 <!-- عرض المصاريف كبطاقات -->
                 <div id="expensesContainer" class="cards-grid">
                     <!-- سيتم إضافة البطاقات هنا -->
@@ -1193,13 +1204,23 @@
                 </div>
 
                 <div class="bg-white p-4 rounded-[1.5rem] shadow-sm border border-slate-50 mb-4">
-                    <div class="relative">
-                        <input type="text" id="clientSearch" onkeyup="searchClients()"
-                            placeholder="ابحث عن زبون بالاسم أو الهاتف..."
-                            class="w-full p-3 bg-slate-50 rounded-xl border-none outline-none font-bold px-10"
-                            data-i18n-placeholder="search_client_hint">
-                        <i
-                            class="fas fa-search absolute right-3 top-3 text-slate-400 rtl:right-3 rtl:left-auto ltr:left-3 ltr:right-auto"></i>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div class="relative">
+                            <input type="text" id="clientSearch" onkeyup="searchClients()" oninput="searchClients()"
+                                placeholder="ابحث عن زبون بالاسم أو الهاتف..."
+                                class="w-full p-3 bg-slate-50 rounded-xl border-none outline-none font-bold px-10"
+                                data-i18n-placeholder="search_client_hint">
+                            <i
+                                class="fas fa-search absolute right-3 top-3 text-slate-400 rtl:right-3 rtl:left-auto ltr:left-3 ltr:right-auto"></i>
+                        </div>
+                        <div>
+                            <select id="clientStatusFilter" onchange="searchClients()"
+                                class="w-full p-3 bg-slate-50 rounded-xl border-none outline-none font-bold">
+                                <option value="" data-i18n="all_status">كل الحالات</option>
+                                <option value="sound" data-i18n="sound_status">سليم</option>
+                                <option value="unhealthy" data-i18n="unhealthy_status">غير سليم</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
@@ -1228,13 +1249,23 @@
                 </div>
 
                 <div class="bg-white p-4 rounded-[1.5rem] shadow-sm border border-slate-50 mb-4">
-                    <div class="relative">
-                        <input type="text" id="supplierSearch" onkeyup="searchSuppliers()"
-                            placeholder="ابحث عن مورد بالاسم أو الهاتف..."
-                            class="w-full p-3 bg-slate-50 rounded-xl border-none outline-none font-bold px-10"
-                            data-i18n-placeholder="search_supplier_hint">
-                        <i
-                            class="fas fa-search absolute right-3 top-3 text-slate-400 rtl:right-3 rtl:left-auto ltr:left-3 ltr:right-auto"></i>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div class="relative">
+                            <input type="text" id="supplierSearch" onkeyup="searchSuppliers()" oninput="searchSuppliers()"
+                                placeholder="ابحث عن مورد بالاسم أو الهاتف..."
+                                class="w-full p-3 bg-slate-50 rounded-xl border-none outline-none font-bold px-10"
+                                data-i18n-placeholder="search_supplier_hint">
+                            <i
+                                class="fas fa-search absolute right-3 top-3 text-slate-400 rtl:right-3 rtl:left-auto ltr:left-3 ltr:right-auto"></i>
+                        </div>
+                        <div>
+                            <select id="supplierStatusFilter" onchange="searchSuppliers()"
+                                class="w-full p-3 bg-slate-50 rounded-xl border-none outline-none font-bold">
+                                <option value="" data-i18n="all_status">كل الحالات</option>
+                                <option value="sound" data-i18n="sound_status">سليم</option>
+                                <option value="unhealthy" data-i18n="unhealthy_status">غير سليم</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
