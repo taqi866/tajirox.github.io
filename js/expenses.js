@@ -327,15 +327,58 @@
             closeModal('expenseModal');
         }
 
+        function searchExpenses() {
+            const fExps = getFilteredData(allData.expenses);
+            renderExpenses(fExps);
+        }
+
         function renderExpenses(fExps) {
             const container = document.getElementById('expensesContainer');
             const noExpensesMessage = document.getElementById('noExpensesMessage');
+
+            if (!container) return;
+
             container.innerHTML = '';
 
+            const searchTerm = (document.getElementById('expenseSearch')?.value || '').trim().toLowerCase();
+
+            if (searchTerm) {
+                fExps = fExps.filter(exp => {
+                    const desc = String(exp.description || '').toLowerCase();
+                    const cat = String(exp.category || '').toLowerCase();
+                    const transCat = String(translateExpenseCategory(exp.category) || '').toLowerCase();
+                    const supp = String(exp.supplier || '').toLowerCase();
+                    const invNo = String(exp.invoice_number || '').toLowerCase();
+                    const payRef = String(exp.payment_reference || '').toLowerCase();
+                    const amt = String(exp.amount || '').toLowerCase();
+                    const method = String(exp.method || '').toLowerCase();
+
+                    return desc.includes(searchTerm) ||
+                           cat.includes(searchTerm) ||
+                           transCat.includes(searchTerm) ||
+                           supp.includes(searchTerm) ||
+                           invNo.includes(searchTerm) ||
+                           payRef.includes(searchTerm) ||
+                           amt.includes(searchTerm) ||
+                           method.includes(searchTerm);
+                });
+            }
+
             if (fExps.length === 0) {
-                container.classList.add('hidden');
-                if (noExpensesMessage) noExpensesMessage.classList.remove('hidden');
-                container.innerHTML = '';
+                container.classList.remove('hidden');
+                if (noExpensesMessage) noExpensesMessage.classList.add('hidden');
+
+                if (searchTerm) {
+                    container.innerHTML = `
+                        <div class="col-span-full text-center p-8 bg-white rounded-[2rem] shadow-sm">
+                            <i class="fas fa-search text-3xl text-slate-300 mb-3"></i>
+                            <p class="text-slate-400 font-bold">${t('no_results_found')}</p>
+                        </div>
+                    `;
+                } else {
+                    container.classList.add('hidden');
+                    if (noExpensesMessage) noExpensesMessage.classList.remove('hidden');
+                }
                 return;
             } else {
                 container.classList.remove('hidden');
@@ -446,7 +489,7 @@
                 <div class="text-center py-4 bg-white rounded-3xl shadow-sm mt-2 flex flex-col items-center justify-center gap-2 col-span-full">
                     <p class="text-slate-400 text-xs font-bold">${t('search_results_stats', { filtered: limit, total: fExps.length })}</p>
                     <button onclick="increaseExpensesLimit()" class="px-5 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold text-xs shadow-md transition-all active:scale-95">
-                        ${currentLang === 'ar' ? 'عرض المزيد مصاريف' : 'Charger plus de dépenses'}
+                        ${t('show_more_expenses')}
                     </button>
                 </div>`;
             }
@@ -456,6 +499,9 @@
             window.expensesLimit = (window.expensesLimit || 30) + ((typeof lowResourceMode !== 'undefined' && lowResourceMode) ? 10 : 30);
             renderExpenses(getFilteredData(allData.expenses));
         };
+
+        window.renderExpenses = renderExpenses;
+        window.searchExpenses = searchExpenses;
 
         function promptDeleteExpense(id) {
             openConfirm({
@@ -808,4 +854,4 @@
             </div>
         </div>
     `;
-        }
+        }
