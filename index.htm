@@ -315,20 +315,37 @@
 
                 <!-- تفاصيل خطة الاشتراك في الهيرو -->
                 <div id="heroPlanDetailsGrid" class="bg-white/10 p-6 rounded-3xl backdrop-blur-md border border-white/20 mb-8 max-w-md mx-auto lg:mx-0 hidden transition-all duration-300">
+                    <!-- Toggle Switcher Hero -->
+                    <div class="flex items-center justify-center p-1 bg-slate-900/40 rounded-2xl border border-white/10 mb-5 relative">
+                        <button onclick="setBillingCycle('monthly')" id="heroBillingMonthlyBtn" class="flex-1 py-2 px-3 rounded-xl font-black text-xs transition-all duration-300 text-white/70 hover:text-white">
+                            <span data-i18n="billing_monthly">شهري</span>
+                            <span class="text-[9px] block font-normal text-blue-200">120 DH / <span data-i18n="month_word">شهر</span></span>
+                        </button>
+                        <button onclick="setBillingCycle('annual')" id="heroBillingAnnualBtn" class="flex-1 py-2 px-3 rounded-xl font-black text-xs transition-all duration-300 bg-amber-500 text-white shadow-md relative">
+                            <span class="absolute -top-3.5 rtl:-left-1 ltr:-right-1 bg-emerald-500 text-white text-[8px] px-2 py-0.5 rounded-full shadow-lg font-black animate-pulse" data-i18n="billing_save_badge_short">وفّر 240 درهم</span>
+                            <span data-i18n="billing_annual">سنوي</span>
+                            <span class="text-[9px] block font-normal text-amber-100">1 200 DH / <span data-i18n="year_word">سنة</span></span>
+                        </button>
+                    </div>
+
                     <div class="grid grid-cols-1 gap-6 text-start rtl:text-right ltr:text-left">
                         <!-- TAJIROX Cloud -->
                         <div class="bg-white/5 p-5 rounded-2xl border border-white/10 flex flex-col justify-between">
                             <div>
-                                <div class="flex items-center gap-2 mb-3 justify-start">
-                                    <i class="fas fa-cloud text-blue-400 text-lg"></i>
-                                    <h3 class="text-white font-black text-sm" data-i18n="plan_cloud_title">TAJIROX Cloud</h3>
+                                <div class="flex items-center justify-between mb-3">
+                                    <div class="flex items-center gap-2">
+                                        <i class="fas fa-cloud text-blue-400 text-lg"></i>
+                                        <h3 class="text-white font-black text-sm" data-i18n="plan_cloud_title">TAJIROX Cloud</h3>
+                                    </div>
+                                    <span id="heroPlanBadge" class="text-[9px] bg-amber-500/30 text-amber-300 px-2.5 py-0.5 rounded-full font-black border border-amber-400/30" data-i18n="plan_annual">سنوي</span>
                                 </div>
                                 <p class="text-white text-sm font-black mb-2 flex items-center gap-2 flex-wrap justify-start">
-                                    <span class="text-amber-400 font-extrabold text-lg" data-i18n="plan_cloud_price">1200 درهم</span>
-                                    <span>/ <span data-i18n="month_word">سنة</span></span>
+                                    <span id="heroPlanPrice" class="text-amber-400 font-extrabold text-2xl" data-i18n="plan_cloud_price_annual">1200 درهم</span>
+                                    <span class="text-blue-100 text-xs">/ <span id="heroPlanPeriod" data-i18n="year_word">سنة</span></span>
+                                    <span id="heroPlanSavings" class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-lg border border-emerald-500/30 font-black" data-i18n="billing_save_badge">وفّر 240 درهم (شهرين مجاناً)</span>
                                 </p>
-                                <p class="text-blue-100 text-[10px] font-bold leading-relaxed mb-4" data-i18n="plan_cloud_desc">
-                                    الاشتراك السحابي السنوي لإدارة متجرك، تفعيل كافة ميزات النظام والدعم الفني المباشر والنسخ الاحتياطي التلقائي.
+                                <p id="heroPlanDesc" class="text-blue-100 text-[10px] font-bold leading-relaxed mb-4" data-i18n="plan_cloud_desc_annual">
+                                    الاشتراك السحابي السنوي لإدارة متجرك، تفعيل كافة ميزات النظام والدعم الفني المباشر والنسخ الاحتياطي التلقائي (وفّر 240 درهم سنوياً).
                                 </p>
                             </div>
                             <ul class="text-blue-100 text-[9px] space-y-1.5 list-none p-0 font-bold border-t border-white/10 pt-3">
@@ -607,6 +624,19 @@
                         <p class="text-slate-400 text-[10px] font-bold" data-i18n="discover_system">اختر الخطة المناسبة لمتجرك</p>
                     </div>
                     
+                    <!-- Toggle Switcher Mobile -->
+                    <div class="flex items-center justify-center p-1 bg-slate-100 rounded-2xl border border-slate-200 mb-3 relative">
+                        <button onclick="setBillingCycle('monthly')" id="mobAuthBillingMonthlyBtn" class="flex-1 py-2 px-3 rounded-xl font-black text-xs transition-all duration-300 text-slate-600">
+                            <span data-i18n="billing_monthly">شهري</span>
+                            <span class="text-[9px] block font-normal text-slate-500">120 DH / <span data-i18n="month_word">شهر</span></span>
+                        </button>
+                        <button onclick="setBillingCycle('annual')" id="mobAuthBillingAnnualBtn" class="flex-1 py-2 px-3 rounded-xl font-black text-xs transition-all duration-300 bg-blue-600 text-white shadow-md relative">
+                            <span class="absolute -top-3.5 rtl:-left-1 ltr:-right-1 bg-emerald-500 text-white text-[8px] px-2 py-0.5 rounded-full shadow-lg font-black animate-pulse" data-i18n="billing_save_badge_short">وفّر 240 درهم</span>
+                            <span data-i18n="billing_annual">سنوي</span>
+                            <span class="text-[9px] block font-normal text-blue-100">1 200 DH / <span data-i18n="year_word">سنة</span></span>
+                        </button>
+                    </div>
+
                     <!-- Cloud Plan -->
                     <div class="bg-gradient-to-br from-blue-600 to-indigo-800 text-white p-5 rounded-[2rem] shadow-lg border border-blue-500/20 text-right rtl:text-right ltr:text-left relative overflow-hidden">
                         <div class="absolute -right-10 -bottom-10 w-24 h-24 bg-white/5 rounded-full blur-xl"></div>
@@ -615,18 +645,17 @@
                                 <i class="fas fa-cloud text-blue-300"></i>
                                 <h4 class="font-black text-sm" data-i18n="plan_cloud_title">TAJIROX Cloud</h4>
                             </div>
-                            <span class="text-[8px] bg-blue-500/30 text-blue-200 px-2 py-0.5 rounded-full font-black border border-blue-400/20" data-i18n="plan_monthly">سنوي</span>
+                            <span id="mobAuthPlanBadge" class="text-[8px] bg-amber-400 text-slate-900 px-2.5 py-0.5 rounded-full font-black shadow-sm" data-i18n="plan_annual">سنوي</span>
                         </div>
                         <div class="flex items-baseline gap-2 flex-wrap mb-2">
-                            <span class="text-2xl font-black text-amber-300" data-i18n="plan_cloud_price">1200 درهم</span>
-                            <span class="text-xs text-blue-100">/ <span data-i18n="month_word">سنة</span></span>
+                            <span id="mobAuthPlanPrice" class="text-2xl font-black text-amber-300" data-i18n="plan_cloud_price_annual">1200 درهم</span>
+                            <span class="text-xs text-blue-100">/ <span id="mobAuthPlanPeriod" data-i18n="year_word">سنة</span></span>
+                            <span id="mobAuthPlanSavings" class="text-[9px] bg-emerald-500/30 text-emerald-200 px-2 py-0.5 rounded-lg border border-emerald-400/30 font-black" data-i18n="billing_save_badge">وفّر 240 درهم (شهرين مجاناً)</span>
                         </div>
-                        <p class="text-[9px] text-blue-100 font-bold leading-relaxed" data-i18n="plan_cloud_desc">
-                            الاشتراك السحابي السنوي لإدارة متجرك، تفعيل كافة ميزات النظام والدعم الفني المباشر والنسخ الاحتياطي التلقائي.
+                        <p id="mobAuthPlanDesc" class="text-[9px] text-blue-100 font-bold leading-relaxed" data-i18n="plan_cloud_desc_annual">
+                            الاشتراك السحابي السنوي لإدارة متجرك، تفعيل كافة ميزات النظام والدعم الفني المباشر والنسخ الاحتياطي التلقائي (وفّر 240 درهم سنوياً).
                         </p>
                     </div>
-
-
                 </div>
             </div>
 
@@ -1741,10 +1770,22 @@
 
                     <!-- تفاصيل خطة الاشتراك المفعّلة / Tarifs d'abonnement -->
                     <div class="mb-8 text-right rtl:text-right ltr:text-left">
-                        <h3 class="text-sm font-black text-slate-700 mb-4 flex items-center gap-2 justify-start">
-                            <i class="fas fa-gem text-indigo-600"></i>
-                            <span data-i18n="active_plan_details">تفاصيل خطط الاشتراك المتوفرة</span>
-                        </h3>
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+                            <h3 class="text-sm font-black text-slate-700 flex items-center gap-2 justify-start">
+                                <i class="fas fa-gem text-indigo-600"></i>
+                                <span data-i18n="active_plan_details">تفاصيل خطط الاشتراك المتوفرة</span>
+                            </h3>
+                            <!-- Toggle Switcher In-App -->
+                            <div class="flex items-center justify-center p-1 bg-slate-100 rounded-2xl border border-slate-200">
+                                <button onclick="setBillingCycle('monthly')" id="appBillingMonthlyBtn" class="py-1.5 px-3 rounded-xl font-black text-xs transition-all duration-300 text-slate-600">
+                                    <span data-i18n="billing_monthly">شهري</span> (120 DH)
+                                </button>
+                                <button onclick="setBillingCycle('annual')" id="appBillingAnnualBtn" class="py-1.5 px-3 rounded-xl font-black text-xs transition-all duration-300 bg-indigo-600 text-white shadow-sm relative">
+                                    <span class="absolute -top-3.5 rtl:-left-1 ltr:-right-1 bg-emerald-500 text-white text-[8px] px-2 py-0.5 rounded-full font-black animate-pulse" data-i18n="billing_save_badge_short">وفّر 240 درهم</span>
+                                    <span data-i18n="billing_annual">سنوي</span> (1 200 DH)
+                                </button>
+                            </div>
+                        </div>
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <!-- Cloud Card -->
@@ -1755,14 +1796,15 @@
                                             <i class="fas fa-cloud text-indigo-600"></i>
                                             <span data-i18n="plan_cloud_title">TAJIROX Cloud</span>
                                         </h4>
-                                        <span class="text-[8px] bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded-full font-black" data-i18n="plan_monthly">سنوي</span>
+                                        <span id="appPlanBadge" class="text-[8px] bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded-full font-black" data-i18n="plan_annual">سنوي</span>
                                     </div>
                                     <p class="text-base font-black text-slate-800 flex items-center gap-1.5 flex-wrap justify-start mb-2">
-                                        <span class="text-indigo-600 font-extrabold text-lg" data-i18n="plan_cloud_price">1200 درهم</span>
-                                        <span>/ <span data-i18n="month_word">سنة</span></span>
+                                        <span id="appPlanPrice" class="text-indigo-600 font-extrabold text-2xl" data-i18n="plan_cloud_price_annual">1200 درهم</span>
+                                        <span>/ <span id="appPlanPeriod" data-i18n="year_word">سنة</span></span>
+                                        <span id="appPlanSavings" class="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-lg font-black border border-emerald-200" data-i18n="billing_save_badge">وفّر 240 درهم (شهرين مجاناً)</span>
                                     </p>
-                                    <p class="text-xs text-slate-500 font-bold leading-relaxed mb-4" data-i18n="plan_cloud_desc">
-                                        الاشتراك السحابي السنوي لإدارة متجرك، تفعيل كافة ميزات النظام والدعم الفني المباشر والنسخ الاحتياطي التلقائي.
+                                    <p id="appPlanDesc" class="text-xs text-slate-500 font-bold leading-relaxed mb-4" data-i18n="plan_cloud_desc_annual">
+                                        الاشتراك السحابي السنوي لإدارة متجرك، تفعيل كافة ميزات النظام والدعم الفني المباشر والنسخ الاحتياطي التلقائي (وفّر 240 درهم سنوياً).
                                     </p>
                                 </div>
                                 <div class="flex items-center justify-between border-t border-indigo-100 pt-3">
