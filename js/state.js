@@ -206,7 +206,100 @@
             if (allData && allData.inventory) {
                 renderAll();
             }
+
+            // Update billing cycle pricing UI (monthly vs annual)
+            updateBillingCycleUI();
         }
+
+        let currentBillingCycle = 'annual'; // 'annual' or 'monthly'
+
+        function setBillingCycle(cycle) {
+            if (cycle !== 'monthly' && cycle !== 'annual') cycle = 'annual';
+            currentBillingCycle = cycle;
+            updateBillingCycleUI();
+        }
+
+        function updateBillingCycleUI() {
+            const isAnnual = currentBillingCycle === 'annual';
+
+            // 1. Hero Section Toggle & Display
+            const heroMonthlyBtn = document.getElementById('heroBillingMonthlyBtn');
+            const heroAnnualBtn = document.getElementById('heroBillingAnnualBtn');
+            const heroBadge = document.getElementById('heroPlanBadge');
+            const heroPrice = document.getElementById('heroPlanPrice');
+            const heroPeriod = document.getElementById('heroPlanPeriod');
+            const heroSavings = document.getElementById('heroPlanSavings');
+            const heroDesc = document.getElementById('heroPlanDesc');
+
+            if (heroMonthlyBtn && heroAnnualBtn) {
+                if (isAnnual) {
+                    heroMonthlyBtn.className = "flex-1 py-2 px-3 rounded-xl font-black text-xs transition-all duration-300 text-white/70 hover:text-white";
+                    heroAnnualBtn.className = "flex-1 py-2 px-3 rounded-xl font-black text-xs transition-all duration-300 bg-amber-500 text-white shadow-md relative";
+                } else {
+                    heroMonthlyBtn.className = "flex-1 py-2 px-3 rounded-xl font-black text-xs transition-all duration-300 bg-blue-600 text-white shadow-md";
+                    heroAnnualBtn.className = "flex-1 py-2 px-3 rounded-xl font-black text-xs transition-all duration-300 text-white/70 hover:text-white relative";
+                }
+            }
+
+            if (heroBadge) heroBadge.innerText = t(isAnnual ? 'plan_annual' : 'plan_monthly');
+            if (heroPrice) heroPrice.innerText = t(isAnnual ? 'plan_cloud_price_annual' : 'plan_cloud_price_monthly');
+            if (heroPeriod) heroPeriod.innerText = t(isAnnual ? 'year_word' : 'month_word');
+            if (heroSavings) heroSavings.classList.toggle('hidden', !isAnnual);
+            if (heroDesc) heroDesc.innerText = t(isAnnual ? 'plan_cloud_desc_annual' : 'plan_cloud_desc_monthly');
+
+            // 2. Mobile Auth Pricing Section
+            const mobMonthlyBtn = document.getElementById('mobAuthBillingMonthlyBtn');
+            const mobAnnualBtn = document.getElementById('mobAuthBillingAnnualBtn');
+            const mobBadge = document.getElementById('mobAuthPlanBadge');
+            const mobPrice = document.getElementById('mobAuthPlanPrice');
+            const mobPeriod = document.getElementById('mobAuthPlanPeriod');
+            const mobSavings = document.getElementById('mobAuthPlanSavings');
+            const mobDesc = document.getElementById('mobAuthPlanDesc');
+
+            if (mobMonthlyBtn && mobAnnualBtn) {
+                if (isAnnual) {
+                    mobMonthlyBtn.className = "flex-1 py-2 px-3 rounded-xl font-black text-xs transition-all duration-300 text-slate-600";
+                    mobAnnualBtn.className = "flex-1 py-2 px-3 rounded-xl font-black text-xs transition-all duration-300 bg-blue-600 text-white shadow-md relative";
+                } else {
+                    mobMonthlyBtn.className = "flex-1 py-2 px-3 rounded-xl font-black text-xs transition-all duration-300 bg-blue-600 text-white shadow-md";
+                    mobAnnualBtn.className = "flex-1 py-2 px-3 rounded-xl font-black text-xs transition-all duration-300 text-slate-600 relative";
+                }
+            }
+
+            if (mobBadge) mobBadge.innerText = t(isAnnual ? 'plan_annual' : 'plan_monthly');
+            if (mobPrice) mobPrice.innerText = t(isAnnual ? 'plan_cloud_price_annual' : 'plan_cloud_price_monthly');
+            if (mobPeriod) mobPeriod.innerText = t(isAnnual ? 'year_word' : 'month_word');
+            if (mobSavings) mobSavings.classList.toggle('hidden', !isAnnual);
+            if (mobDesc) mobDesc.innerText = t(isAnnual ? 'plan_cloud_desc_annual' : 'plan_cloud_desc_monthly');
+
+            // 3. In-App Subscription Page
+            const appMonthlyBtn = document.getElementById('appBillingMonthlyBtn');
+            const appAnnualBtn = document.getElementById('appBillingAnnualBtn');
+            const appBadge = document.getElementById('appPlanBadge');
+            const appPrice = document.getElementById('appPlanPrice');
+            const appPeriod = document.getElementById('appPlanPeriod');
+            const appSavings = document.getElementById('appPlanSavings');
+            const appDesc = document.getElementById('appPlanDesc');
+
+            if (appMonthlyBtn && appAnnualBtn) {
+                if (isAnnual) {
+                    appMonthlyBtn.className = "py-1.5 px-3 rounded-xl font-black text-xs transition-all duration-300 text-slate-600";
+                    appAnnualBtn.className = "py-1.5 px-3 rounded-xl font-black text-xs transition-all duration-300 bg-indigo-600 text-white shadow-sm relative";
+                } else {
+                    appMonthlyBtn.className = "py-1.5 px-3 rounded-xl font-black text-xs transition-all duration-300 bg-indigo-600 text-white shadow-sm";
+                    appAnnualBtn.className = "py-1.5 px-3 rounded-xl font-black text-xs transition-all duration-300 text-slate-600 relative";
+                }
+            }
+
+            if (appBadge) appBadge.innerText = t(isAnnual ? 'plan_annual' : 'plan_monthly');
+            if (appPrice) appPrice.innerText = t(isAnnual ? 'plan_cloud_price_annual' : 'plan_cloud_price_monthly');
+            if (appPeriod) appPeriod.innerText = t(isAnnual ? 'year_word' : 'month_word');
+            if (appSavings) appSavings.classList.toggle('hidden', !isAnnual);
+            if (appDesc) appDesc.innerText = t(isAnnual ? 'plan_cloud_desc_annual' : 'plan_cloud_desc_monthly');
+        }
+
+        window.setBillingCycle = setBillingCycle;
+        window.updateBillingCycleUI = updateBillingCycleUI;
 
         async function initQZTray() {
             if (qzConnected || qzConnecting) return;
@@ -575,4 +668,4 @@
             }
         }
 
-
+
