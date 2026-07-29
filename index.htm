@@ -314,8 +314,8 @@
                 </div>
 
                 <!-- تفاصيل خطة الاشتراك في الهيرو -->
-                <div id="heroPlanDetailsGrid" class="bg-white/10 p-6 rounded-3xl backdrop-blur-md border border-white/20 mb-8 max-w-2xl mx-auto lg:mx-0 hidden transition-all duration-300">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-start rtl:text-right ltr:text-left">
+                <div id="heroPlanDetailsGrid" class="bg-white/10 p-6 rounded-3xl backdrop-blur-md border border-white/20 mb-8 max-w-md mx-auto lg:mx-0 hidden transition-all duration-300">
+                    <div class="grid grid-cols-1 gap-6 text-start rtl:text-right ltr:text-left">
                         <!-- TAJIROX Cloud -->
                         <div class="bg-white/5 p-5 rounded-2xl border border-white/10 flex flex-col justify-between">
                             <div>
@@ -335,39 +335,6 @@
                                 <li class="flex items-start gap-2 justify-start">
                                     <i class="fas fa-check-circle text-emerald-400 text-xs mt-0.5 flex-shrink-0"></i>
                                     <span class="flex-1 text-start" data-i18n="plan_feature_1">2 مستخدمين كحد أقصى (المدير + موظف واحد)</span>
-                                </li>
-                                <li class="flex items-start gap-2 justify-start">
-                                    <i class="fas fa-check-circle text-emerald-400 text-xs mt-0.5 flex-shrink-0"></i>
-                                    <span class="flex-1 text-start" data-i18n="plan_feature_2">جميع الوظائف متضمنة</span>
-                                </li>
-                                <li class="flex items-start gap-2 justify-start">
-                                    <i class="fas fa-check-circle text-emerald-400 text-xs mt-0.5 flex-shrink-0"></i>
-                                    <span class="flex-1 text-start" data-i18n="plan_feature_3">خدمة الدعم الفني</span>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <!-- TAJIROX Desktop -->
-                        <div class="bg-gradient-to-br from-amber-500/10 to-orange-500/10 p-5 rounded-2xl border border-amber-500/20 flex flex-col justify-between relative overflow-hidden">
-                            <div class="absolute -top-6 -right-6 w-16 h-16 bg-amber-400/10 rounded-full blur-xl"></div>
-                            <div>
-                                <div class="flex items-center gap-2 mb-3 justify-start">
-                                    <i class="fas fa-desktop text-amber-400 text-lg"></i>
-                                    <h3 class="text-white font-black text-sm" data-i18n="plan_desktop_title">TAJIROX Desktop</h3>
-                                    <span class="text-[8px] bg-amber-400/20 text-amber-300 px-2 py-0.5 rounded-full font-black border border-amber-400/30" data-i18n="plan_lifetime">مدى الحياة</span>
-                                </div>
-                                <p class="text-white text-sm font-black mb-2 flex items-center gap-2 flex-wrap justify-start">
-                                    <span class="text-amber-400 font-extrabold text-lg" data-i18n="plan_desktop_price">1990 درهم</span>
-                                    <span class="text-white/50 text-[10px] font-bold" data-i18n="plan_lifetime">(تفعيل مدى الحياة)</span>
-                                </p>
-                                <p class="text-blue-100 text-[10px] font-bold leading-relaxed mb-4" data-i18n="plan_desktop_desc">
-                                    تفعيل مدى الحياة للنسخة المحلية المخصصة للعمل مباشرة على جهازك دون الحاجة لاشتراك سنوي ويعمل بالكامل بدون إنترنت.
-                                </p>
-                            </div>
-                            <ul class="text-blue-100 text-[9px] space-y-1.5 list-none p-0 font-bold border-t border-amber-500/10 pt-3">
-                                <li class="flex items-start gap-2 justify-start">
-                                    <i class="fas fa-check-circle text-emerald-400 text-xs mt-0.5 flex-shrink-0"></i>
-                                    <span class="flex-1 text-start" data-i18n="plan_desktop_features_short">تفعيل مدى الحياة على جهازك، بدون اشتراك سنوي، يعمل بالكامل بدون اتصال بالإنترنت.</span>
                                 </li>
                                 <li class="flex items-start gap-2 justify-start">
                                     <i class="fas fa-check-circle text-emerald-400 text-xs mt-0.5 flex-shrink-0"></i>
@@ -659,24 +626,7 @@
                         </p>
                     </div>
 
-                    <!-- Desktop Plan -->
-                    <div class="bg-gradient-to-br from-amber-600 to-orange-700 text-white p-5 rounded-[2rem] shadow-lg border border-amber-500/20 text-right rtl:text-right ltr:text-left relative overflow-hidden">
-                        <div class="absolute -right-10 -bottom-10 w-24 h-24 bg-white/5 rounded-full blur-xl"></div>
-                        <div class="flex items-center justify-between mb-2">
-                            <div class="flex items-center gap-2">
-                                <i class="fas fa-desktop text-amber-300"></i>
-                                <h4 class="font-black text-sm" data-i18n="plan_desktop_title">TAJIROX Desktop</h4>
-                            </div>
-                            <span class="text-[8px] bg-amber-500/30 text-amber-200 px-2 py-0.5 rounded-full font-black border border-amber-400/20" data-i18n="plan_lifetime">مدى الحياة</span>
-                        </div>
-                        <div class="flex items-baseline gap-2 flex-wrap mb-2">
-                            <span class="text-2xl font-black text-amber-300" data-i18n="plan_desktop_price">1990 درهم</span>
-                            <span class="text-xs text-blue-100" data-i18n="plan_lifetime">/ مدى الحياة</span>
-                        </div>
-                        <p class="text-[9px] text-amber-100 font-bold leading-relaxed" data-i18n="plan_desktop_desc">
-                            تفعيل مدى الحياة للنسخة المحلية المخصصة للعمل مباشرة على جهازك دون الحاجة لاشتراك سنوي ويعمل بالكامل بدون إنترنت.
-                        </p>
-                    </div>
+
                 </div>
             </div>
 
@@ -1151,10 +1101,10 @@
                 <div class="flex justify-between items-center">
                     <h2 class="text-lg font-black text-slate-800" data-i18n="invoices">الفواتير</h2>
                     <div class="flex gap-2">
-                        <button onclick="openInvoiceModal()"
+                        <button id="btnNewSaleInvoice" onclick="openInvoiceModal()"
                             class="bg-emerald-600 text-white px-5 py-2 rounded-xl font-black text-xs shadow-lg"
                             data-i18n="new_sale_invoice">+ فاتورة بيع</button>
-                        <button onclick="openServiceModal()"
+                        <button id="btnNewServiceInvoice" onclick="openServiceModal()"
                             class="bg-purple-600 text-white px-5 py-2 rounded-xl font-black text-xs shadow-lg"
                             data-i18n="new_service_invoice">+ فاتورة خدمة</button>
                     </div>
@@ -1959,6 +1909,20 @@
                                     class="text-xs font-bold text-slate-700 cursor-pointer"
                                     data-i18n="show_purchase_to_employee_label">إظهار ثمن الشراء للموظف في
                                     المخزون</label>
+                            </div>
+
+                            <div class="flex items-center gap-3 p-4 bg-slate-50 rounded-xl mb-4">
+                                <input type="checkbox" id="settingShowSaleInvoice"
+                                    class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500">
+                                <label for="settingShowSaleInvoice" class="text-xs font-bold text-slate-700 cursor-pointer"
+                                    data-i18n="show_sale_invoice_btn_label">إظهار زر فاتورة بيع (+ فاتورة بيع)</label>
+                            </div>
+
+                            <div class="flex items-center gap-3 p-4 bg-slate-50 rounded-xl mb-4">
+                                <input type="checkbox" id="settingShowServiceInvoice"
+                                    class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500">
+                                <label for="settingShowServiceInvoice" class="text-xs font-bold text-slate-700 cursor-pointer"
+                                    data-i18n="show_service_invoice_btn_label">إظهار زر فاتورة خدمة (+ فاتورة خدمة)</label>
                             </div>
 
                             <div class="flex flex-col p-4 bg-slate-50 rounded-xl mb-4">
