@@ -321,7 +321,9 @@
 
         function showToast(m, t = 'success') {
             const div = document.createElement('div');
-            div.className = `fixed bottom-6 left-6 z-[300] px-6 py-4 rounded-[2rem] shadow-2xl text-[11px] font-black animate-bounce flex items-center gap-3 transition-all ${t === 'error' ? 'bg-rose-500 text-white' : 'bg-slate-900 text-white'}`;
+            const isRtl = document.documentElement.dir === 'rtl' || (typeof currentLang !== 'undefined' && currentLang === 'ar');
+            const alignClass = isRtl ? 'right-6' : 'left-6';
+            div.className = `fixed bottom-6 ${alignClass} z-[300] px-6 py-4 rounded-[2rem] shadow-2xl text-[11px] font-black animate-bounce flex items-center gap-3 transition-all ${t === 'error' ? 'bg-rose-500 text-white' : 'bg-slate-900 text-white'}`;
             div.innerHTML = `<i class="fas ${t === 'error' ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i> ${m}`;
             document.body.appendChild(div);
             setTimeout(() => { div.style.opacity = '0'; setTimeout(() => div.remove(), 500); }, 3000);
@@ -329,10 +331,30 @@
 
         function openModal(id) {
             document.getElementById(id).classList.remove('hidden');
+            if (id === 'invoiceModal') {
+                if (typeof supportChatOpen !== 'undefined' && supportChatOpen) {
+                    if (typeof toggleSupportChat === 'function') toggleSupportChat();
+                }
+                const chatWin = document.getElementById('supportChatWindow');
+                if (chatWin) {
+                    chatWin.classList.add('hidden', 'translate-y-4', 'opacity-0');
+                    if (typeof supportChatOpen !== 'undefined') supportChatOpen = false;
+                }
+                const supportBtn = document.getElementById('supportBtn');
+                if (supportBtn) {
+                    supportBtn.classList.add('hidden');
+                }
+            }
         }
 
         function closeModal(id) {
             document.getElementById(id).classList.add('hidden');
+            if (id === 'invoiceModal') {
+                const supportBtn = document.getElementById('supportBtn');
+                if (supportBtn) {
+                    supportBtn.classList.remove('hidden');
+                }
+            }
         }
 
         function openPrivacyModal() {
