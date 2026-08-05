@@ -37,7 +37,8 @@ function initSupportWidget() {
     const btn = document.createElement('button');
     btn.id = 'supportBtn';
     btn.onclick = toggleSupportChat;
-    btn.className = `fixed bottom-6 ${alignClass} z-[200] w-14 h-14 bg-gradient-to-tr from-blue-600 to-indigo-600 text-white rounded-full flex items-center justify-center shadow-2xl active:scale-95 transition-all duration-300 hover:rotate-12 group border border-blue-400/20`;
+    const isInvoiceOpen = document.getElementById('invoiceModal') && !document.getElementById('invoiceModal').classList.contains('hidden');
+    btn.className = `fixed bottom-6 ${alignClass} z-[200] w-14 h-14 bg-gradient-to-tr from-blue-600 to-indigo-600 text-white rounded-full flex items-center justify-center shadow-2xl active:scale-95 transition-all duration-300 hover:rotate-12 group border border-blue-400/20 ${isInvoiceOpen ? 'hidden' : ''}`;
     btn.innerHTML = `
         <span class="absolute -top-1 -right-1 flex h-3 w-3">
             <span class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${isSupportWorkingHours() ? 'bg-emerald-400' : 'bg-amber-400'}"></span>
