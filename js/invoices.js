@@ -207,6 +207,20 @@
         }
 
         function openInvoiceModal() {
+            // Close support chat window if open and hide floating button
+            if (typeof supportChatOpen !== 'undefined' && supportChatOpen) {
+                if (typeof toggleSupportChat === 'function') toggleSupportChat();
+            }
+            const chatWin = document.getElementById('supportChatWindow');
+            if (chatWin) {
+                chatWin.classList.add('hidden', 'translate-y-4', 'opacity-0');
+                if (typeof supportChatOpen !== 'undefined') supportChatOpen = false;
+            }
+            const supportBtn = document.getElementById('supportBtn');
+            if (supportBtn) {
+                supportBtn.classList.add('hidden');
+            }
+
             cart = [];
             isEditingInvoice = false;
             document.getElementById('invoiceModalMainTitle').innerText = t('create_invoice_title');
