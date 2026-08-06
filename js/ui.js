@@ -171,23 +171,23 @@
 
         function showPage(p) {
             // التحقق من قيود النسخة التجريبية (14 يوم)
-            const isTrial = currentUser?.isTrial === true || currentUser?.isTrial === 'true' || 
-                (currentUser?.subscription && Math.ceil((parseDate(currentUser.subscription.end) - parseDate(currentUser.subscription.start)) / (1000 * 60 * 60 * 24)) <= 15);
-            if (isTrial) {
-                const trialRestrictedPages = ['reports', 'treasury', 'checks-promissory', 'users'];
-                if (trialRestrictedPages.includes(p)) {
-                    openConfirm({
-                        title: t('trial_feature_locked_title'),
-                        msg: t('trial_feature_locked'),
-                        iconClass: "fas fa-crown",
-                        colorClass: "bg-indigo-600",
-                        onConfirm: () => {
-                            showPage('subscription');
-                        }
-                    });
-                    return;
-                }
-            }
+            // const isTrial = currentUser?.isTrial === true || currentUser?.isTrial === 'true' || 
+            //     (currentUser?.subscription && Math.ceil((parseDate(currentUser.subscription.end) - parseDate(currentUser.subscription.start)) / (1000 * 60 * 60 * 24)) <= 15);
+            // if (isTrial) {
+            //     const trialRestrictedPages = ['reports', 'treasury', 'checks-promissory', 'users'];
+            //     if (trialRestrictedPages.includes(p)) {
+            //         openConfirm({
+            //             title: t('trial_feature_locked_title'),
+            //             msg: t('trial_feature_locked'),
+            //             iconClass: "fas fa-crown",
+            //             colorClass: "bg-indigo-600",
+            //             onConfirm: () => {
+            //                 showPage('subscription');
+            //             }
+            //         });
+            //         return;
+            //     }
+            // }
 
             // التحقق من الصلاحية قبل عرض الصفحة
             if (currentUser?.role !== 'admin') {
