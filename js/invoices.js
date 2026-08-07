@@ -377,6 +377,23 @@
 
             setBtnLoading(saveBtn, true, t('saving'));
 
+            // --- NEW: Validate stock before proceeding with invoice ---
+            for (const cartItem of cart) {
+                const productInInventory = allData.inventory.find(p => p.id === cartItem.id);
+                if (!productInInventory) {
+                    showToast(t('product_not_found_in_stock', { productName: cartItem.name }), 'error');
+                    setBtnLoading(saveBtn, false);
+                    return;
+                }
+                const availableQty = safeNum(productInInventory.qty);
+                if (cartItem.selectedQty > availableQty) {
+                    showToast(t('insufficient_stock_error', { productName: cartItem.name, availableQty: availableQty }), 'error');
+                    setBtnLoading(saveBtn, false);
+                    return;
+                }
+            }
+            // --- END NEW VALIDATION ---
+
             // ========== MISE À JOUR LOCALE OPTIMISTE ==========
             // This section is now part of the continuous saving logic
 
