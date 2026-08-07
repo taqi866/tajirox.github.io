@@ -6,7 +6,7 @@
             }
 
             // التحقق من عدد المستخدمين
-            if (allData.users.length >= 3) {
+            if (allData.users.length >= 2) {
                 showToast(t('max_users_error'), 'error');
                 return;
             }
